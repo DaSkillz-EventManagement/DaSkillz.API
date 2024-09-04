@@ -32,7 +32,6 @@
 	  <Folder Include="Controllers\" />
 	  <Folder Include="Logs\" />
 	  <Folder Include="Controllers\" />
-	  <Folder Include="UseCases\User\" />
 	</ItemGroup>
 
 </Project>
