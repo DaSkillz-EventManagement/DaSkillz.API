@@ -1,5 +1,5 @@
 ﻿using Domain.Entities;
-using Domain.Repository.Generic;
+using Domain.Repositories.Generic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Repositories
 {
-    public interface IEventRepo : IRepository<Event>
+    public interface ILogoRepository : IRepository<Logo>
     {
+        Task<Logo> GetByName(string name);
     }
 }

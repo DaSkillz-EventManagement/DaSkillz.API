@@ -13,7 +13,7 @@ namespace Infrastructure.Persistence
         }
 
         public DbSet<Event> Events { get; set; }
-
+        public DbSet<Logo> Logos { get; set; }
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;

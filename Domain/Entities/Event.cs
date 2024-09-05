@@ -8,6 +8,14 @@ namespace Domain.Entities
 {
     public class Event
     {
+        public Event()
+        {
+           
+           
+            Logos = new HashSet<Logo>();
+           
+        }
+
         public Guid Id { get; set; }
         public string EventName { get; set; } = null!;
         public string? Description { get; set; }
@@ -27,5 +35,7 @@ namespace Domain.Entities
         public string? LocationId { get; set; }
         public string? LocationAddress { get; set; }
         public string? Theme { get; set; }
+
+        public virtual ICollection<Logo> Logos { get; set; }
     }
 }
