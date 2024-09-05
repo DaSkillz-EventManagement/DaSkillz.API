@@ -1,6 +1,6 @@
 ﻿using Elastic.Clients.Elasticsearch;
 
-namespace Infrastructure.Persistence.Elasticsearch
+namespace Application.Abstractions.ElasticSearch
 {
     public interface IElasticService<TDomain> where TDomain : class
     {

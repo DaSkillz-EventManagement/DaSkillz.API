@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Caching
+﻿namespace Application.Abstractions.Caching
 {
     public interface IRedisCaching
     {

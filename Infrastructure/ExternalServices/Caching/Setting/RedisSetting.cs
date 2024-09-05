@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Caching.Setting
+﻿namespace Infrastructure.ExternalServices.Caching.Setting
 {
     public class RedisSetting
     {

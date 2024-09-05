@@ -1,6 +1,6 @@
 ﻿using Domain.Models.Pagination;
-using Domain.Repository.Generic;
-using Domain.Repository.UnitOfWork;
+using Domain.Repositories.Generic;
+using Domain.Repositories.UnitOfWork;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

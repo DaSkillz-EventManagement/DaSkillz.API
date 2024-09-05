@@ -23,8 +23,11 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="NJsonSchema" Version="11.0.2" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <Folder Include="UseCase\" />
+	  <Folder Include="UseCases\User\Commands\DeleteUser\" />
+	  <Folder Include="UseCases\User\Commands\UpdateUser\" />
+	  <Folder Include="UseCases\User\Queries\FilterUser\" />
 	</ItemGroup>
+
 </Project>
