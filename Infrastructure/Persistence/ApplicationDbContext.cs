@@ -1,4 +1,5 @@
-﻿using Domain.Repository.UnitOfWork;
+﻿using Domain.Entities;
+using Domain.Repository.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -10,6 +11,8 @@ namespace Infrastructure.Persistence
         {
 
         }
+
+        public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
