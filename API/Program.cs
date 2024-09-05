@@ -3,8 +3,8 @@ using API.Middleware;
 using Application;
 using HealthChecks.UI.Client;
 using Infrastructure;
+using Infrastructure.ExternalServices.ElasticSearch.Setting;
 using Infrastructure.Persistence;
-using Infrastructure.Persistence.Elasticsearch.Setting;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 

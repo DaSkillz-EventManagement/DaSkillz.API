@@ -1,4 +1,4 @@
-﻿using Domain.Repository.UnitOfWork;
+﻿using Domain.Repositories.UnitOfWork;
 using MediatR;
 using System.Transactions;
 using System.Windows.Input;

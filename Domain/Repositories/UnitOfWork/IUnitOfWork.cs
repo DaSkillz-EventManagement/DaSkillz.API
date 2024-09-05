@@ -1,7 +1,7 @@
-﻿namespace Domain.Repository.UnitOfWork
+﻿namespace Domain.Repositories.UnitOfWork
 {
     public interface IUnitOfWork
     {
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
