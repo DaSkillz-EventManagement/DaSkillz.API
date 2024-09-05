@@ -1,9 +1,10 @@
-﻿using Infrastructure.Caching.Setting;
+﻿using Application.Abstractions.Caching;
+using Infrastructure.ExternalServices.Caching.Setting;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace Infrastructure.Caching
+namespace Infrastructure.ExternalServices.Caching
 {
     public class RedisCaching : IRedisCaching
     {

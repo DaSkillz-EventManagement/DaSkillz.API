@@ -1,4 +1,4 @@
-﻿namespace API.UseCases.User
+﻿namespace Application.UseCases.User
 {
     public class Class
     {

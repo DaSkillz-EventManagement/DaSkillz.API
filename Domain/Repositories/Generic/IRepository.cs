@@ -1,8 +1,8 @@
 ﻿using Domain.Models.Pagination;
-using Domain.Repository.UnitOfWork;
+using Domain.Repositories.UnitOfWork;
 using System.Linq.Expressions;
 
-namespace Domain.Repository.Generic
+namespace Domain.Repositories.Generic
 {
     public interface IRepository<T> where T : class
     {

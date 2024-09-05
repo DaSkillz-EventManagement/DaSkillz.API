@@ -1,6 +1,7 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using Application.Abstractions.ElasticSearch;
+using Elastic.Clients.Elasticsearch;
 
-namespace Infrastructure.Persistence.Elasticsearch
+namespace Infrastructure.ExternalServices.ElasticSearch
 {
     public class ElasticService<TDomain> : IElasticService<TDomain> where TDomain : class
     {
@@ -16,7 +17,7 @@ namespace Infrastructure.Persistence.Elasticsearch
         public async Task<IEnumerable<TDomain>> FilterAsync(SearchRequestDescriptor<TDomain> descriptor)
         {
             var indexResponse = await _client.SearchAsync(descriptor);
-            return indexResponse.Documents.ToList();
+            return indexResponse.IsValidResponse ? indexResponse.Documents.ToList() : default;
         }
 
         public async Task IndexDocumentAsync(TDomain domain)
