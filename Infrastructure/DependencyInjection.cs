@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Caching;
 using Application.Abstractions.ElasticSearch;
+using Application.ExternalServices.Images;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using Elastic.Clients.Elasticsearch;
@@ -8,6 +9,7 @@ using Infrastructure.ExternalServices.Caching;
 using Infrastructure.ExternalServices.Caching.Setting;
 using Infrastructure.ExternalServices.ElasticSearch;
 using Infrastructure.ExternalServices.ElasticSearch.Setting;
+using Infrastructure.ExternalServices.Images;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -87,6 +89,9 @@ namespace Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<ILogoRepository, LogoRepository>();
+            services.AddScoped<IImageService, ImageService>();
 
             return services;
         }

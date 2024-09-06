@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="DTOs\" />
     <Compile Remove="Models\DTOs\**" />
     <EmbeddedResource Remove="Models\DTOs\**" />
     <None Remove="Models\DTOs\**" />
