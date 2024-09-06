@@ -9,17 +9,27 @@ namespace Infrastructure.Persistence.Configuration
         public void Configure(EntityTypeBuilder<Event> builder)
         {
             builder.Property(e => e.Id).ValueGeneratedNever();
-            builder.Property(e => e.EndDate).HasColumnType("datetime");
-            builder.Property(e => e.EventName).HasMaxLength(250);
-            builder.Property(e => e.Fare).HasColumnType("decimal(19, 2)");
+
+            // StartDate and EndDate are longs (likely Unix timestamps), so remove HasColumnType("datetime")
+            builder.Property(e => e.StartDate).IsRequired();
+            builder.Property(e => e.EndDate).IsRequired();
+
+            builder.Property(e => e.EventName)
+                .HasMaxLength(250)
+                .IsRequired();
+
+            builder.Property(e => e.Fare)
+                .HasColumnType("decimal(19, 2)");
 
             builder.Property(e => e.Image)
                 .HasMaxLength(5000)
                 .IsUnicode(false);
 
-            builder.Property(e => e.Location).HasMaxLength(500);
+            builder.Property(e => e.Location)
+                .HasMaxLength(500);
 
-            builder.Property(e => e.LocationAddress).HasMaxLength(1000);
+            builder.Property(e => e.LocationAddress)
+                .HasMaxLength(1000);
 
             builder.Property(e => e.LocationCoord)
                 .HasMaxLength(500)
@@ -34,7 +44,9 @@ namespace Infrastructure.Persistence.Configuration
                 .HasMaxLength(2000)
                 .IsUnicode(false);
 
-            builder.Property(e => e.StartDate).HasColumnType("datetime");
+            // Removed HasColumnType("datetime") since CreatedAt and UpdatedAt are long (timestamps)
+            builder.Property(e => e.CreatedAt);
+            builder.Property(e => e.UpdatedAt);
 
             builder.Property(e => e.Status)
                 .HasMaxLength(10)
@@ -44,7 +56,7 @@ namespace Infrastructure.Persistence.Configuration
                 .HasMaxLength(20)
                 .IsUnicode(false);
 
-            builder.Property(e => e.UpdatedAt).HasColumnType("datetime");
+           
         }
     }
 }

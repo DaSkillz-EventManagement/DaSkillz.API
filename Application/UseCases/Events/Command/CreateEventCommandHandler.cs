@@ -50,8 +50,8 @@ namespace Application.UseCases.Events.Command
             }
             var eventEntity = _mapper.Map<Event>(request);
             eventEntity.Id = Guid.NewGuid();
-            eventEntity.StartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.StartDate + dateTimeConvertValue).DateTime;
-            eventEntity.EndDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EndDate + dateTimeConvertValue).DateTime;
+            eventEntity.StartDate = request.StartDate + dateTimeConvertValue;
+            eventEntity.EndDate = request.EndDate + dateTimeConvertValue;
             if (request.Image != null)
             {
                 eventEntity.Image = await _fileService.UploadImage(request.Image, Guid.NewGuid());
