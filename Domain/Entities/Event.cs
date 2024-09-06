@@ -10,8 +10,8 @@ namespace Domain.Entities
     {
         public Event()
         {
-           
-           
+            Participants = new HashSet<Participant>();
+            Tags = new HashSet<Tag>();
             Logos = new HashSet<Logo>();
            
         }
@@ -36,6 +36,9 @@ namespace Domain.Entities
         public string? LocationAddress { get; set; }
         public string? Theme { get; set; }
 
+        public virtual User? CreatedByNavigation { get; set; }
         public virtual ICollection<Logo> Logos { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<Participant> Participants { get; set; }
     }
 }

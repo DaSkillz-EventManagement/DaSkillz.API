@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Events.Command
+namespace Application.UseCases.Events.Command.CreateEvent
 {
     public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
     {

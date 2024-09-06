@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public partial class Logo
+    public partial class Tag
     {
-        public Logo()
+        public Tag()
         {
             Events = new HashSet<Event>();
         }
 
-        public int LogoId { get; set; }
-        public string? SponsorBrand { get; set; }
-        public string? LogoUrl { get; set; }
+        public int TagId { get; set; }
+        public string? TagName { get; set; }
 
         public virtual ICollection<Event> Events { get; set; }
     }

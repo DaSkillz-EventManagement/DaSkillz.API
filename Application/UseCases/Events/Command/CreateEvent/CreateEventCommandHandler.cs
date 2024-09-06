@@ -9,7 +9,7 @@ using Domain.Repositories.UnitOfWork;
 using MediatR;
 using System.Net;
 
-namespace Application.UseCases.Events.Command
+namespace Application.UseCases.Events.Command.CreateEvent
 {
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, APIResponse>
     {

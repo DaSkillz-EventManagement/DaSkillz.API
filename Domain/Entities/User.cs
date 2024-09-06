@@ -2,6 +2,15 @@
 {
     public partial class User
     {
+        public User()
+        {
+            Events = new HashSet<Event>();
+            //Feedbacks = new HashSet<Feedback>();
+            //Notifications = new HashSet<Notification>();
+            Participants = new HashSet<Participant>();
+            //PaymentTransactions = new HashSet<PaymentTransaction>();
+            RefreshTokens = new HashSet<RefreshToken>();
+        }
 
         public Guid UserId { get; set; }
         public string? FullName { get; set; }
@@ -14,10 +23,10 @@
         public string? Avatar { get; set; }
 
         public virtual Role Role { get; set; } = null!;
-        //public virtual ICollection<Event> Events { get; set; }
+        public virtual ICollection<Event> Events { get; set; }
         //public virtual ICollection<Feedback> Feedbacks { get; set; }
         //public virtual ICollection<Notification> Notifications { get; set; }
-        //public virtual ICollection<Participant> Participants { get; set; }
+        public virtual ICollection<Participant> Participants { get; set; }
         //public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; }
         public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
     }
