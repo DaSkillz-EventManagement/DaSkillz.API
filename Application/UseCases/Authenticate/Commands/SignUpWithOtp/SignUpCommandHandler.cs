@@ -1,6 +1,9 @@
 ﻿using Application.Abstractions.AvatarApi;
+using Application.Abstractions.Caching;
+using Application.Abstractions.Email;
 using Application.Helper;
 using Application.ResponseMessage;
+using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
@@ -13,18 +16,23 @@ namespace Application.UseCases.Authenticate.Commands.SignUpWithOtp
     public class SignUpCommandHandler : IRequestHandler<SignUpCommand, APIResponse>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRedisCaching _redisCaching;
         private readonly IAvatarApiClient _avatarApiClient;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailService _emailService;
 
-        public SignUpCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IAvatarApiClient avatarApiClient)
+        public SignUpCommandHandler(IUserRepository userRepository, IRedisCaching redisCaching, IAvatarApiClient avatarApiClient, IUnitOfWork unitOfWork, IEmailService emailService)
         {
             _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
+            _redisCaching = redisCaching;
             _avatarApiClient = avatarApiClient;
+            _unitOfWork = unitOfWork;
+            _emailService = emailService;
         }
 
         public async Task<APIResponse> Handle(SignUpCommand request, CancellationToken cancellationToken)
         {
+            string RedisDbkey = $"SignIn_{request.Email}";
             var user = await _userRepository.GetUserByEmailAsync(request.Email!);
             if (user != null)
             {
@@ -49,37 +57,21 @@ namespace Application.UseCases.Authenticate.Commands.SignUpWithOtp
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = null
             };
-
             await _userRepository.Add(user);
 
             var otp = AuthenHelper.GenerateOTP();
-            //var existingUserValidation = await _unitOfWork.UserValidationRepository.GetUser(userId);
 
-            //bool isNewUserValidation = existingUserValidation == null;
-            //var userValidation = existingUserValidation ?? new UserValidation { UserId = userId };
+            //var existingUserValidation = await _redisCaching.GetAsync<UserValidation>(RedisDbkey);
+            var userValidation = new UserValidation
+            {
+                UserId = user.UserId,
+                Otp = otp
+            };
 
-            //userValidation.Otp = otp;
-            //userValidation.ExpiredAt = DateTime.UtcNow.AddMinutes(5);
-            //userValidation.CreatedAt = userValidation.CreatedAt == default ? DateTime.UtcNow : userValidation.CreatedAt;
+            await _redisCaching.SetAsync(RedisDbkey, userValidation, 5);
+            await _emailService.SendEmailAsync(request.Email, request.FullName, otp);
 
-            //if (isNewUserValidation)
-            //{
-            //    await _unitOfWork.UserValidationRepository.Add(userValidation);
-            //}
-            //else
-            //{
-            //    await _unitOfWork.UserValidationRepository.Update(userValidation);
-            //}
-
-            //await _unitOfWork.SaveChangesAsync();
-
-            //_sendMailTask.SendMailVerify(new UserMailDto()
-            //{
-            //    UserName = userName,
-            //    Email = email,
-            //    OTP = otp
-            //});
-
+            await _unitOfWork.SaveChangesAsync();
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
