@@ -1,4 +1,7 @@
-﻿using Domain.Entities;
+﻿using Application.Helper;
+using Domain.DTOs.Events;
+using Domain.DTOs.User.Response;
+using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Pagination;
 using Domain.Repositories;
@@ -18,12 +21,31 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+        private async Task<IQueryable<Event>> GetUserRegisterdEventsQuery(Guid userId)
+        {
+            var participants = await _context.Participants
+                .Where(p => p.UserId.Equals(userId))
+                .Select(p => p.EventId)
+                .ToListAsync();
+
+            return _context.Events.Include(e => e.Participants)
+                .Where(e => participants.Contains(e.Id))
+                .AsNoTracking();
+        }
+
+        
+
+        public Task<PagedList<Event>> GetFilteredEvent(EventFilterObjectDto filter, int pageNo, int elementEachPage)
+        {
+            throw new NotImplementedException();
+        }
+
         //public Task<Event> getAllEventInfo(Guid eventId)
         //{
         //    throw new NotImplementedException();
         //}
 
-        
+
         public async Task<PagedList<Event>> getEventByUserRole(EventRole eventRole, Guid userId, int pageNo, int elementEachPage)
         {
             var userInfo = await _context.Participants.Where(p => p.UserId == userId && p.RoleEvent!.RoleEventId == ((int)eventRole))
@@ -76,6 +98,34 @@ namespace Infrastructure.Repositories
             var eventList = await _context.Events.Where(e => e.CreatedBy == userId)
                 .OrderByDescending(e => e.StartDate).AsNoTracking().ToListAsync();
             return eventList;
+        }
+
+        public Task<PagedList<Event>> GetUserParticipatedEvents(EventFilterObjectDto filter, Guid userId, int pageNo, int elementEachPage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Event>> UserPastEvents(Guid userId)
+        {
+
+            var eventResponse = await _context.Events
+                .Where(e => e.CreatedBy == userId && DateTimeHelper.ToDateTime(e.EndDate) < DateTime.Now)
+                .ToListAsync();
+            var events = await GetUserRegisterdEventsQuery(userId);
+            var eventList = await events.Where(e => DateTimeHelper.ToDateTime(e.EndDate) < DateTime.Now)
+                .OrderByDescending(e => e.EndDate).ToListAsync();
+            return eventResponse.Concat(eventList).DistinctBy(e => e.Id).ToList();
+        }
+
+        public async Task<List<Event>> UserIncomingEvents(Guid userId)
+        {
+            var eventResponse = await _context.Events
+                .Where(e => e.CreatedBy == userId && DateTimeHelper.ToDateTime(e.StartDate) >= DateTime.Now)
+                .ToListAsync();
+            var incomingEvents = await GetUserRegisterdEventsQuery(userId);
+            var eventList = await incomingEvents.Where(e => DateTimeHelper.ToDateTime(e.StartDate) >= DateTime.Now)
+                .OrderByDescending(e => e.StartDate).ToListAsync();
+            return eventResponse.Concat(eventList).DistinctBy(e => e.Id).ToList();
         }
     }
 }

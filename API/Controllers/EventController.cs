@@ -3,6 +3,8 @@ using Application.UseCases.Events.Command.CreateEvent;
 using Application.UseCases.Events.Command.GetEvent;
 using Application.UseCases.Events.Command.GetEventByTag;
 using Application.UseCases.Events.Command.GetEventByUserRole;
+using Application.UseCases.Events.Command.GetEventParticipatedByUser;
+using Application.UseCases.Events.Command.GetFilteredEvent;
 using Azure;
 using Domain.Enum.Events;
 using Domain.Models.Response;
@@ -77,6 +79,62 @@ namespace API.Controllers
             });
         }
 
+
+        [HttpGet("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllEvents([FromQuery] GetFilteredEventCommand command, CancellationToken cancellationToken = default)
+        {
+            var response = await _mediator.Send(command, cancellationToken);
+            if (response.TotalItems > 0)
+            {
+
+                Response.Headers.Add("X-Total-Element", response.TotalItems.ToString());
+                Response.Headers.Add("X-Total-Page", response.TotalPages.ToString());
+                Response.Headers.Add("X-Current-Page", response.CurrentPage.ToString());
+                return Ok(new APIResponse
+                {
+                    StatusResponse = HttpStatusCode.OK,
+                    Message = MessageEvent.GetAllEvent,
+                    Data = response
+                });
+            }
+            return Ok(new APIResponse
+            {
+                StatusResponse = HttpStatusCode.NotFound,
+                Message = MessageCommon.NotFound,
+                Data = null
+            });
+        }
+
+        [Authorize]
+        [HttpGet("user-participated")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetUserParticipatedEvents([FromQuery] GetEventParticipatedByUserCommand command, CancellationToken cancellationToken = default)
+        {
+            //string userId = User.GetUserIdFromToken();
+            var response = await _mediator.Send(command, cancellationToken);
+            if (response.TotalItems > 0)
+            {
+
+                Response.Headers.Add("X-Total-Element", response.TotalItems.ToString());
+                Response.Headers.Add("X-Total-Page", response.TotalPages.ToString());
+                Response.Headers.Add("X-Current-Page", response.CurrentPage.ToString());
+                return Ok(new APIResponse
+                {
+                    StatusResponse = HttpStatusCode.OK,
+                    Message = MessageEvent.UserParticipatedEvent,
+                    Data = response
+                });
+            }
+            return Ok(new APIResponse
+            {
+                StatusResponse = HttpStatusCode.NotFound,
+                Message = MessageCommon.NotFound,
+                Data = null
+            });
+        }
 
         [Authorize]
         [HttpPost("")]
