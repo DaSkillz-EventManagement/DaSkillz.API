@@ -1,15 +1,21 @@
-﻿using Application.Abstractions.Caching;
+﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.AvatarApi;
+using Application.Abstractions.Caching;
 using Application.Abstractions.ElasticSearch;
+using Application.Abstractions.Oauth2;
 using Application.ExternalServices.Images;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
+using Infrastructure.ExternalServices.Authentication;
+using Infrastructure.ExternalServices.AvatarApi;
 using Infrastructure.ExternalServices.Caching;
 using Infrastructure.ExternalServices.Caching.Setting;
 using Infrastructure.ExternalServices.ElasticSearch;
 using Infrastructure.ExternalServices.ElasticSearch.Setting;
 using Infrastructure.ExternalServices.Images;
+using Infrastructure.ExternalServices.Oauth2;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -85,13 +91,16 @@ namespace Infrastructure
             services.AddSingleton(client);
             services.AddSingleton<IRedisCaching, RedisCaching>();
             services.AddScoped(typeof(IElasticService<>), typeof(ElasticService<>));
-            services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<IUnitOfWork>(provider => (IUnitOfWork)provider.GetRequiredService<ApplicationDbContext>());
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ILogoRepository, LogoRepository>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IAvatarApiClient, AvatarApiClient>();
+            services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
 
             return services;
         }

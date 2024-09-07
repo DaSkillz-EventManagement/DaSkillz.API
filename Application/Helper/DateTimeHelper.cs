@@ -73,5 +73,6 @@ namespace Application.Helper
         {
             return dateTime.ToString("dd/MM/yyyy").Equals(compare.ToString("dd/MM/yyyy"));
         }
+
     }
 }

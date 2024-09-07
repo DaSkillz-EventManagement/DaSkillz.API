@@ -21,7 +21,7 @@ namespace Infrastructure.Repositories
         //    throw new NotImplementedException();
         //}
 
-        
+
         public Task<PagedList<Event>> getEventByUserRole(EventRole eventRole, Guid userId, int pageNo, int elementEachPage)
         {
             throw new NotImplementedException();
