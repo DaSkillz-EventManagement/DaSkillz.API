@@ -2,8 +2,6 @@
 {
     public interface IEmailService
     {
-        //Task<bool> SendEmailWithTemplateFromFile(string template, string title, UserMailDto userMail);
-        //Task<bool> SendEmailWithTemplate(string title, UserMailDto userMail);
-        //Task<bool> SendEmailTicket(string template, string title, TicketModel ticket);
+        Task SendEmailAsync(string recipientEmail, string username, string otp);
     }
 }

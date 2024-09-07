@@ -7,6 +7,7 @@ using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Event_Management.Domain.Enum;
+using Event_Management.Domain.Enum;
 using Infrastructure.ExternalServices.Authentication.Setting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -50,7 +51,7 @@ namespace Infrastructure.ExternalServices.Authentication
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                _jwtSettings.SecurityKey ?? throw new InvalidOperationException("Secret not configured")));
+                _jwtSettings.Securitykey ?? throw new InvalidOperationException("Secret not configured")));
 
             var tokenhandler = new JwtSecurityTokenHandler();
 
@@ -81,7 +82,7 @@ namespace Infrastructure.ExternalServices.Authentication
                 ValidAudience = _jwtSettings.Audience,
                 ValidIssuer = _jwtSettings.Issuer,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Securitykey)),
                 ValidateLifetime = false //false
             };
 

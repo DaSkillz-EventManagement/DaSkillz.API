@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.AvatarApi;
 using Application.Abstractions.Caching;
+using Application.Abstractions.Email;
 using Application.Helper;
 using Application.ResponseMessage;
 using Domain.Entities;
@@ -18,47 +19,31 @@ namespace Application.UseCases.Authenticate.Commands.SignInWIthOtp
         private readonly IRedisCaching _redisCaching;
         private readonly IAvatarApiClient _avatarApiClient;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailService _emailService;
 
-        
+        public SignInOtpCommandHandler(IUserRepository userRepository, IRedisCaching redisCaching, IAvatarApiClient avatarApiClient, IUnitOfWork unitOfWork, IEmailService emailService)
+        {
+            _userRepository = userRepository;
+            _redisCaching = redisCaching;
+            _avatarApiClient = avatarApiClient;
+            _unitOfWork = unitOfWork;
+            _emailService = emailService;
+        }
 
         public async Task<APIResponse> Handle(SignInOtpCommand request, CancellationToken cancellationToken)
         {
-            string RedisDbkey = "UserValidation";
+            string RedisDbkey = $"SignIn_{request.Email}";
             var user = await _userRepository.GetUserByEmailAsync(request.Email!);
-            if (user != null)
+            if (user == null)
             {
                 return new APIResponse
                 {
                     StatusResponse = HttpStatusCode.BadRequest,
-                    Message = "User already exists",
+                    Message = "User not existed",
                     Data = null
                 };
             }
 
-            //var avatarApiClient = _avatarApiClient.GetAvatarUrlWithName(user.FullName!);
-            //var id = Guid.NewGuid();
-            //user = new Domain.Entities.User
-            //{
-            //    UserId = id,
-            //    Email = request.Email,
-            //    FullName = request.FullName,
-            //    Status = AccountStatus.Pending.ToString(),
-            //    Avatar = avatarApiClient,
-            //    RoleId = Convert.ToInt32(UserRole.User),
-            //    CreatedAt = DateTime.UtcNow,
-            //    UpdatedAt = null
-            //};
-
-            //await _unitOfWork.UserRepository.Add(user);
-            //if (user == null)
-            //{
-            //    return new APIResponse
-            //    {
-            //        StatusResponse = HttpStatusCode.NotFound,
-            //        Message = MessageUser.UserNotFound,
-            //        Data = null
-            //    };
-            //}
             var otp = AuthenHelper.GenerateOTP();
 
             var existingUserValidation = await _redisCaching.GetAsync<UserValidation>(RedisDbkey);
@@ -67,25 +52,11 @@ namespace Application.UseCases.Authenticate.Commands.SignInWIthOtp
                 UserId = user.UserId,
                 Otp = otp
             };
-            
 
-            if (existingUserValidation == null)
-            {
-                await _redisCaching.SetAsync(RedisDbkey, userValidation, 30);
-            }
-            else
-            {
-                //await _unitOfWork.UserValidationRepository.Update(userValidation);
-            }
+            await _redisCaching.SetAsync(RedisDbkey, userValidation, 5);
+            await _emailService.SendEmailAsync(request.Email, user.FullName, otp);
 
-
-            //_sendMailTask.SendMailVerify(new UserMailDto()
-            //{
-            //    UserName = userName,
-            //    Email = email,
-            //    OTP = otp
-            //});
-
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
