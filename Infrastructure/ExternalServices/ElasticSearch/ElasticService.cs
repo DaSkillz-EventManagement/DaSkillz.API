@@ -44,7 +44,6 @@ namespace Infrastructure.ExternalServices.ElasticSearch
         {
             var response = await _client.BulkAsync(idx => idx.Index(_indexName)
                     .UpdateMany(customer, (ud, u) => ud.Doc(u).DocAsUpsert(true)));
-
             //return response.IsValidResponse;
         }
 
