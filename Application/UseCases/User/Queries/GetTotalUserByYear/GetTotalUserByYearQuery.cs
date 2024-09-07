@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Models.Response;
+﻿using Domain.Models.Response;
 using MediatR;
 
 namespace Application.UseCases.User.Queries.GetTotalUserByYear

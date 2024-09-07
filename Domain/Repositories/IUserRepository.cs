@@ -1,8 +1,9 @@
 ﻿using Domain.Entities;
+using Domain.Repositories.Generic;
 
 namespace Domain.Repositories
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<User>
     {
         Task<IEnumerable<User>> GetUsersByKeywordAsync(string keyword);
         Task<User?> GetUserByIdAsync(Guid userId);

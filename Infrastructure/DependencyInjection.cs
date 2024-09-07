@@ -1,10 +1,15 @@
-﻿using Application.Abstractions.Caching;
+﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.AvatarApi;
+using Application.Abstractions.Caching;
 using Application.Abstractions.ElasticSearch;
 using Application.ExternalServices.Images;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
+using Event_Management.Infrastructure.ExternalServices.Oauth2;
+using Infrastructure.ExternalServices.Authentication;
+using Infrastructure.ExternalServices.AvatarApi;
 using Infrastructure.ExternalServices.Caching;
 using Infrastructure.ExternalServices.Caching.Setting;
 using Infrastructure.ExternalServices.ElasticSearch;
