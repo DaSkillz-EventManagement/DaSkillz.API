@@ -56,7 +56,7 @@ namespace Infrastructure.Persistence.Configuration
                 .HasMaxLength(20)
                 .IsUnicode(false);
 
-           
+
         }
     }
 }

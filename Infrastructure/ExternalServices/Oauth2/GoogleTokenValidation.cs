@@ -6,11 +6,11 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace Event_Management.Infrastructure.ExternalServices.Oauth2
+namespace Infrastructure.ExternalServices.Oauth2
 {
     public class GoogleTokenValidation : IGoogleTokenValidation
     {
-        private readonly GoogleSetting  _setting;
+        private readonly GoogleSetting _setting;
 
         public GoogleTokenValidation(IOptions<GoogleSetting> setting)
         {
@@ -56,7 +56,7 @@ namespace Event_Management.Infrastructure.ExternalServices.Oauth2
         }
     }
 
-    
+
 
 
 }
