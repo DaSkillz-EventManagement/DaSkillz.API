@@ -16,7 +16,7 @@ namespace Infrastructure.ExternalServices.Email
             _emailSetting = emailSetting.Value;
         }
 
-        public async Task SendEmailAsync(string recipientEmail, string username, string otp)
+        public async Task SendEmailAsync(string recipientEmail, string username, string otp, string path)
         {
             // Create a new email message
             var message = new MimeMessage();
@@ -25,7 +25,7 @@ namespace Infrastructure.ExternalServices.Email
             message.Subject = "test";
 
             // Load HTML content from the file
-            var htmlContent = await File.ReadAllTextAsync("./template/VerifyWithOTP.cshtml");
+            var htmlContent = await File.ReadAllTextAsync(path);
 
             // Replace placeholders with actual values
             var hrml = htmlContent.Replace("@Model.UserName", username)
