@@ -73,7 +73,7 @@ namespace Infrastructure.ExternalServices.Authentication
 
 
         //Validate the token if the token is decoded with jwt, and then extract the information in the token
-        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
+        public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
         {
             var tokenValidationParameters = new TokenValidationParameters
             {

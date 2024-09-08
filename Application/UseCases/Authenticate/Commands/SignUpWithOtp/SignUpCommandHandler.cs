@@ -69,7 +69,7 @@ namespace Application.UseCases.Authenticate.Commands.SignUpWithOtp
             };
 
             await _redisCaching.SetAsync(RedisDbkey, userValidation, 5);
-            await _emailService.SendEmailAsync(request.Email, request.FullName, otp);
+            await _emailService.SendEmailAsync(request.Email, request.FullName, otp, "./template/VerifyWithOTP.cshtml");
 
             await _unitOfWork.SaveChangesAsync();
             return new APIResponse
