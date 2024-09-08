@@ -18,10 +18,9 @@ namespace Application.UseCases.Events.Command.GetEventByUserRole
         public int PageNo {  get; set; }
         public int ElementEachPage { get; set; }
 
-        public GetEventByUserRoleCommand(EventRole eventRole, Guid userId, int pageNo, int elementEachPage)
+        public GetEventByUserRoleCommand(EventRole eventRole, int pageNo, int elementEachPage)
         {
             EventRole = eventRole;
-            UserId = userId;
             PageNo = pageNo;
             ElementEachPage = elementEachPage;
         }

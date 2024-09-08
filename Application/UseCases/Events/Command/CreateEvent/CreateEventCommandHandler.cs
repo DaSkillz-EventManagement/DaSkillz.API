@@ -13,16 +13,16 @@ namespace Application.UseCases.Events.Command.CreateEvent
 {
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, APIResponse>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        
         private readonly IEventRepository _eventRepo;
         private readonly IImageService _fileService;
         private readonly IMapper _mapper;
         private readonly long dateTimeConvertValue = 25200000; //-7h to match JS dateTime type
         private readonly long minimumUpdateTimeSpan = 21600000;//time span between event created and new event startDate
 
-        public CreateEventCommandHandler(IUnitOfWork unitOfWork, IEventRepository eventRepo, IImageService fileService, IMapper mapper)
+        public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            
             _eventRepo = eventRepo;
             _fileService = fileService;
             _mapper = mapper;
@@ -30,7 +30,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
         public async Task<APIResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
-            var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.StartDate).DateTime;
+            var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EventRequestDto.StartDate).DateTime;
             if (tempStartDate > DateTime.Now.AddMonths(4))
             {
                 return new APIResponse
@@ -39,7 +39,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
                     StatusResponse = HttpStatusCode.BadRequest
                 };
             }
-            bool validate = DateTimeHelper.ValidateStartTimeAndEndTime(request.StartDate, request.EndDate);
+            bool validate = DateTimeHelper.ValidateStartTimeAndEndTime(request.EventRequestDto.StartDate, request.EndDate);
             if (!validate)
             {
                 return new APIResponse
@@ -50,11 +50,11 @@ namespace Application.UseCases.Events.Command.CreateEvent
             }
             var eventEntity = _mapper.Map<Event>(request);
             eventEntity.Id = Guid.NewGuid();
-            eventEntity.StartDate = request.StartDate + dateTimeConvertValue;
-            eventEntity.EndDate = request.EndDate + dateTimeConvertValue;
-            if (request.Image != null)
+            eventEntity.StartDate = request.EventRequestDto.StartDate + dateTimeConvertValue;
+            eventEntity.EndDate = request.EventRequestDto.EndDate + dateTimeConvertValue;
+            if (request.EventRequestDto.Image != null)
             {
-                eventEntity.Image = await _fileService.UploadImage(request.Image, Guid.NewGuid());
+                eventEntity.Image = await _fileService.UploadImage(request.EventRequestDto.Image, Guid.NewGuid());
             }
 
 

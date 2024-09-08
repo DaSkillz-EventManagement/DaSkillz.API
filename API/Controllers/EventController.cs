@@ -1,4 +1,5 @@
-﻿using Application.ResponseMessage;
+﻿using Application.Helper;
+using Application.ResponseMessage;
 using Application.UseCases.Events.Command.CreateEvent;
 using Application.UseCases.Events.Command.GetEvent;
 using Application.UseCases.Events.Command.GetEventByTag;
@@ -38,9 +39,10 @@ namespace API.Controllers
 
         [Authorize]
         [HttpGet("user-event-role")]
-        public async Task<ActionResult<APIResponse>> GetEventByUserRole([FromQuery, Required] GetEventByUserRoleCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetEventByUserRole([FromQuery] GetEventByUserRoleCommand command, CancellationToken cancellationToken = default)
         {
-            //string userId = User.GetUserIdFromToken();
+            string userId = User.GetUserIdFromToken();
+            command.UserId = Guid.Parse(userId);
             var result = await _mediator.Send(command, cancellationToken);
             Response.Headers.Add("X-Total-Element", result.TotalItems.ToString());
             Response.Headers.Add("X-Total-Page", result.TotalPages.ToString());
@@ -113,7 +115,8 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserParticipatedEvents([FromQuery] GetEventParticipatedByUserCommand command, CancellationToken cancellationToken = default)
         {
-            //string userId = User.GetUserIdFromToken();
+            string userId = User.GetUserIdFromToken();
+            command.UserId = Guid.Parse(userId);
             var response = await _mediator.Send(command, cancellationToken);
             if (response.TotalItems > 0)
             {
@@ -146,6 +149,27 @@ namespace API.Controllers
             //string userId = User.GetUserIdFromToken();
             var result = await _mediator.Send(command, cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
+        }
+
+
+
+        [Authorize]
+        [HttpPut("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateEvent([FromBody] EventRequestDto eventDto, [FromQuery, Required] Guid eventId)
+        {
+            string userId = User.GetUserIdFromToken();
+            var result = await _eventService.UpdateEvent(eventDto, userId.ToString(), eventId);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            if (result.StatusResponse == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized(result);
+            }
+            return BadRequest(result);
         }
     }
 }

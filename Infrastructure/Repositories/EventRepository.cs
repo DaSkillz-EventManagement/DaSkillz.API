@@ -127,5 +127,39 @@ namespace Infrastructure.Repositories
                 .OrderByDescending(e => e.StartDate).ToListAsync();
             return eventResponse.Concat(eventList).DistinctBy(e => e.Id).ToList();
         }
+
+        public bool UpdateEventStatusToOnGoing(Guid eventId)
+        {
+            var ongoingEvent = _context.Events.Find(eventId);
+            ongoingEvent.Status = EventStatus.OnGoing.ToString();
+            _context.Update(ongoingEvent);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool UpdateEventStatusToOnGoing()
+        {
+            var ongoingEvents = _context.Events.Where(e => e.StartDate <= DateTimeHelper.ToJsDateType(DateTime.Now) &&
+            e.Status!.Equals(EventStatus.NotYet.ToString())).ToList();
+            ongoingEvents.ForEach(e => e.Status = EventStatus.OnGoing.ToString());
+            _context.UpdateRange(ongoingEvents);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool UpdateEventStatusToEnded(Guid eventId)
+        {
+            var endedEvent = _context.Events.Find(eventId);
+            endedEvent.Status = EventStatus.Ended.ToString();
+            _context.Update(endedEvent);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool UpdateEventStatusToEnded()
+        {
+            var endedEvents = _context.Events.Where(e => e.EndDate <= DateTimeHelper.ToJsDateType(DateTime.Now) &&
+            e.Status!.Equals(EventStatus.OnGoing.ToString())).ToList();
+            endedEvents.ForEach(e => e.Status = EventStatus.Ended.ToString());
+            _context.UpdateRange(endedEvents);
+            return _context.SaveChanges() > 0;
+        }
     }
 }

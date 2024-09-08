@@ -18,6 +18,14 @@ namespace Domain.Repositories
         public Task<List<Event>> UserPastEvents(Guid userId);
         public Task<List<Event>> UserIncomingEvents(Guid userId);
 
+        //AUTO update status for event
+        //Update status: On going
+        public bool UpdateEventStatusToOnGoing(Guid eventId);
+        public bool UpdateEventStatusToOnGoing();
+        //Update status: Ended
+        public bool UpdateEventStatusToEnded(Guid eventId);
+        public bool UpdateEventStatusToEnded();
+
 
 
         // get Event

@@ -12,14 +12,17 @@ namespace Application.UseCases.Events.Command.GetEventParticipatedByUser
     public class GetEventParticipatedByUserCommand : IRequest<PagedList<EventResponseDto>>
     {
         public EventFilterObjectDto Filter { get; set; }
-        public Guid UserId { get; set; }
+       
         public int PageNo { get; set; }
         public int ElementEachPage { get; set; }
 
-        public GetEventParticipatedByUserCommand(EventFilterObjectDto filter, Guid userId, int pageNo, int elementEachPage)
+        // Add UserId to the command, but it is not input by the user
+        public Guid UserId { get; set; }
+
+
+        public GetEventParticipatedByUserCommand(EventFilterObjectDto filter, int pageNo, int elementEachPage)
         {
             Filter = filter;
-            UserId = userId;
             PageNo = pageNo;
             ElementEachPage = elementEachPage;
         }
