@@ -1,16 +1,26 @@
 ﻿using Application.Abstractions.Email;
+using Infrastructure.ExternalServices.Email.Setting;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace Infrastructure.ExternalServices.Email
 {
+    
     public class EmailServices : IEmailService
     {
+        private readonly EmailSetting _emailSetting;
+
+        public EmailServices(IOptions<EmailSetting> emailSetting)
+        {
+            _emailSetting = emailSetting.Value;
+        }
+
         public async Task SendEmailAsync(string recipientEmail, string username, string otp)
         {
             // Create a new email message
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Daskillz", "daskillz45@gmail.com"));
+            message.From.Add(new MailboxAddress(_emailSetting.SenderName, _emailSetting.SenderEmail));
             message.To.Add(new MailboxAddress("", recipientEmail));
             message.Subject = "test";
 
@@ -32,10 +42,10 @@ namespace Infrastructure.ExternalServices.Email
             using (var smtpClient = new SmtpClient())
             {
                 // SMTP server configuration (replace with your SMTP server details)
-                var smtpServer = "smtp.gmail.com";
-                var smtpPort = 587; // or 465 for SSL
-                var smtpUsername = "daskillz45@gmail.com";
-                var smtpPassword = "knoxfxtwqdyvpccl";
+                var smtpServer = _emailSetting.SmtpServer;
+                var smtpPort = _emailSetting.Port; // or 465 for SSL
+                var smtpUsername = _emailSetting.Username;
+                var smtpPassword = _emailSetting.Password;
 
                 // Connect to the SMTP server
                 await smtpClient.ConnectAsync(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.StartTls);

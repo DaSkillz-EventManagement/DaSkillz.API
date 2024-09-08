@@ -17,6 +17,7 @@ using Infrastructure.ExternalServices.Caching.Setting;
 using Infrastructure.ExternalServices.ElasticSearch;
 using Infrastructure.ExternalServices.ElasticSearch.Setting;
 using Infrastructure.ExternalServices.Email;
+using Infrastructure.ExternalServices.Email.Setting;
 using Infrastructure.ExternalServices.Images;
 using Infrastructure.ExternalServices.Oauth2;
 using Infrastructure.Persistence;
@@ -38,6 +39,7 @@ namespace Infrastructure
             services.Configure<RedisSetting>(configuration.GetSection("Redis"));
             services.Configure<ElasticSetting>(configuration.GetSection("ELasticSearch"));
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+            services.Configure<EmailSetting>(configuration.GetSection("SmtpSettings"));
 
 
             //Add DBcontext
