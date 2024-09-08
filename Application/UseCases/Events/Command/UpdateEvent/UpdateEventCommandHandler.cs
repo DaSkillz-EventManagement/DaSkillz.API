@@ -1,11 +1,16 @@
-﻿using Application.Helper;
+﻿using Application.ExternalServices.Images;
+using Application.ExternalServices.Quartz;
+using Application.Helper;
 using Application.ResponseMessage;
 using Application.UseCases.Events.Command.CreateEvent;
+using AutoMapper;
+using Domain.DTOs.Events;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
+using Elastic.Clients.Elasticsearch.Requests;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -20,8 +25,22 @@ namespace Application.UseCases.Events.Command.UpdateEvent
     {
         private readonly IEventRepository _eventRepo;
         private readonly ITagRepository _tagRepository;
+        private readonly IQuartzService _quartzService;
+        private readonly IImageService _fileService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly long dateTimeConvertValue = 25200000; //-7h to match JS dateTime type
         private readonly long minimumUpdateTimeSpan = 21600000;
+
+        public UpdateEventCommandHandler(IEventRepository eventRepo, ITagRepository tagRepository, IQuartzService quartzService, IImageService fileService, IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _eventRepo = eventRepo;
+            _tagRepository = tagRepository;
+            _quartzService = quartzService;
+            _fileService = fileService;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
 
         public async Task<APIResponse> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
         {
@@ -75,8 +94,8 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             {
                 eventEntity.StartDate = request.EventRequestDto.StartDate + dateTimeConvertValue;
                 await _quartzService.DeleteJobsByEventId("start-" + eventEntity.Id);
-                await _quartzService.StartEventStatusToOngoingJob(eventEntity.Id, eventEntity.StartDate);
-                await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, eventEntity.StartDate.AddHours(-1));
+                await _quartzService.StartEventStatusToOngoingJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate));
+                await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
             }
             //endDate
             if (request.EventRequestDto.EndDate > 0 && request.EventRequestDto.EndDate - eventEntity.StartDate < 30 * 60 * 1000)
@@ -91,8 +110,8 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             {
                 eventEntity.EndDate = request.EventRequestDto.EndDate + dateTimeConvertValue;
                 await _quartzService.DeleteJobsByEventId("ended-" + eventEntity.Id);
-                await _quartzService.StartEventStatusToEndedJob(eventEntity.Id, eventEntity.EndDate);
-                await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, eventEntity.EndDate.AddHours(1));
+                await _quartzService.StartEventStatusToEndedJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate));
+                await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
             }
             //theme
             eventEntity.Theme = request.EventRequestDto.Theme;
@@ -106,25 +125,28 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                     eventEntity.Image = await _fileService.UploadImage(request.EventRequestDto.Image, Guid.NewGuid());
             }
             //location
-            eventEntity.Location = eventDto.Location!.Name;
-            eventEntity.LocationId = eventDto.Location.Id;
-            eventEntity.LocationCoord = eventDto.Location.Coord;
-            eventEntity.LocationAddress = eventDto.Location.Address;
-            eventEntity.LocationUrl = eventDto.Location.Url;
+            eventEntity.Location = request.EventRequestDto.Location!.Name;
+            eventEntity.LocationId = request.EventRequestDto.Location.Id;
+            eventEntity.LocationCoord = request.EventRequestDto.Location.Coord;
+            eventEntity.LocationAddress = request.EventRequestDto.Location.Address;
+            eventEntity.LocationUrl = request.EventRequestDto.Location.Url;
             //capacity
-            eventEntity.Capacity = eventDto.Capacity.HasValue ? eventDto.Capacity.Value : eventEntity.Capacity;
+            eventEntity.Capacity = request.EventRequestDto.Capacity.HasValue ? request.EventRequestDto.Capacity.Value : eventEntity.Capacity;
             //approval
-            eventEntity.Approval = eventDto.Approval.HasValue ? eventDto.Approval.Value : eventEntity.Approval;
+            eventEntity.Approval = request.EventRequestDto.Approval.HasValue ? request.EventRequestDto.Approval.Value : eventEntity.Approval;
             //fare / ticket
-            eventEntity.Fare = eventDto.Ticket.HasValue ? eventDto.Ticket.Value : eventEntity.Fare;
-            await _unitOfWork.EventRepository.Update(eventEntity);
-            if (await _unitOfWork.SaveChangesAsync())
+            eventEntity.Fare = request.EventRequestDto.Ticket.HasValue ? request.EventRequestDto.Ticket.Value : eventEntity.Fare;
+            await _eventRepo.Update(eventEntity);
+            if (await _unitOfWork.SaveChangesAsync() > 0)
             {
+                var eventResponse = _mapper.Map<EventResponseDto>(eventEntity);
+                eventResponse.UpdatedAt = eventEntity.UpdatedAt.HasValue ? eventEntity.UpdatedAt.Value : null;
+                eventResponse.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
                 return new APIResponse
                 {
                     Message = MessageCommon.UpdateSuccesfully,
                     StatusResponse = HttpStatusCode.OK,
-                    Data = ToResponseDto(eventEntity)
+                    Data = eventResponse
                 };
             }
             return new APIResponse

@@ -6,6 +6,7 @@ using Application.UseCases.Events.Command.GetEventByTag;
 using Application.UseCases.Events.Command.GetEventByUserRole;
 using Application.UseCases.Events.Command.GetEventParticipatedByUser;
 using Application.UseCases.Events.Command.GetFilteredEvent;
+using Application.UseCases.Events.Command.UpdateEvent;
 using Azure;
 using Domain.Enum.Events;
 using Domain.Models.Response;
@@ -157,10 +158,10 @@ namespace API.Controllers
         [HttpPut("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateEvent([FromBody] EventRequestDto eventDto, [FromQuery, Required] Guid eventId)
+        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventCommand command, CancellationToken cancellationToken = default)
         {
             string userId = User.GetUserIdFromToken();
-            var result = await _eventService.UpdateEvent(eventDto, userId.ToString(), eventId);
+            var result = await _mediator.Send(command, cancellationToken);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);

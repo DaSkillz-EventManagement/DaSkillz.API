@@ -39,7 +39,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
                     StatusResponse = HttpStatusCode.BadRequest
                 };
             }
-            bool validate = DateTimeHelper.ValidateStartTimeAndEndTime(request.EventRequestDto.StartDate, request.EndDate);
+            bool validate = DateTimeHelper.ValidateStartTimeAndEndTime(request.EventRequestDto.StartDate, request.EventRequestDto.EndDate);
             if (!validate)
             {
                 return new APIResponse

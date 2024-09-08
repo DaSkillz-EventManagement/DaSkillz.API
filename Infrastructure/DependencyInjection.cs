@@ -4,7 +4,10 @@ using Application.Abstractions.Caching;
 using Application.Abstractions.ElasticSearch;
 using Application.Abstractions.Email;
 using Application.Abstractions.Oauth2;
+using Application.ExternalServices.BackgroundTák;
 using Application.ExternalServices.Images;
+using Application.ExternalServices.Mail;
+using Application.ExternalServices.Quartz;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using Elastic.Clients.Elasticsearch;
@@ -12,6 +15,7 @@ using Elastic.Transport;
 using Infrastructure.ExternalServices.Authentication;
 using Infrastructure.ExternalServices.Authentication.Setting;
 using Infrastructure.ExternalServices.AvatarApi;
+using Infrastructure.ExternalServices.BackgroundTask;
 using Infrastructure.ExternalServices.Caching;
 using Infrastructure.ExternalServices.Caching.Setting;
 using Infrastructure.ExternalServices.ElasticSearch;
@@ -20,6 +24,7 @@ using Infrastructure.ExternalServices.Email;
 using Infrastructure.ExternalServices.Email.Setting;
 using Infrastructure.ExternalServices.Images;
 using Infrastructure.ExternalServices.Oauth2;
+using Infrastructure.ExternalServices.Quartz;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,6 +32,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Text;
 
 namespace Infrastructure
@@ -103,11 +109,17 @@ namespace Infrastructure
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ILogoRepository, LogoRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
+
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IAvatarApiClient, AvatarApiClient>();
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();
             services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddScoped<IEmailService, EmailServices>();
+            services.AddScoped<IQuartzService, QuartzService>();
+            services.AddScoped<ISendMailTask, SendMailTask>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            services.AddQuartz();
 
             return services;
         }

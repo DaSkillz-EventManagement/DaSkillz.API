@@ -28,6 +28,8 @@
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.8" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Quartz" Version="3.13.0" />
+		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.0" />
 	</ItemGroup>
 
 	<ItemGroup>

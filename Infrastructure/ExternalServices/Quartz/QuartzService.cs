@@ -2,11 +2,6 @@
 using Application.Helper;
 using Quartz;
 using Quartz.Impl.Matchers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.ExternalServices.Quartz
 {
@@ -72,14 +67,34 @@ namespace Infrastructure.ExternalServices.Quartz
             return allJobKeys.Select(jobKey => jobKey.Name);
         }
 
-        public Task StartEventEndingEmailNoticeJob(Guid eventId, DateTime endTime)
+        public async Task StartEventEndingEmailNoticeJob(Guid eventId, DateTime endTime)
         {
-            throw new NotImplementedException();
+            var jobKey = new JobKey("E-ended-" + eventId);
+            IScheduler scheduler = await _schedulerFactory.GetScheduler();
+            IJobDetail job = JobBuilder.Create<EventEndingEmailJob>()
+            .WithIdentity(jobKey)
+            .Build();
+            var newTrigger =
+                TriggerBuilder.Create().ForJob(jobKey)
+                .WithSchedule(CronScheduleBuilder.CronSchedule(DateTimeHelper.GetCronExpression(endTime)))
+                .Build();
+            await scheduler.ScheduleJob(job, newTrigger);
+            Console.WriteLine($"ScheduleJob:  Event ending notice email with id {jobKey}");
         }
 
-        public Task StartEventStartingEmailNoticeJob(Guid eventId, DateTime startTime)
+        public async Task StartEventStartingEmailNoticeJob(Guid eventId, DateTime startTime)
         {
-            throw new NotImplementedException();
+            var jobKey = new JobKey("E-start-" + eventId);
+            IScheduler scheduler = await _schedulerFactory.GetScheduler();
+            IJobDetail job = JobBuilder.Create<EventStartingEmailJob>()
+            .WithIdentity(jobKey)
+            .Build();
+            var newTrigger =
+                TriggerBuilder.Create().ForJob(jobKey)
+                .WithSchedule(CronScheduleBuilder.CronSchedule(DateTimeHelper.GetCronExpression(startTime)))
+                .Build();
+            await scheduler.ScheduleJob(job, newTrigger);
+            Console.WriteLine($"ScheduleJob:  Event starting notice email with id {jobKey}");
         }
 
         public async Task StartEventStatusToEndedJob(Guid eventId, DateTime startTime)

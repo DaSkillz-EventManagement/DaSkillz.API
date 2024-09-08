@@ -30,6 +30,7 @@ builder.Services.AddSwagger();
 
 builder.Services.AddCors();
 
+
 //builder.Services.AddSession(options =>
 //{
 //    options.IdleTimeout = TimeSpan.FromSeconds(10);
