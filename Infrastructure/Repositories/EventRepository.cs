@@ -161,5 +161,17 @@ namespace Infrastructure.Repositories
             _context.UpdateRange(endedEvents);
             return _context.SaveChanges() > 0;
         }
+
+        public async Task<bool> IsOwner(Guid userId, Guid eventId)
+        {
+            return await _context.Events.AnyAsync(e => e.Id.Equals(eventId) && e.CreatedBy.Equals(userId));
+        }
+
+        public async Task<bool> ChangeEventStatus(Guid eventId, EventStatus status)
+        {
+            var deleteEvent = await _context.Events.FindAsync(eventId);
+            deleteEvent!.Status = status.ToString();
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

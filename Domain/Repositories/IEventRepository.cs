@@ -8,6 +8,10 @@ namespace Domain.Repositories
 {
     public interface IEventRepository : IRepository<Event>
     {
+
+        Task<bool> IsOwner(Guid userId, Guid eventId);
+
+
         //Get All event with search, paging and sort.
         public Task<PagedList<Event>> GetFilteredEvent(EventFilterObjectDto filter, int pageNo, int elementEachPage);
 
@@ -26,6 +30,7 @@ namespace Domain.Repositories
         public bool UpdateEventStatusToEnded(Guid eventId);
         public bool UpdateEventStatusToEnded();
 
+        Task<bool> ChangeEventStatus(Guid eventId, EventStatus status);
 
 
         // get Event

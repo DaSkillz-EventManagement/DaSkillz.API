@@ -57,9 +57,6 @@ namespace Application.UseCases.Events.Command.CreateEvent
                 eventEntity.Image = await _fileService.UploadImage(request.EventRequestDto.Image, Guid.NewGuid());
             }
 
-
-
-
             return new APIResponse
             {
                 Message = MessageCommon.CreateFailed,

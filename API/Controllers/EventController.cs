@@ -1,21 +1,25 @@
 ﻿using Application.Helper;
 using Application.ResponseMessage;
 using Application.UseCases.Events.Command.CreateEvent;
+using Application.UseCases.Events.Command.DeleteEvent;
 using Application.UseCases.Events.Command.GetEvent;
 using Application.UseCases.Events.Command.GetEventByTag;
 using Application.UseCases.Events.Command.GetEventByUserRole;
 using Application.UseCases.Events.Command.GetEventParticipatedByUser;
 using Application.UseCases.Events.Command.GetFilteredEvent;
 using Application.UseCases.Events.Command.UpdateEvent;
+using Application.UseCases.Events.Command.UploadEventSponsorLogo;
 using Azure;
 using Domain.Enum.Events;
 using Domain.Models.Response;
+using Infrastructure.ExternalServices.Images;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Threading;
 
 namespace API.Controllers
 {
@@ -24,10 +28,12 @@ namespace API.Controllers
     public class EventController : ControllerBase
     {
         private ISender _mediator;
+        
 
         public EventController(ISender mediator)
         {
             _mediator = mediator;
+            
         }
 
         [HttpGet("info")]
@@ -171,6 +177,52 @@ namespace API.Controllers
                 return Unauthorized(result);
             }
             return BadRequest(result);
+        }
+
+
+        [Authorize]
+        [HttpDelete("")]
+        public async Task<IActionResult> DeleteEvent([FromQuery, Required] DeleteEventCommand command, CancellationToken cancellationToken = default)
+        {
+            string userId = User.GetUserIdFromToken();
+            command.UserId = Guid.Parse(userId);
+            APIResponse response = new APIResponse();
+            var result = await _mediator.Send(command, cancellationToken);
+            if (result)
+            {
+                response.StatusResponse = HttpStatusCode.OK;
+                response.Message = MessageCommon.DeleteSuccessfully;
+                response.Data = result;
+                return Ok(response);
+            }
+            else
+            {
+                response.StatusResponse = HttpStatusCode.BadRequest;
+                response.Message = MessageCommon.DeleteFailed;
+                return BadRequest(response);
+            }
+
+        }
+
+        [HttpPost("logo-upload")]
+        public async Task<IActionResult> UploadEventLogoImage([FromBody] UploadEventSponsorLogoCommand command, CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            if (result != null)
+            {
+                return Ok(new APIResponse
+                {
+                    StatusResponse = HttpStatusCode.OK,
+                    Message = MessageCommon.Complete,
+                    Data = result
+                });
+            }
+            return BadRequest(new APIResponse
+            {
+                StatusResponse = HttpStatusCode.BadRequest,
+                Message = "Logo already exist!"
+            });
+
         }
     }
 }
