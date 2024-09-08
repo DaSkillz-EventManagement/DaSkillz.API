@@ -2,6 +2,7 @@
 using Application.Abstractions.AvatarApi;
 using Application.Abstractions.Caching;
 using Application.Abstractions.ElasticSearch;
+using Application.Abstractions.Email;
 using Application.Abstractions.Oauth2;
 using Application.ExternalServices.Images;
 using Domain.Repositories;
@@ -9,11 +10,14 @@ using Domain.Repositories.UnitOfWork;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
 using Infrastructure.ExternalServices.Authentication;
+using Infrastructure.ExternalServices.Authentication.Setting;
 using Infrastructure.ExternalServices.AvatarApi;
 using Infrastructure.ExternalServices.Caching;
 using Infrastructure.ExternalServices.Caching.Setting;
 using Infrastructure.ExternalServices.ElasticSearch;
 using Infrastructure.ExternalServices.ElasticSearch.Setting;
+using Infrastructure.ExternalServices.Email;
+using Infrastructure.ExternalServices.Email.Setting;
 using Infrastructure.ExternalServices.Images;
 using Infrastructure.ExternalServices.Oauth2;
 using Infrastructure.Persistence;
@@ -34,6 +38,8 @@ namespace Infrastructure
             //transfer data from appsetting.json to the correspondeding setting class
             services.Configure<RedisSetting>(configuration.GetSection("Redis"));
             services.Configure<ElasticSetting>(configuration.GetSection("ELasticSearch"));
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+            services.Configure<EmailSetting>(configuration.GetSection("SmtpSettings"));
 
 
             //Add DBcontext
@@ -69,9 +75,9 @@ namespace Infrastructure
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = configuration.GetSection("JWTSetting:Issuer").Get<string>(),
-                    ValidAudience = configuration.GetSection("JWTSetting:Audience").Get<string>(),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JWTSetting:Securitykey").Get<string>())),
+                    ValidIssuer = configuration.GetSection("JWTSettings:Issuer").Get<string>(),
+                    ValidAudience = configuration.GetSection("JWTSettings:Audience").Get<string>(),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JWTSettings:Securitykey").Get<string>())),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
@@ -101,6 +107,7 @@ namespace Infrastructure
             services.AddScoped<IAvatarApiClient, AvatarApiClient>();
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();
             services.AddScoped<IJwtProvider, JwtProvider>();
+            services.AddScoped<IEmailService, EmailServices>();
 
             return services;
         }

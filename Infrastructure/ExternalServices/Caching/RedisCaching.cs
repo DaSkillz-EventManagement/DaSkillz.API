@@ -40,7 +40,7 @@ namespace Infrastructure.ExternalServices.Caching
         {
             var cacheOpt = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(TimeToLive)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(TimeToLive)
             };
 
             var jsonOpt = new JsonSerializerSettings()

@@ -1,5 +1,6 @@
 ﻿using Domain.DTOs.AuthenticationDTO;
 using Domain.Models.Response;
+using System.Security.Claims;
 
 namespace Application.Abstractions.Authentication
 {
@@ -13,11 +14,11 @@ namespace Application.Abstractions.Authentication
         Task<string> GenerateAccessToken(string email);
 
         /// <summary>
-        /// refresh exist token
+        /// validate old token
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<APIResponse> RefreshToken(TokenResponseDTO token);
+        ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token);
 
         /// <summary>
         /// Generate both access token and refresh token

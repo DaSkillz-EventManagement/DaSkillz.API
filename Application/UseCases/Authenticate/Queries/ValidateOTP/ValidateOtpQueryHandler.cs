@@ -50,8 +50,7 @@ namespace Application.UseCases.Authenticate.Queries.ValidateOTP
                 };
             }
 
-            var existOTP = await _redisCaching.GetAsync<UserValidation>($"UserOtp_{request.Otp}");
-
+            var existOTP = await _redisCaching.GetAsync<UserValidation>($"SignIn_{request.Email}");
             if (existOTP.Otp == request.Otp)
             {
                 
@@ -62,6 +61,7 @@ namespace Application.UseCases.Authenticate.Queries.ValidateOTP
                     user.Status = AccountStatus.Active.ToString();
                 }
 
+                await _redisCaching.RemoveAsync($"SignIn_{request.Email}");
                 await _userRepository.Update(user);
                 await _unitOfWork.SaveChangesAsync();
 

@@ -29,7 +29,7 @@ namespace Application.UseCases.Authenticate.Commands.SignOut
 
         public async Task<APIResponse> Handle(SignOutCommand request, CancellationToken cancellationToken)
         {
-            var tokenEntity = await _refreshTokenRepository.GetById(Guid.Parse(request.userId));
+            var tokenEntity = await _refreshTokenRepository.GetUserByIdAsync(Guid.Parse(request.userId));
             if (tokenEntity == null)
             {
                 return new APIResponse

@@ -27,19 +27,6 @@ namespace Event_Management.API.Controllers
         }
 
 
-        // [HttpPost("login")]
-        // [ProducesResponseType(StatusCodes.Status200OK)]
-        // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        // public async Task<IActionResult> Login([FromBody] LoginUserDto loginUser)
-        // {
-        //     var response = await _authenService.Login(loginUser);
-        //     if (response.StatusResponse != HttpStatusCode.OK)
-        //     {
-        //         return BadRequest(response);
-        //     }
-        //     return Ok(response);
-        // }
-
         [HttpPost("sign-in/google")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -90,14 +77,14 @@ namespace Event_Management.API.Controllers
             return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
         }
 
-        //[HttpPost("refresh")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        //public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenQuery query, CancellationToken cancellationToken)
-        //{
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
-        //}
+        [HttpPost("refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenQuery query, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
 
     }
 }
