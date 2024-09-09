@@ -1,5 +1,4 @@
 ﻿using Application.ResponseMessage;
-using AutoMapper;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;

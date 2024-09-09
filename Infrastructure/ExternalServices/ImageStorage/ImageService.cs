@@ -49,7 +49,7 @@
 //            //eventExist.Image = absPath;
 //            return absPath;
 //        }
-        
+
 //        public async Task<List<SponsorLogoDto>> GetAllBlobUris()
 //        {
 //            List<SponsorLogoDto> response = new List<SponsorLogoDto>();
@@ -95,7 +95,7 @@
 //            return response;
 //        }
 
-        
+
 
 //        // blob name format of the image uploaded by this function: eventId + sponsor name + "logo"
 //        public async Task<string?> UploadEventSponsorLogo(string base64, Guid EventId, string sponsorName)

@@ -36,11 +36,11 @@ namespace Infrastructure.ExternalServices.Caching
             await _distributedCache.RemoveAsync(key);
         }
 
-        public async Task SetAsync<T>(string key, T value)
+        public async Task SetAsync<T>(string key, T value, double TimeToLive)
         {
             var cacheOpt = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(_redisSetting.TimeToLive) // Set cache time 1d
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(TimeToLive)
             };
 
             var jsonOpt = new JsonSerializerSettings()
