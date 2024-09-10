@@ -146,7 +146,7 @@ namespace API.Controllers
             });
         }
 
-        
+        [//Authorize]
         [HttpPost("")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -160,7 +160,7 @@ namespace API.Controllers
 
 
 
-        [Authorize]
+        //[Authorize]
         [HttpPut("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
