@@ -23,5 +23,7 @@ namespace Domain.DTOs.Events
         public decimal? TicketTo { get; set; } = null;
         public string? SortBy { get; set; } = null;
         public bool IsAscending { get; } = false;
+
+        
     }
 }

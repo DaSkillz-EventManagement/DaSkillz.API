@@ -1,4 +1,5 @@
 ﻿using Domain.DTOs.Events;
+using Domain.DTOs.Events.ResponseDto;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Pagination;
@@ -31,6 +32,9 @@ namespace Domain.Repositories
         public bool UpdateEventStatusToEnded();
 
         Task<bool> ChangeEventStatus(Guid eventId, EventStatus status);
+
+        public Task<List<EventCreatorLeaderBoardDto>> GetTop10CreatorsByEventCount();
+        public Task<List<EventLocationLeaderBoardDto>> GetTop10LocationByEventCount();
 
 
         // get Event

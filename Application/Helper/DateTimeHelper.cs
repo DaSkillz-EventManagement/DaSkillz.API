@@ -74,5 +74,22 @@ namespace Application.Helper
             return dateTime.ToString("dd/MM/yyyy").Equals(compare.ToString("dd/MM/yyyy"));
         }
 
+        public static long GetCurrentTimeAsLong()
+        {
+            // Get the current UTC time
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+
+            // Convert to Unix time (milliseconds since Unix epoch)
+            return now.ToUnixTimeMilliseconds();
+        }
+
+        public static long GetTimeAsLong(DateTimeOffset dateTimeOffset)
+        {
+            return dateTimeOffset.ToUnixTimeMilliseconds();
+        }
+
+
+
+
     }
 }

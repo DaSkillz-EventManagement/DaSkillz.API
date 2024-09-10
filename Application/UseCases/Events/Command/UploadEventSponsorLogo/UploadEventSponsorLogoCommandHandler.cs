@@ -1,18 +1,10 @@
 ﻿using Application.ExternalServices.Images;
-using Application.UseCases.Events.Command.CreateEvent;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Domain.Entities;
-using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Command.UploadEventSponsorLogo
 {

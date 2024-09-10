@@ -1,4 +1,4 @@
-﻿using Domain.DTOs.Events;
+﻿using Domain.DTOs.Events.RequestDto;
 using Domain.Models.Response;
 using MediatR;
 using System;
