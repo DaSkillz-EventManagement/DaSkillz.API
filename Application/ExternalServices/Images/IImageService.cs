@@ -1,4 +1,11 @@
-﻿namespace Application.ExternalServices.Images
+﻿using Azure.Storage.Blobs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.ExternalServices.Images
 {
     public interface IImageService
     {
@@ -8,5 +15,6 @@
 
         public Task<string?> UploadEventSponsorLogo(string base64, Guid EventId, string sponsorName);
         public Task<bool> DeleteBlob(string blobName);
+        public BlobContainerClient GetBlobContainerClient();
     }
 }

@@ -12,11 +12,11 @@ namespace Infrastructure.Persistence
 
         }
 
-        public DbSet<Event> Events { get; set; }
-        public DbSet<Logo> Logos { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<Participant> Participants { get; set; }
-        public DbSet<RoleEvent> RoleEvents { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<Logo> Logos { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<Participant> Participants { get; set; }
+        public virtual DbSet<RoleEvent> RoleEvents { get; set; }    
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;

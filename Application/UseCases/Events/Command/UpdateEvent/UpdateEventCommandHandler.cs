@@ -4,6 +4,7 @@ using Application.Helper;
 using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.Events;
+using Domain.DTOs.Events.ResponseDto;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Response;
@@ -22,7 +23,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
         private readonly IImageService _fileService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly long dateTimeConvertValue = 25200000; //-7h to match JS dateTime type
+        
         private readonly long minimumUpdateTimeSpan = 21600000;
 
         public UpdateEventCommandHandler(IEventRepository eventRepo, ITagRepository tagRepository, IQuartzService quartzService, IImageService fileService, IUnitOfWork unitOfWork, IMapper mapper)
@@ -85,7 +86,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             }
             if (request.EventRequestDto.StartDate > 0 && request.EventRequestDto.StartDate - eventEntity.CreatedAt! >= minimumUpdateTimeSpan)
             {
-                eventEntity.StartDate = request.EventRequestDto.StartDate + dateTimeConvertValue;
+                eventEntity.StartDate = request.EventRequestDto.StartDate;
                 await _quartzService.DeleteJobsByEventId("start-" + eventEntity.Id);
                 await _quartzService.StartEventStatusToOngoingJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate));
                 await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
@@ -101,7 +102,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             }
             if (request.EventRequestDto.EndDate > 0 && request.EventRequestDto.EndDate - eventEntity.StartDate >= 30 * 60 * 1000)
             {
-                eventEntity.EndDate = request.EventRequestDto.EndDate + dateTimeConvertValue;
+                eventEntity.EndDate = request.EventRequestDto.EndDate;
                 await _quartzService.DeleteJobsByEventId("ended-" + eventEntity.Id);
                 await _quartzService.StartEventStatusToEndedJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate));
                 await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
