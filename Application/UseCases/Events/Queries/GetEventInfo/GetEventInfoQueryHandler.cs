@@ -8,6 +8,8 @@ using Domain.Models.Pagination;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using System.Net;
 
 namespace Application.UseCases.Events.Queries.GetEventInfo
@@ -29,18 +31,20 @@ namespace Application.UseCases.Events.Queries.GetEventInfo
 
         public async Task<APIResponse> Handle(GetEventInfoQuery request, CancellationToken cancellationToken)
         {
-            string RedisDbkey = $"GetEventInfo_{request.Id}";
-            var existingGetEventInfo = await _redisCaching.GetAsync<EventDetailDto>(RedisDbkey);
-            if(existingGetEventInfo != null)
+            string cacheKey = $"GetEventInfo_{request.Id}";
+            var cachedDataString = await _redisCaching.GetAsync<EventDetailDto>(cacheKey);
+            if(cachedDataString != null)
             {
+                
+
                 return new APIResponse
                 {
                     Message = MessageCommon.Complete,
                     StatusResponse = HttpStatusCode.OK,
-                    Data = existingGetEventInfo
+                    Data = cachedDataString
                 };
             }
-            var eventInfo = await _eventRepo.GetById(request);
+            var eventInfo = await _eventRepo.GetById(request.Id);
 
             if (eventInfo!.Status!.Equals(EventStatus.Deleted.ToString(), StringComparison.OrdinalIgnoreCase))
             {
@@ -65,7 +69,8 @@ namespace Application.UseCases.Events.Queries.GetEventInfo
 
                 eventDetailDto.eventTags = _mapper.Map<List<EventTagDto>>(eventInfo.Tags);
 
-                await _redisCaching.SetAsync(RedisDbkey, eventDetailDto, 5);
+                
+                await _redisCaching.SetAsync(cacheKey, eventDetailDto, 5);
 
                 return new APIResponse
                 {

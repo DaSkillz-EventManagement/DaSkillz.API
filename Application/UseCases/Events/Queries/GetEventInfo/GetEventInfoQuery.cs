@@ -12,6 +12,10 @@ namespace Application.UseCases.Events.Queries.GetEventInfo
     {
         public Guid Id { get; set; }
 
+        public GetEventInfoQuery()
+        {
+        }
+
         public GetEventInfoQuery(Guid id)
         {
             Id = id;
