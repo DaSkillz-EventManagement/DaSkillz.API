@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequestDetail;
 
-public class GetSponsorRequestDetailCommand: IRequest<APIResponse>
+public class GetSponsorRequestDetailQueries: IRequest<APIResponse>
 {
     public Guid EventId { get; set; }
     public Guid UserId { get; set; }
-    public GetSponsorRequestDetailCommand(Guid eventId, Guid userId) 
+    public GetSponsorRequestDetailQueries(Guid eventId, Guid userId) 
     {
         EventId = eventId;
         UserId = userId;

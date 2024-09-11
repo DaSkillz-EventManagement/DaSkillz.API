@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequestsByEventId
 {
-    public class GetSponsorRequestsByEventIdCommand: IRequest<PagedList<SponsorEventDto>>
+    public class GetSponsorRequestsByEventIdQueries: IRequest<PagedList<SponsorEventDto>>
     {
         public SponsorEventFilterDto SponsorFilter { get; set; }
         public Guid UserId { get; set; }
-        public GetSponsorRequestsByEventIdCommand(SponsorEventFilterDto sponsorFilter, Guid userId)
+        public GetSponsorRequestsByEventIdQueries(SponsorEventFilterDto sponsorFilter, Guid userId)
         {
             SponsorFilter = sponsorFilter;
             UserId = userId;

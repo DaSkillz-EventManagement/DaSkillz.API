@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequests
 {
-    public class GetSponsorRequestsHandler : IRequestHandler<GetSponsorRequestsCommand, PagedList<SponsorEvent>?>
+    public class GetSponsorRequestsHandler : IRequestHandler<GetSponsorRequestsQueries, PagedList<SponsorEvent>?>
     {
         private readonly ISponsorEventRepository _sponsorEventRepository;
         private readonly IUserRepository _userRepository;
@@ -23,7 +23,7 @@ namespace Application.UseCases.Sponsor.Queries.GetSponsorRequests
             _sponsorEventRepository = repository;
             _userRepository = userRepository;
         }
-        public async Task<PagedList<SponsorEvent>?> Handle(GetSponsorRequestsCommand request, CancellationToken cancellationToken)
+        public async Task<PagedList<SponsorEvent>?> Handle(GetSponsorRequestsQueries request, CancellationToken cancellationToken)
         {
             var userEntity = await _userRepository.GetUserByIdAsync(request.UserId);
             if (userEntity == null)

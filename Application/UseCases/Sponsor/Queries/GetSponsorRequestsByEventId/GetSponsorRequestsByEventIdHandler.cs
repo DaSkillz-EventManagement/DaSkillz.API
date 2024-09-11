@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequestsByEventId
 {
-    public class GetSponsorRequestsByEventIdHandler : IRequestHandler<GetSponsorRequestsByEventIdCommand, PagedList<SponsorEventDto>?>
+    public class GetSponsorRequestsByEventIdHandler : IRequestHandler<GetSponsorRequestsByEventIdQueries, PagedList<SponsorEventDto>?>
     {
         private readonly ISponsorEventRepository _sponsorEventRepository;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace Application.UseCases.Sponsor.Queries.GetSponsorRequestsByEventId
             _mapper = mapper;
             _userRepository = userRepository;
         }
-        public async Task<PagedList<SponsorEventDto>?> Handle(GetSponsorRequestsByEventIdCommand request, CancellationToken cancellationToken)
+        public async Task<PagedList<SponsorEventDto>?> Handle(GetSponsorRequestsByEventIdQueries request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUserByIdAsync(request.UserId);
             if (user == null)

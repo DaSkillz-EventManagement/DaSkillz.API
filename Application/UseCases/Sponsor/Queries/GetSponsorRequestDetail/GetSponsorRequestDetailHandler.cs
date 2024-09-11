@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequestDetail;
 
-public class GetSponsorRequestDetailHandler : IRequestHandler<GetSponsorRequestDetailCommand, APIResponse>
+public class GetSponsorRequestDetailHandler : IRequestHandler<GetSponsorRequestDetailQueries, APIResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly ISponsorEventRepository _sponsorEventRepository;
@@ -16,7 +16,7 @@ public class GetSponsorRequestDetailHandler : IRequestHandler<GetSponsorRequestD
         _userRepository = userRepository;
     }
 
-    public async Task<APIResponse> Handle(GetSponsorRequestDetailCommand request, CancellationToken cancellationToken)
+    public async Task<APIResponse> Handle(GetSponsorRequestDetailQueries request, CancellationToken cancellationToken)
     {
         var user = _userRepository.GetUserById(request.UserId);
         if(user == null)

@@ -58,7 +58,7 @@ public class SponsorController : ControllerBase
                                                         CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
-        var result = await _mediator.Send(new GetSponsorRequestsCommand(userId, status, pageNo, elementEachPage), token);
+        var result = await _mediator.Send(new GetSponsorRequestsQueries(userId, status, pageNo, elementEachPage), token);
         if (result == null)
         {
             return new APIResponse
@@ -85,7 +85,7 @@ public class SponsorController : ControllerBase
     public async Task<APIResponse> GetSponsorEvent([FromQuery] SponsorEventFilterDto sponsorFilter, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
-        var result = await _mediator.Send(new GetSponsorRequestsByEventIdCommand(sponsorFilter, userId), token);
+        var result = await _mediator.Send(new GetSponsorRequestsByEventIdQueries(sponsorFilter, userId), token);
         if (result == null)
         {
             return new APIResponse
@@ -108,7 +108,7 @@ public class SponsorController : ControllerBase
     public async Task<APIResponse> GetRequestDetail(Guid eventId, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
-        var result = await _mediator.Send(new GetSponsorRequestDetailCommand(eventId, userId), token);
+        var result = await _mediator.Send(new GetSponsorRequestDetailQueries(eventId, userId), token);
         return result;
     }
     [Authorize]

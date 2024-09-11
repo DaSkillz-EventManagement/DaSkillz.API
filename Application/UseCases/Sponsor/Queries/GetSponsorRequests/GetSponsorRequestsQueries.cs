@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequests
 {
-    public class GetSponsorRequestsCommand: IRequest<PagedList<SponsorEvent>?>
+    public class GetSponsorRequestsQueries: IRequest<PagedList<SponsorEvent>?>
     {
         public Guid UserId { get; set; }
         public string? Status { get; set; }
         public int Page {  get; set; }
         public int EachPage { get; set; }
-        public GetSponsorRequestsCommand(Guid userId, string? status, int page, int eachPage)
+        public GetSponsorRequestsQueries(Guid userId, string? status, int page, int eachPage)
         {
             UserId = userId;
             Status = status;
