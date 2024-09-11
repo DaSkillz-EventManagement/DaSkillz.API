@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Azure.Storage.Blobs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,6 @@ namespace Application.ExternalServices.Images
 
         public Task<string?> UploadEventSponsorLogo(string base64, Guid EventId, string sponsorName);
         public Task<bool> DeleteBlob(string blobName);
+        public BlobContainerClient GetBlobContainerClient();
     }
 }

@@ -26,7 +26,7 @@ namespace Infrastructure.ExternalServices.Images
             _logoRepository = logoRepository;
         }
 
-        private BlobContainerClient GetBlobContainerClient()
+        public BlobContainerClient GetBlobContainerClient()
         {
             string? containerName = _config["AzureStorageSettings:ContainerName"];
             string? connectionString = _config["AzureStorageSettings:ConnectionString"];
