@@ -1,4 +1,4 @@
-﻿using Application.UseCases.Events.Command.GetEventByUserRole;
+﻿
 using AutoMapper;
 using Domain.DTOs.Events.ResponseDto;
 using Domain.Models.Pagination;

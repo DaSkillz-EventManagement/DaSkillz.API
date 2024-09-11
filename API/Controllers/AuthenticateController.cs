@@ -1,13 +1,10 @@
-﻿using Application.Abstractions.Authentication;
-using Application.Helper;
+﻿using Application.Helper;
 using Application.UseCases.Authenticate.Commands.SignInWithGoogle;
 using Application.UseCases.Authenticate.Commands.SignInWIthOtp;
 using Application.UseCases.Authenticate.Commands.SignOut;
 using Application.UseCases.Authenticate.Commands.SignUpWithOtp;
 using Application.UseCases.Authenticate.Queries.RefreshToken;
 using Application.UseCases.Authenticate.Queries.ValidateOTP;
-using Application.UseCases.User.Commands.DeleteUser;
-using Domain.DTOs.AuthenticationDTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

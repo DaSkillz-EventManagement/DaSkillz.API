@@ -3,20 +3,16 @@ using Application.ResponseMessage;
 using Application.UseCases.Sponsor.Commands.CreateSponsorRequest;
 using Application.UseCases.Sponsor.Commands.DeleteSponsorRequest;
 using Application.UseCases.Sponsor.Commands.UpdateSponsorRequest;
-using Application.UseCases.Sponsor.Queries;
 using Application.UseCases.Sponsor.Queries.GetSponsorRequestDetail;
 using Application.UseCases.Sponsor.Queries.GetSponsorRequests;
 using Application.UseCases.Sponsor.Queries.GetSponsorRequestsByEventId;
-using Azure;
 using Domain.DTOs.Sponsors;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace API.Controllers;
 

@@ -1,4 +1,5 @@
-﻿using Event_Management.Domain.Enum;
+﻿using Domain.Enum.Participant;
+using Event_Management.Domain.Enum;
 
 namespace Application.Helper
 {

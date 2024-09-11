@@ -259,10 +259,10 @@ namespace Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
-        public async Task<bool> IsOwner(Guid userId, Guid eventId)
+        /*public async Task<bool> IsOwner(Guid userId, Guid eventId)
         {
             return await _context.Events.AnyAsync(e => e.Id.Equals(eventId) && e.CreatedBy.Equals(userId));
-        }
+        }*/
         public async Task<List<Event>> UserPastEvents(Guid userId)
         {
 

@@ -2,6 +2,7 @@
 using Application.ResponseMessage;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enum.Sponsor;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
