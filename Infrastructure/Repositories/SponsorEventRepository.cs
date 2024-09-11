@@ -1,6 +1,10 @@
-﻿using Domain.Entities;
+﻿using Application.UseCases.Sponsor.Queries;
+using Domain.DTOs.Sponsors;
+using Domain.Entities;
+using Domain.Enum.Sponsor;
 using Domain.Models.Pagination;
 using Domain.Repositories;
+using Event_Management.Domain.Enum.Sponsor;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
@@ -9,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class SponsorEventRepository: RepositoryBase<SponsorEvent>, ISponsorEventRepository
+    public class SponsorEventRepository : RepositoryBase<SponsorEvent>, ISponsorEventRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -43,7 +47,7 @@ namespace Infrastructure.Repositories
         public async Task<SponsorEvent?> DeleteSponsorRequest(Guid eventId, Guid userId)
         {
             var sponsorRequest = await CheckSponsorEvent(eventId, userId);
-            _context.SponsorEvents.Remove(sponsorRequest);
+            _context.SponsorEvents.Remove(sponsorRequest!);
             await _context.SaveChangesAsync();
             return sponsorRequest;
         }
@@ -53,20 +57,20 @@ namespace Infrastructure.Repositories
             var list = _context.SponsorEvents.Where(s => s.UserId.Equals(userId));
             if (status != null)
             {
-                list = list.Where(p => p.Status.Equals(status));
+                list = list.Where(p => p.Status!.Equals(status));
             }
             list = list.Include(p => p.Event);
             list = list.OrderByDescending(p => p.UpdatedAt);
             return await list.ToPagedListAsync(page, eachPage);
         }
 
-        public async Task<PagedList<SponsorEvent>> GetSponsorEvents(SponsorEventFilter sponsorFilter)
+        public async Task<PagedList<SponsorEvent>> GetSponsorEvents(SponsorEventFilterDto sponsorFilter)
         {
             var list = _context.SponsorEvents.Where(s => s.EventId.Equals(sponsorFilter.EventId)).OrderByDescending(p => p.CreatedAt).AsNoTracking().AsQueryable();
 
             if (sponsorFilter.Status != null)
             {
-                list = list.Where(s => s.Status.Equals(sponsorFilter.Status));
+                list = list.Where(s => s.Status!.Equals(sponsorFilter.Status));
             }
 
             if (sponsorFilter.IsSponsored.HasValue)
@@ -75,7 +79,7 @@ namespace Infrastructure.Repositories
             }
             if (sponsorFilter.SponsorType != null)
             {
-                list = list.Where(s => s.SponsorType.Equals(sponsorFilter.SponsorType));
+                list = list.Where(s => s.SponsorType!.Equals(sponsorFilter.SponsorType));
             }
             list = list.Include(p => p.User);
             return await list.ToPagedListAsync(sponsorFilter.Page, sponsorFilter.EachPage);

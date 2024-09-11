@@ -1,6 +1,5 @@
 ﻿using Application.Helper;
 using Domain.DTOs.Events;
-using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Pagination;
@@ -33,7 +32,7 @@ namespace Infrastructure.Repositories
                 .AsNoTracking();
         }
 
-        
+
 
         public Task<PagedList<Event>> GetFilteredEvent(EventFilterObjectDto filter, int pageNo, int elementEachPage)
         {
@@ -104,7 +103,10 @@ namespace Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
-
+        public async Task<bool> IsOwner(Guid userId, Guid eventId)
+        {
+            return await _context.Events.AnyAsync(e => e.Id.Equals(eventId) && e.CreatedBy.Equals(userId));
+        }
         public async Task<List<Event>> UserPastEvents(Guid userId)
         {
 

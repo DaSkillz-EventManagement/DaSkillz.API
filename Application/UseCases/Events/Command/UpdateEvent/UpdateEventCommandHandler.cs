@@ -2,7 +2,6 @@
 using Application.ExternalServices.Quartz;
 using Application.Helper;
 using Application.ResponseMessage;
-using Application.UseCases.Events.Command.CreateEvent;
 using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.Entities;
@@ -10,14 +9,8 @@ using Domain.Enum.Events;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch.Requests;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Command.UpdateEvent
 {

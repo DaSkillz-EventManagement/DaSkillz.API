@@ -13,7 +13,7 @@
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
 
-        //public virtual Event? Event { get; set; } waiting for event to complete
+        public virtual Event? Event { get; set; } 
         public virtual User? User { get; set; }
     }
 }

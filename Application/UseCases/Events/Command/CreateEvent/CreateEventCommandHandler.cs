@@ -5,7 +5,6 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
 using System.Net;
 
@@ -13,7 +12,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 {
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, APIResponse>
     {
-        
+
         private readonly IEventRepository _eventRepo;
         private readonly IImageService _fileService;
         private readonly IMapper _mapper;
@@ -22,7 +21,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
         public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper)
         {
-            
+
             _eventRepo = eventRepo;
             _fileService = fileService;
             _mapper = mapper;

@@ -25,7 +25,7 @@ namespace Domain.Repositories
         //Update status: Ended
         public bool UpdateEventStatusToEnded(Guid eventId);
         public bool UpdateEventStatusToEnded();
-
+        Task<bool> IsOwner(Guid userId, Guid eventId);
 
 
         // get Event

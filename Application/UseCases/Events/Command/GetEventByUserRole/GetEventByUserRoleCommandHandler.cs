@@ -20,7 +20,7 @@ namespace Application.UseCases.Events.Command.GetEventByUserRole
         public async Task<PagedList<EventResponseDto>> Handle(GetEventByUserRoleCommand request, CancellationToken cancellationToken)
         {
             var result = await _eventRepo.getEventByUserRole(request.EventRole, request.UserId, request.PageNo, request.ElementEachPage);
-           
+
             var response = _mapper.Map<PagedList<EventResponseDto>>(result);
             PagedList<EventResponseDto> pages = new PagedList<EventResponseDto>
                 (response, response.TotalItems, request.PageNo, request.ElementEachPage);

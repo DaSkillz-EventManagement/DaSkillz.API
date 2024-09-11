@@ -1,17 +1,8 @@
-﻿using Application.UseCases.Events.Command.GetEventParticipatedByUser;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.Entities;
-using Domain.Models.Pagination;
-using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Command.GetUserPastAndIncomingEvent
 {

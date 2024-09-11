@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.ExternalServices.Images
+﻿namespace Application.ExternalServices.Images
 {
     public interface IImageService
     {

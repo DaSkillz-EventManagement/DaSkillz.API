@@ -1,10 +1,4 @@
-﻿using Application.UseCases.Events.Command.GetEventByUserRole;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace Application.UseCases.Events.Command.GetEventByTag
 {
@@ -12,7 +6,7 @@ namespace Application.UseCases.Events.Command.GetEventByTag
     {
         public GetEventByTagCommandValidator()
         {
-           
+
             // Rule for PageNo to ensure it's greater than 0
             RuleFor(x => x.PageNo)
                 .GreaterThan(0).WithMessage("Page number must be greater than 0.")

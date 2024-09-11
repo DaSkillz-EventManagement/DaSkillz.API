@@ -1,10 +1,4 @@
-﻿using Application.UseCases.Events.Command.GetFilteredEvent;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace Application.UseCases.Events.Command.GetEventParticipatedByUser
 {

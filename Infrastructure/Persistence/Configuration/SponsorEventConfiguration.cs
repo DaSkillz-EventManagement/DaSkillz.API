@@ -29,10 +29,10 @@ namespace Infrastructure.Persistence.Configuration
 
             builder.Property(e => e.UserId).HasColumnName("UserID");
 
-            /*builder.HasOne(d => d.Event)
+            builder.HasOne(d => d.Event)
                 .WithMany()
                 .HasForeignKey(d => d.EventId)
-                .HasConstraintName("FK__SponsorEv__Event__5FB337D6");*/
+                .HasConstraintName("FK__SponsorEv__Event__5FB337D6");
 
             builder.HasOne(d => d.User)
                 .WithMany()

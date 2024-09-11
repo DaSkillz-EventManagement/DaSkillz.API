@@ -1,15 +1,8 @@
-﻿using Application.UseCases.Events.Command.GetEventByUserRole;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.Models.Pagination;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Command.GetEventByTag
 {

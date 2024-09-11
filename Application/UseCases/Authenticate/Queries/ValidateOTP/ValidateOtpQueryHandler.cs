@@ -53,7 +53,7 @@ namespace Application.UseCases.Authenticate.Queries.ValidateOTP
             var existOTP = await _redisCaching.GetAsync<UserValidation>($"SignIn_{request.Email}");
             if (existOTP.Otp == request.Otp)
             {
-                
+
                 var tokenResponse = await _jwtProvider.GenerateAccessRefreshTokens(user.UserId, user.Email!);
 
                 if (user.Status == AccountStatus.Pending.ToString())
