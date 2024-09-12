@@ -115,7 +115,7 @@ namespace Infrastructure
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IAvatarApiClient, AvatarApiClient>();
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();
-            //services.AddScoped<IJwtProvider, JwtProvider>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddScoped<IEmailService, EmailServices>();
             services.AddScoped<IQuartzService, QuartzService>();
             services.AddScoped<ISendMailTask, SendMailTask>();
