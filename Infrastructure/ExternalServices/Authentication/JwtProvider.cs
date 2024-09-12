@@ -6,7 +6,7 @@ using Domain.DTOs.AuthenticationDTO;
 using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Event_Management.Domain.Enum;
+using Domain.Repositories.UnitOfWork;
 using Event_Management.Domain.Enum;
 using Infrastructure.ExternalServices.Authentication.Setting;
 using Microsoft.Extensions.Options;

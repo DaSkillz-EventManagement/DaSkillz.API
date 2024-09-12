@@ -13,7 +13,7 @@
                     .AddRedis(connectionString!)
                     .AddSqlServer(sqlserver!)
                     .AddElasticsearch(elasticSearch!);
-                
+
 
             return services;
         }

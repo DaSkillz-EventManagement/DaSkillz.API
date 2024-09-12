@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Event_Management.Domain.Enum.Sponsor
+namespace Domain.Enum.Sponsor
 {
 	public enum SponsorRequest
 	{

@@ -7,7 +7,6 @@ using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Event_Management.Domain.Enum;
 using MediatR;
 using System.Net;
 

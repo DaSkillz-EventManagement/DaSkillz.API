@@ -17,7 +17,7 @@ namespace Application.Helper
             IEnumerable<Claim> claims = identity!.Claims;
             return claims.FirstOrDefault(s => s.Type == "UserId")?.Value ?? string.Empty;
         }
-        
+
 
         public static string GetEmailFromToken(this IPrincipal user)
         {

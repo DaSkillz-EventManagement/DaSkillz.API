@@ -1,11 +1,6 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Persistence.Configuration
 {
@@ -14,7 +9,7 @@ namespace Infrastructure.Persistence.Configuration
         public void Configure(EntityTypeBuilder<Participant> builder)
         {
             builder.HasKey(e => new { e.UserId, e.EventId });
-                    
+
 
             builder.ToTable("Participant");
 
@@ -36,18 +31,18 @@ namespace Infrastructure.Persistence.Configuration
                 .WithMany(p => p.Participants)
                 .HasForeignKey(d => d.EventId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-                
+
 
             builder.HasOne(d => d.RoleEvent)
                 .WithMany(p => p.Participants)
                 .HasForeignKey(d => d.RoleEventId);
-                
+
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Participants)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-               
+
         }
     }
 }

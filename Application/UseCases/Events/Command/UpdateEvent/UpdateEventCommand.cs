@@ -1,11 +1,6 @@
 ﻿using Domain.DTOs.Events.RequestDto;
 using Domain.Models.Response;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Command.UpdateEvent
 {
@@ -13,7 +8,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
     {
         public EventRequestDto EventRequestDto { get; set; }
         public Guid UserId { get; set; }
-        public Guid EventId {  get; set; }
+        public Guid EventId { get; set; }
 
         public UpdateEventCommand(EventRequestDto eventRequestDto, Guid eventId)
         {
