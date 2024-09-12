@@ -242,6 +242,47 @@ namespace Infrastructure.Migrations
                     b.ToTable("RoleEvent", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.SponsorEvent", b =>
+                {
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("EventID");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserID");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(19, 2)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool?>("IsSponsored")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SponsorType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("EventId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SponsorEvent", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Tag", b =>
                 {
                     b.Property<int>("TagId")
@@ -382,6 +423,27 @@ namespace Infrastructure.Migrations
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK__RefreshTo__UserI__5535A963");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SponsorEvent", b =>
+                {
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__SponsorEv__Event__5FB337D6");
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__SponsorEv__UserI__60A75C0F");
+
+                    b.Navigation("Event");
 
                     b.Navigation("User");
                 });
