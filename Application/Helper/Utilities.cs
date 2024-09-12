@@ -1,4 +1,5 @@
-﻿using Event_Management.Domain.Enum;
+﻿using Domain.Enum.Participant;
+using Event_Management.Domain.Enum;
 
 namespace Application.Helper
 {
@@ -46,6 +47,11 @@ namespace Application.Helper
         {
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
             return Convert.TryFromBase64String(base64, buffer, out _);
+        }
+        public static bool IsValidParticipantStatus(string status)
+        {
+            // Attempt to parse the string as a ParticipantStatus enum value
+            return Enum.TryParse<ParticipantStatus>(status, out _);
         }
 
     }

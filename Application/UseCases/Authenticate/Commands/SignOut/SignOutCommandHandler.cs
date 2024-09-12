@@ -3,7 +3,6 @@ using Application.ResponseMessage;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Event_Management.Domain.Enum;
 using MediatR;
 using System.Net;
 
@@ -16,8 +15,8 @@ namespace Application.UseCases.Authenticate.Commands.SignOut
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public SignOutCommandHandler(IUserRepository userRepository, 
-            IAvatarApiClient avatarApiClient, 
+        public SignOutCommandHandler(IUserRepository userRepository,
+            IAvatarApiClient avatarApiClient,
             IRefreshTokenRepository refreshTokenRepository,
             IUnitOfWork unitOfWork)
         {

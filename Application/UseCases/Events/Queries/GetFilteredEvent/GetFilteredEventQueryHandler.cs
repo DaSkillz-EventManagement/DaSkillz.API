@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Caching;
+using Application.Abstractions.Caching;
 using AutoMapper;
 using Domain.DTOs.Events.ResponseDto;
 using Domain.Models.Pagination;

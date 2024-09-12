@@ -28,12 +28,12 @@ namespace API.Controllers
     public class EventController : ControllerBase
     {
         private ISender _mediator;
-        
+
 
         public EventController(ISender mediator)
         {
             _mediator = mediator;
-            
+
         }
 
         [HttpGet("info")]
