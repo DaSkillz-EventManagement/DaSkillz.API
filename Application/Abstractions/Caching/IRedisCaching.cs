@@ -26,5 +26,7 @@
         /// <param name="key"></param>
         /// <returns></returns>
         Task RemoveAsync(string key);
+
+        Task InvalidateCacheByPattern(string pattern);
     }
 }

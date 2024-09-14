@@ -1,13 +1,19 @@
-﻿using Application.UseCases.Events.Queries.GetEventByTag;
+﻿using Application.Abstractions.Caching;
+using Application.UseCases.Events.Queries.GetEventByTag;
 using Domain.DTOs.Events;
 using Domain.DTOs.User.Response;
 using Domain.Repositories;
+using System.Text;
 
 namespace Application.Helper
 {
     public static class EventHelper
     {
-        public static IUserRepository _userRepo;
+        private static IUserRepository _userRepo;
+        private static IRedisCaching _redisCaching;
+        
+
+
         public static CreatedByUserDto GetHostInfo(Guid userId)
         {
             var user = _userRepo.GetUserById(userId);
@@ -74,8 +80,27 @@ namespace Application.Helper
         public static string GenerateCacheKeyByTag(GetEventByTagQuery request)
         {
             var tagIds = string.Join("_", request.TagIds);
-            return $"events_by_tags_{tagIds}_page_{request.PageNo}_size_{request.ElementEachPage}";
+            return $"Events_by_tags_{tagIds}_page_{request.PageNo}_size_{request.ElementEachPage}";
         }
+
+        public static async Task InvalidateEventCacheAsync()
+        {
+            string getEventByTagPattern = $"Events_by_tags_*";
+            await _redisCaching.InvalidateCacheByPattern(getEventByTagPattern);
+
+            string getEventByUserRolePattern = $"GetEventByUserRole_*";
+            await _redisCaching.InvalidateCacheByPattern(getEventByUserRolePattern);
+
+            string getEventParticipatedByUserPattern = $"GetEventParticipatedByUser_*";
+            await _redisCaching.InvalidateCacheByPattern(getEventParticipatedByUserPattern);
+
+            string getFilteredEventPattern = $"FilteredEvents_*";
+            await _redisCaching.InvalidateCacheByPattern(getFilteredEventPattern);
+
+
+        }
+
+        
 
     }
 }

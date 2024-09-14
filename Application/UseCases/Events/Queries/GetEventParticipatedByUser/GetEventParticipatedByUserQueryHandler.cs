@@ -25,7 +25,7 @@ namespace Application.UseCases.Events.Queries.GetEventParticipatedByUser
 
         public async Task<PagedList<EventResponseDto>> Handle(GetEventParticipatedByUserQuery request, CancellationToken cancellationToken)
         {
-            string cacheKey = $" GetEventParticipatedByUser_{request.UserId}";
+            string cacheKey = $"GetEventParticipatedByUser_{request.UserId}";
             var cachedDataString = await _redisCaching.GetAsync<string>(cacheKey);
             if(cachedDataString != null)
             {

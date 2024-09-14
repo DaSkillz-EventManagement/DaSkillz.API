@@ -1,4 +1,5 @@
-﻿using Application.ExternalServices.Images;
+﻿using Application.Abstractions.Caching;
+using Application.ExternalServices.Images;
 using Application.ExternalServices.Quartz;
 using Application.Helper;
 using Application.ResponseMessage;
@@ -25,8 +26,9 @@ namespace Application.UseCases.Events.Command.CreateEvent
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITagRepository _tagRepository;
         private readonly IQuartzService _quartzService;
+        private readonly IRedisCaching _redisCaching;
 
-        public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper, IUnitOfWork unitOfWork, ITagRepository tagRepository, IQuartzService quartzService)
+        public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper, IUnitOfWork unitOfWork, ITagRepository tagRepository, IQuartzService quartzService, IRedisCaching redisCaching)
         {
             _eventRepo = eventRepo;
             _fileService = fileService;
@@ -34,6 +36,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
             _unitOfWork = unitOfWork;
             _tagRepository = tagRepository;
             _quartzService = quartzService;
+            _redisCaching = redisCaching ;
         }
 
         private readonly long minimumUpdateTimeSpan = 21600000;//time span between event created and new event startDate
@@ -42,6 +45,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
         public async Task<APIResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
+            string cacheKey = $"CreateEvent";
             var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EventRequestDto.StartDate).DateTime;
             if (tempStartDate > DateTime.Now.AddMonths(4))
             {
@@ -104,6 +108,8 @@ namespace Application.UseCases.Events.Command.CreateEvent
                 await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
                 await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
                 var response = _mapper.Map<EventResponseDto>(eventEntity);
+                await EventHelper.InvalidateEventCacheAsync();
+                await _redisCaching.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10).TotalMinutes);
                 return new APIResponse
                 {
                     Data = response,

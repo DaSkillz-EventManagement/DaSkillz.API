@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Events.Command.CreateEvent;
+﻿using Application.Helper;
+using Application.UseCases.Events.Command.CreateEvent;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Response;
@@ -27,6 +28,7 @@ namespace Application.UseCases.Events.Command.DeleteEvent
 
         public async Task<bool> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
         {
+            
             try
             {
                 bool isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
@@ -50,6 +52,8 @@ namespace Application.UseCases.Events.Command.DeleteEvent
                 {
                     return await _eventRepository.ChangeEventStatus(request.EventId, EventStatus.Aborted);
                 }
+
+                await EventHelper.InvalidateEventCacheAsync();
             }
             catch (Exception)
             {

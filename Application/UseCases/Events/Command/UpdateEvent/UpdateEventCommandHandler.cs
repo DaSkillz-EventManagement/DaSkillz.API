@@ -38,6 +38,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
 
         public async Task<APIResponse> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
         {
+            
             var eventEntity = await _eventRepo.GetById(request.EventId);
             if (eventEntity!.Status != EventStatus.NotYet.ToString())
             {
@@ -136,6 +137,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                 var eventResponse = _mapper.Map<EventResponseDto>(eventEntity);
                 eventResponse.UpdatedAt = eventEntity.UpdatedAt.HasValue ? eventEntity.UpdatedAt.Value : null;
                 eventResponse.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
+                await EventHelper.InvalidateEventCacheAsync();
                 return new APIResponse
                 {
                     Message = MessageCommon.UpdateSuccesfully,

@@ -3,6 +3,7 @@ using Infrastructure.ExternalServices.Caching.Setting;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace Infrastructure.ExternalServices.Caching
 {
@@ -11,6 +12,7 @@ namespace Infrastructure.ExternalServices.Caching
         //
         private readonly IDistributedCache _distributedCache;
         private readonly RedisSetting _redisSetting;
+        private readonly IConnectionMultiplexer _redisConnection;
 
         public RedisCaching(IOptions<RedisSetting> config, IDistributedCache distributedCache)
         {
@@ -51,5 +53,26 @@ namespace Infrastructure.ExternalServices.Caching
             await _distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(value, jsonOpt), cacheOpt);
 
         }
+
+        // New method to invalidate cache by pattern
+        public async Task InvalidateCacheByPattern(string pattern)
+        {
+            var server = GetRedisServer();
+            var keys = server.Keys(pattern: pattern);
+
+            foreach (var key in keys)
+            {
+                await _distributedCache.RemoveAsync(key);
+            }
+        }
+
+        // Method to get Redis server from ConnectionMultiplexer
+        private IServer GetRedisServer()
+        {
+            // Use ConnectionMultiplexer to get the Redis server
+            var endpoint = _redisConnection.GetEndPoints().First(); // Get the first configured endpoint
+            return _redisConnection.GetServer(endpoint);
+        }
+
     }
 }
