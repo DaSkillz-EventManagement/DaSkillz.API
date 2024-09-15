@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
 using Domain.DTOs.Events.ResponseDto;
+using Domain.DTOs.Feedbacks;
 using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Models.Pagination;
@@ -28,7 +29,7 @@ namespace Application.Configuration
             CreateMap<Event, EventRequestDto>().ReverseMap();
             CreateMap<Event, EventDetailDto>().ReverseMap();
             CreateMap<PagedList<Event>, PagedList<EventResponseDto>>().ReverseMap();
-
+            CreateMap<PagedList<Feedback>, PagedList<FeedbackEvent>>().ReverseMap();
             CreateMap<Event, EventResponseDto>()
             //.ForMember(dest => dest.Host,
             //           opt => opt.MapFrom(src => EventHelper.GetHostInfo((Guid)src.CreatedBy!)))

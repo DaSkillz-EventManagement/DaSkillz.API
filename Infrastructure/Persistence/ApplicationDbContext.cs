@@ -13,6 +13,7 @@ namespace Infrastructure.Persistence
         }
 
         public virtual DbSet<Event> Events { get; set; } = null!;
+        public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Logo> Logos { get; set; } = null!;
         public virtual DbSet<Tag> Tags { get; set; } = null!;
         public virtual DbSet<Participant> Participants { get; set; } = null!;
