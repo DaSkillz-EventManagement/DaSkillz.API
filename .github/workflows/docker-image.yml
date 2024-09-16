@@ -26,9 +26,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}  # Set Docker Hub password in GitHub Secrets
 
       - name: Build and push Docker image
-        run: |
-          docker buildx build -t tthanhvu2337/daskillz:${{ github.sha }} .
-          docker push tthanhvu2337/daskillz:${{ github.sha }}
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64   # Building for multiple platforms
+          push: true                           # Push image to Docker Hub after build
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/daskillz:latest
 
       - name: Logout from Docker Hub
         run: docker logout
