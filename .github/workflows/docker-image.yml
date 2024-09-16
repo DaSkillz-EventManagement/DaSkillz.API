@@ -27,7 +27,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker buildx build -t tthanhvu2337/daskillz:${{ github.sha }} 
+          docker buildx build -t tthanhvu2337/daskillz:${{ github.sha }} .
           docker push tthanhvu2337/daskillz:${{ github.sha }}
 
       - name: Logout from Docker Hub
