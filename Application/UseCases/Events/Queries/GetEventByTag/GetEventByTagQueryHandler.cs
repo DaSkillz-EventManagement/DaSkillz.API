@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿
+using AutoMapper;
 using Domain.DTOs.Events.ResponseDto;
 using Domain.Models.Pagination;
 using Domain.Repositories;

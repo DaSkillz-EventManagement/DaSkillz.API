@@ -110,7 +110,8 @@ namespace Infrastructure
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ILogoRepository, LogoRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
-
+            services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
+            services.AddScoped<IParticipantRepository, ParticipantRepository>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IAvatarApiClient, AvatarApiClient>();
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();

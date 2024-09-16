@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Event_Management.Domain.Enum
+namespace Domain.Enum.Participant
 {
 	public enum ParticipantSortBy
 	{
