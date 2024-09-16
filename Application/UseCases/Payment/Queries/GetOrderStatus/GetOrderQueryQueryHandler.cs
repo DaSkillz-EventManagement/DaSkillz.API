@@ -38,6 +38,7 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                 {
                     exist.Status = (int)TransactionStatus.SUCCESS;
                 }
+                await _transactionRepository.Update(exist);
                 await _unitOfWork.SaveChangesAsync();
                 
             }

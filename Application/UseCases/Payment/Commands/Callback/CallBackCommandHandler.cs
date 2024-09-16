@@ -23,10 +23,9 @@ namespace Application.UseCases.Payment.Commands.Callback
 
         public async Task<object> Handle(CallbackCommand request, CancellationToken cancellationToken)
         {
+            //consider using long-polling or exponential backoff with redis to handle call back @@
             try
             {
-
-
                 var dataStr = Convert.ToString(request.data);
                 var reqMac = Convert.ToString(request.mac);
 
@@ -50,6 +49,7 @@ namespace Application.UseCases.Payment.Commands.Callback
 
                 if (exist != null)
                 {
+                    exist.Zptransid = dataJson["zp_trans_id"].ToString();
                     exist.Status = (int)TransactionStatus.SUCCESS;
                     await _transactionRepository.Update(exist);
                     await _unitOfWork.SaveChangesAsync();

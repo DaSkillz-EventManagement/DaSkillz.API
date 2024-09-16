@@ -7,6 +7,9 @@
         public string? Key2 { get; set; }
         public string? GetBankListUrl { get; set; }
         public string? CreateOrderUrl { get; set; }
+        public string? QueryOrderUrl { get; set; }
+        public string? RefundUrl { get; set; }
+        public string? QueryRefundUrl { get; set; }
     }
 
 }
