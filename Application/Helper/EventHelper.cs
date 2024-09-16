@@ -11,8 +11,12 @@ namespace Application.Helper
     {
         private static IUserRepository _userRepo;
         private static IRedisCaching _redisCaching;
-        
 
+        public static void Initialize(IUserRepository userRepo, IRedisCaching redisCaching)
+        {
+            _userRepo = userRepo ?? throw new ArgumentNullException(nameof(userRepo));
+            _redisCaching = redisCaching ?? throw new ArgumentNullException(nameof(redisCaching));
+        }
 
         public static CreatedByUserDto GetHostInfo(Guid userId)
         {

@@ -53,7 +53,7 @@ namespace Application.UseCases.Events.Command.DeleteEvent
                     return await _eventRepository.ChangeEventStatus(request.EventId, EventStatus.Aborted);
                 }
 
-                await EventHelper.InvalidateEventCacheAsync();
+                //await EventHelper.InvalidateEventCacheAsync();
             }
             catch (Exception)
             {

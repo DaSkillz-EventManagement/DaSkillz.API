@@ -57,7 +57,7 @@ namespace Application.UseCases.Events.Queries.GetEventByUserRole
                 EachPage = pages.EachPage
             });
 
-            await _redisCaching.SetAsync(cacheKey, serializedPagedList, TimeSpan.FromMinutes(10).TotalSeconds);
+            await _redisCaching.SetAsync(cacheKey, serializedPagedList, 10);
 
             return pages;
         }

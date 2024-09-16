@@ -1,4 +1,7 @@
-﻿using Application.UseCases.Events.Command.CreateEvent;
+﻿using Application.Abstractions.Caching;
+using Application.UseCases.Events.Command.CreateEvent;
+using Azure;
+using Domain.DTOs.Sponsors;
 using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
@@ -15,14 +18,23 @@ namespace Application.UseCases.Events.Queries.GetAllEventBlobUris
     public class GetAllEventBlobUrisQueryHandler : IRequestHandler<GetAllEventBlobUrisQuery, Dictionary<string, List<string>>>
     {
         private readonly IEventRepository _eventRepo;
+        private readonly IRedisCaching _redisCaching;
 
-        public GetAllEventBlobUrisQueryHandler(IEventRepository eventRepo)
+        public GetAllEventBlobUrisQueryHandler(IEventRepository eventRepo, IRedisCaching redisCaching)
         {
             _eventRepo = eventRepo;
+            _redisCaching = redisCaching;
         }
 
         public async Task<Dictionary<string, List<string>>> Handle(GetAllEventBlobUrisQuery request, CancellationToken cancellationToken)
         {
+            string cacheKey = $"GetAllEventBlob";
+            var cachedDataString = await _redisCaching.GetAsync<Dictionary<string, List<string>>>(cacheKey);
+            if(cachedDataString != null)
+            {
+                return cachedDataString;
+            }
+
             Event eventData = await _eventRepo.GetById(request.EventId);
             List<string> blobUris = new List<string>();
             List<string> eventTheme = new List<string>();
@@ -39,6 +51,10 @@ namespace Application.UseCases.Events.Queries.GetAllEventBlobUris
                 { "event avatar", eventTheme },
                 { "event sponsor logos", blobUris }
             };
+           
+            await _redisCaching.SetAsync(cacheKey, result, 10);
+            
+            
             return result;
         }
     }

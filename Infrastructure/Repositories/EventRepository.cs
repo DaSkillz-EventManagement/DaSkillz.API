@@ -34,6 +34,18 @@ namespace Infrastructure.Repositories
                 .AsNoTracking();
         }
 
+        private async Task<IQueryable<Event>> GetUserParticipatedEventsQuery(Guid userId)
+        {
+            var participants = await _context.Participants
+                .Where(p => p.UserId.Equals(userId) && p.CheckedIn != null)
+                .Select(p => p.EventId)
+                .ToListAsync();
+
+            return _context.Events
+                .Where(e => participants.Contains(e.Id))
+                .AsNoTracking();
+        }
+
         private IQueryable<Event> ApplyFilter(IQueryable<Event> eventList, EventFilterObjectDto filter)
         {
             if (filter.TagId != null)
@@ -255,9 +267,14 @@ namespace Infrastructure.Repositories
             return eventList;
         }
 
-        public Task<PagedList<Event>> GetUserParticipatedEvents(EventFilterObjectDto filter, Guid userId, int pageNo, int elementEachPage)
+        public async Task<PagedList<Event>> GetUserParticipatedEvents(EventFilterObjectDto filter, Guid userId, int pageNo, int elementEachPage)
         {
-            throw new NotImplementedException();
+            var events = await GetUserParticipatedEventsQuery(userId);
+            var totalEle = await events.CountAsync();
+            events = ApplyFilter(events, filter).PaginateAndSort(pageNo, elementEachPage, filter.SortBy ?? "Id", filter.IsAscending);
+            //events = ApplyFilter(events, filter).Skip(skipElements).Take(elementEachPage);
+            var result = await events.ToListAsync();
+            return new PagedList<Event>(result, totalEle, pageNo, elementEachPage);
         }
         /*public async Task<bool> IsOwner(Guid userId, Guid eventId)
         {

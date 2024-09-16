@@ -108,7 +108,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
                 await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
                 await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
                 var response = _mapper.Map<EventResponseDto>(eventEntity);
-                await EventHelper.InvalidateEventCacheAsync();
+                //await EventHelper.InvalidateEventCacheAsync();
                 await _redisCaching.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10).TotalMinutes);
                 return new APIResponse
                 {

@@ -56,7 +56,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                     StatusResponse = HttpStatusCode.Unauthorized,
                 };
             }
-            if (!request.UserId.Equals(eventEntity.CreatedBy!.Value.ToString()))
+            if (!request.UserId.Equals(eventEntity.CreatedBy!.Value))
             {
                 return new APIResponse
                 {
@@ -137,7 +137,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                 var eventResponse = _mapper.Map<EventResponseDto>(eventEntity);
                 eventResponse.UpdatedAt = eventEntity.UpdatedAt.HasValue ? eventEntity.UpdatedAt.Value : null;
                 eventResponse.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
-                await EventHelper.InvalidateEventCacheAsync();
+                //await EventHelper.InvalidateEventCacheAsync();
                 return new APIResponse
                 {
                     Message = MessageCommon.UpdateSuccesfully,

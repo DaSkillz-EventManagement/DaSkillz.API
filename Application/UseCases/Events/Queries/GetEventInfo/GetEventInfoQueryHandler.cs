@@ -70,7 +70,7 @@ namespace Application.UseCases.Events.Queries.GetEventInfo
                 eventDetailDto.eventTags = _mapper.Map<List<EventTagDto>>(eventInfo.Tags);
 
                 
-                await _redisCaching.SetAsync(cacheKey, eventDetailDto, TimeSpan.FromMinutes(10).TotalMinutes);
+                await _redisCaching.SetAsync(cacheKey, eventDetailDto, 10);
 
                 return new APIResponse
                 {

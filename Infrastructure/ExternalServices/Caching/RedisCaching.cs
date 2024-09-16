@@ -57,9 +57,13 @@ namespace Infrastructure.ExternalServices.Caching
         // New method to invalidate cache by pattern
         public async Task InvalidateCacheByPattern(string pattern)
         {
+           
             var server = GetRedisServer();
             var keys = server.Keys(pattern: pattern);
-
+            if (keys == null || !keys.Any())
+            {
+                return;
+            }
             foreach (var key in keys)
             {
                 await _distributedCache.RemoveAsync(key);
