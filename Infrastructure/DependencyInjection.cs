@@ -4,6 +4,7 @@ using Application.Abstractions.Caching;
 using Application.Abstractions.ElasticSearch;
 using Application.Abstractions.Email;
 using Application.Abstractions.Oauth2;
+using Application.Abstractions.Payment.ZaloPay;
 using Application.ExternalServices.BackgroundTák;
 using Application.ExternalServices.Images;
 using Application.ExternalServices.Mail;
@@ -24,6 +25,8 @@ using Infrastructure.ExternalServices.Email;
 using Infrastructure.ExternalServices.Email.Setting;
 using Infrastructure.ExternalServices.Images;
 using Infrastructure.ExternalServices.Oauth2;
+using Infrastructure.ExternalServices.Payment.ZaloPay;
+using Infrastructure.ExternalServices.Payment.ZaloPay.Setting;
 using Infrastructure.ExternalServices.Quartz;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
@@ -46,6 +49,8 @@ namespace Infrastructure
             services.Configure<ElasticSetting>(configuration.GetSection("ELasticSearch"));
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.Configure<EmailSetting>(configuration.GetSection("SmtpSettings"));
+            services.Configure<ZaloPaySetting>(configuration.GetSection("ZaloPay"));
+
 
 
             //Add DBcontext
@@ -110,6 +115,9 @@ namespace Infrastructure
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ILogoRepository, LogoRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+
+
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
             services.AddScoped<IParticipantRepository, ParticipantRepository>();
             services.AddScoped<IImageService, ImageService>();
@@ -117,6 +125,7 @@ namespace Infrastructure
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();
             services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddScoped<IEmailService, EmailServices>();
+            services.AddScoped<IZaloPayService, ZaloPayService>();
             services.AddScoped<IQuartzService, QuartzService>();
             services.AddScoped<ISendMailTask, SendMailTask>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateData : Migration
+    public partial class v4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,6 +41,35 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tag", x => x.TagID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    Apptransid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Zptransid = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Amount = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Timestamp = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.Apptransid);
+                    table.ForeignKey(
+                        name: "FK_Transaction_Event",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Transaction_User",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserID");
                 });
 
             migrationBuilder.CreateTable(
@@ -117,6 +146,16 @@ namespace Infrastructure.Migrations
                 table: "Participant",
                 column: "RoleEventID");
 
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_EventId",
+                table: "Transactions",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_UserId",
+                table: "Transactions",
+                column: "UserId");
+
             migrationBuilder.AddForeignKey(
                 name: "FK_Events_User_CreatedByNavigationUserId",
                 table: "Events",
@@ -137,6 +176,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Participant");
+
+            migrationBuilder.DropTable(
+                name: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "Tag");

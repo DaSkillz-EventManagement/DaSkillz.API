@@ -12,14 +12,15 @@ namespace Infrastructure.Persistence
 
         }
 
-        public virtual DbSet<Event> Events { get; set; } = null!;
-        public virtual DbSet<Logo> Logos { get; set; } = null!;
-        public virtual DbSet<Tag> Tags { get; set; } = null!;
-        public virtual DbSet<Participant> Participants { get; set; } = null!;
-        public virtual DbSet<RoleEvent> RoleEvents { get; set; } = null!;    
+        public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<Logo> Logos { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<Participant> Participants { get; set; }
+        public virtual DbSet<RoleEvent> RoleEvents { get; set; }    
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
+        public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<SponsorEvent> SponsorEvents { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
