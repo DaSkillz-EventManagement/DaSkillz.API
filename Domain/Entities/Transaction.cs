@@ -15,6 +15,7 @@ namespace Domain.Entities
 
         public virtual Event? Event { get; set; }
         public virtual User? User { get; set; }
+        public virtual RefundTransaction? RefundTransaction { get; set; }
 
     }
 }

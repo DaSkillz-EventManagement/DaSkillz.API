@@ -6,5 +6,6 @@
         bool ValidateMac(string dataStr, string reqMac);
         Dictionary<string, object> DeserializeData(string dataStr);
         Task<Dictionary<string, object>> QueryOrderStatus(string appTransId);
+        Task<Dictionary<string, object>> Refund(string zpTransId, string amount, string description);
     }
 }
