@@ -1,0 +1,34 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main/BE" ]
+  pull_request:
+    branches: [ "main/BE" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Set Docker Hub username in GitHub Secrets
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}  # Set Docker Hub password in GitHub Secrets
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t tthanhvu2337/daskillz:${{ github.sha }} -f ./API/Dockerfile ./API
+          docker push tthanhvu2337/daskillz:${{ github.sha }}
+
+      - name: Logout from Docker Hub
+        run: docker logout
