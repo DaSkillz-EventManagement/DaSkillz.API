@@ -18,7 +18,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 {
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, APIResponse>
     {
-        
+
         private readonly IEventRepository _eventRepo;
         private readonly IImageService _fileService;
         private readonly IMapper _mapper;

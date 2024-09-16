@@ -60,7 +60,7 @@ namespace Application.UseCases.Authenticate.Commands.SignInWithGoogle
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = null
                 };
-                
+
                 await _userRepository.AddUser(newUser);
 
                 var response = await _jwtProvider.GenerateAccessRefreshTokens(newUser.UserId, newUser.Email);

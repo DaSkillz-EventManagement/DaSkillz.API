@@ -118,6 +118,8 @@ namespace Infrastructure
             services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 
+            services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
+            services.AddScoped<IParticipantRepository, ParticipantRepository>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IAvatarApiClient, AvatarApiClient>();
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();

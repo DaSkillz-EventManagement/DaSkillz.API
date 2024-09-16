@@ -1,13 +1,10 @@
 ﻿using Application.Abstractions.Authentication;
 using Application.ResponseMessage;
 using Domain.Constants.Authenticate;
-using Domain.DTOs.AuthenticationDTO;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Elastic.Clients.Elasticsearch.Core.TermVectors;
 using Event_Management.Domain.Enum;
 using MediatR;
-using Microsoft.Extensions.Options;
 
 namespace Application.UseCases.Authenticate.Queries.RefreshToken
 {

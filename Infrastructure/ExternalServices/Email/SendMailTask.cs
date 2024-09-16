@@ -1,17 +1,11 @@
 ﻿using Application.Abstractions.Email;
 using Application.ExternalServices.BackgroundTák;
 using Application.ExternalServices.Mail;
-using Application.Helper;
 using Domain.DTOs.ParticipantDto;
 using Domain.DTOs.User.Request;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.ExternalServices.Email
 {
