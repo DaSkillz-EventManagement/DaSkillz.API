@@ -28,8 +28,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64,linux/arm64   # Building for multiple platforms
-          push: true                           # Push image to Docker Hub after build
+          platforms: linux/amd64  
+          push: true                           
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/daskillz:latest
 
       - name: Logout from Docker Hub
