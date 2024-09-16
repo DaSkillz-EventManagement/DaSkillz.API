@@ -27,7 +27,7 @@
         //public virtual ICollection<Feedback> Feedbacks { get; set; }
         //public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }
-        //public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
     }
 }

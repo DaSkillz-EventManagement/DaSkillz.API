@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240909100508_UpdateData")]
-    partial class UpdateData
+    [Migration("20240915141812_v4")]
+    partial class v4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -263,6 +263,49 @@ namespace Infrastructure.Migrations
                     b.ToTable("Tag", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Property<string>("Apptransid")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Amount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Timestamp")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Zptransid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Apptransid");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Transactions", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -389,6 +432,23 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany("Transactions")
+                        .HasForeignKey("EventId")
+                        .HasConstraintName("FK_Transaction_Event");
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_Transaction_User");
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.HasOne("Domain.Entities.Role", "Role")
@@ -433,6 +493,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
                     b.Navigation("Participants");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -452,6 +514,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }
