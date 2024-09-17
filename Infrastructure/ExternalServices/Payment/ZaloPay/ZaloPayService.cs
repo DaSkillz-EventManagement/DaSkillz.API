@@ -73,8 +73,16 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
 
         public bool ValidateMac(string dataStr, string reqMac)
         {
-            var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySettings.Key2, dataStr);
-            return reqMac.Equals(mac);
+            try
+            {
+
+                var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySettings.Key2, dataStr);
+                return reqMac.Equals(mac);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public Dictionary<string, object> DeserializeData(string dataStr)

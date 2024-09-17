@@ -10,7 +10,6 @@ namespace Application.UseCases.Payment.Commands.Callback
 {
     public class CallbackCommand : IRequest<object>
     {
-        public string? data { get; set; }
-        public string? mac { get; set; }
+        public dynamic? requestBody { get; set; }
     }
 }
