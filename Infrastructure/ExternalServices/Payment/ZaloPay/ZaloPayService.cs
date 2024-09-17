@@ -59,7 +59,7 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
             param.Add("app_trans_id", app_trans_id);
             param.Add("embed_data", JsonConvert.SerializeObject(embed_data));
             param.Add("item", JsonConvert.SerializeObject(items));
-            param.Add("callback_url", "");
+            param.Add("callback_url", _zaloPaySettings.CallbackUrl!);
             param.Add("description", description + app_trans_id);
             param.Add("bank_code", "");
 
