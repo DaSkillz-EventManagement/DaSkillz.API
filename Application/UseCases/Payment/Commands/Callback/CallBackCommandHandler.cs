@@ -27,12 +27,12 @@ namespace Application.UseCases.Payment.Commands.Callback
             //consider using long-polling or exponential backoff with redis to handle call back @@
             try
             {
-                //var dataStr = Convert.ToString(request.data);
-                //var reqMac = Convert.ToString(request.mac);
+                var dataStr = Convert.ToString(request.data);
+                var reqMac = Convert.ToString(request.mac);
 
 
-                var dataStr = Convert.ToString(request.requestBody!["data"]);
-                var reqMac = Convert.ToString(request.requestBody["mac"]);
+                //var dataStr = Convert.ToString(request.requestBody!["data"]);
+                //var reqMac = Convert.ToString(request.requestBody["mac"]);
 
                 var isValid = _zaloPayService.ValidateMac(dataStr, reqMac);
 

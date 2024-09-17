@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
 using Domain.DTOs.Events.ResponseDto;
+using Domain.DTOs.Payment.Response;
 using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Models.Pagination;
@@ -14,6 +15,9 @@ namespace Application.Configuration
     {
         public MapperProfile()
         {
+            CreateMap<Transaction, TransactionResponseDto>()
+                .ReverseMap();
+
             CreateMap<User, UserResponseDto>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
                 .ReverseMap();
