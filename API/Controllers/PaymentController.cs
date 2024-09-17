@@ -1,5 +1,6 @@
 ﻿using Application.UseCases.Payment.Commands.Callback;
 using Application.UseCases.Payment.Commands.CreatePayment;
+using Application.UseCases.Payment.Commands.Refund;
 using Application.UseCases.Payment.Queries.GetAllTransaction;
 using Application.UseCases.Payment.Queries.GetOrderStatus;
 using Application.UseCases.Payment.Queries.GetTransactionByUser;
@@ -37,11 +38,11 @@ namespace API.Controllers
             var result = await _mediator.Send(new GetAllTransactionQuery(), cancellationToken);
             return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
         }
-        
+
         [HttpGet("user")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetTransactionByUser([FromQuery] Guid guid,CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetTransactionByUser([FromQuery] Guid guid, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetTransactionByUserQuery(guid), cancellationToken);
             return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
@@ -56,17 +57,26 @@ namespace API.Controllers
             return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
         }
 
-        
+
 
         [HttpPost("callback")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<object> Callback([FromBody] CallbackCommand command,CancellationToken cancellationToken = default)
+        public async Task<object> Callback([FromBody] CallbackCommand command, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return result;
         }
 
-        
+        [HttpPost("refund")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<object> Callback([FromBody] RefundCommand command, CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
+
+
     }
 }

@@ -13,7 +13,7 @@
             entity.HasKey(t => t.Apptransid);
 
             entity.Property(t => t.Apptransid)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsRequired();
 
             entity.Property(t => t.Zptransid)
@@ -40,6 +40,7 @@
             entity.HasOne(t => t.RefundTransaction)
                 .WithOne(r => r.Transaction)
                 .HasForeignKey<RefundTransaction>(r => r.Apptransid)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_RefundTransaction_Transaction");
 
             entity.HasOne(t => t.Event)
