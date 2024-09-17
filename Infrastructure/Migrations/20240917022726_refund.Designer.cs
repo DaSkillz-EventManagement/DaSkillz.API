@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:Infrastructure/Migrations/20240912062408_UpdateData.Designer.cs
-    [Migration("20240912062408_UpdateData")]
-    partial class UpdateData
-========
-    [Migration("20240915141812_v4")]
-    partial class v4
->>>>>>>> main/BE:Infrastructure/Migrations/20240915141812_v4.Designer.cs
+    [Migration("20240917022726_refund")]
+    partial class refund
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -211,6 +206,41 @@ namespace Infrastructure.Migrations
                     b.ToTable("RefreshToken", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
+                {
+                    b.Property<long>("refundId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("refundId"));
+
+                    b.Property<string>("Apptransid")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<long>("refundAmount")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("refundAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("returnCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("returnMessage")
+                        .HasMaxLength(300)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.HasKey("refundId");
+
+                    b.HasIndex("Apptransid")
+                        .IsUnique()
+                        .HasFilter("[Apptransid] IS NOT NULL");
+
+                    b.ToTable("RefundTransactions", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Role", b =>
                 {
                     b.Property<int>("RoleId")
@@ -312,8 +342,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
                 {
                     b.Property<string>("Apptransid")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Amount")
                         .IsRequired()
@@ -478,7 +508,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-<<<<<<<< HEAD:Infrastructure/Migrations/20240912062408_UpdateData.Designer.cs
+            modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
+                {
+                    b.HasOne("Domain.Entities.Transaction", "Transaction")
+                        .WithOne("RefundTransaction")
+                        .HasForeignKey("Domain.Entities.RefundTransaction", "Apptransid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_RefundTransaction_Transaction");
+
+                    b.Navigation("Transaction");
+                });
+
             modelBuilder.Entity("Domain.Entities.SponsorEvent", b =>
                 {
                     b.HasOne("Domain.Entities.Event", "Event")
@@ -494,7 +534,12 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__SponsorEv__UserI__60A75C0F");
-========
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
                 {
                     b.HasOne("Domain.Entities.Event", "Event")
@@ -506,7 +551,6 @@ namespace Infrastructure.Migrations
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_Transaction_User");
->>>>>>>> main/BE:Infrastructure/Migrations/20240915141812_v4.Designer.cs
 
                     b.Navigation("Event");
 
@@ -569,6 +613,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.RoleEvent", b =>
                 {
                     b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Navigation("RefundTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

@@ -25,12 +25,12 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="NJsonSchema" Version="11.0.2" />
+		<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
 		<PackageReference Include="QRCoder" Version="1.6.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="UseCases\Role\" />
-	  <Folder Include="UseCases\User\Queries\FilterUser\" />
 	</ItemGroup>
 
 </Project>

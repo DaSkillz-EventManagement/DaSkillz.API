@@ -20,7 +20,7 @@ namespace Domain.DTOs.Events
         public CreatedByUserDto? Host { get; set; } = new CreatedByUserDto();
         public string? Image { get; set; }
         public string? Theme { get; set; }
-        public EventLocation? location { get; set; } = new EventLocation();
+        public EventLocation? Location { get; set; } = new EventLocation();
         public long CreatedAt { get; set; }
         public long? UpdatedAt { get; set; }
         public int? Capacity { get; set; }
