@@ -205,11 +205,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
                 {
-                    b.Property<long>("refundId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("refundId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Apptransid")
                         .HasMaxLength(100)
@@ -221,6 +221,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("refundAt")
                         .HasColumnType("datetime");
 
+                    b.Property<long>("refundId")
+                        .HasMaxLength(100)
+                        .HasColumnType("bigint");
+
                     b.Property<int>("returnCode")
                         .HasColumnType("int");
 
@@ -229,7 +233,7 @@ namespace Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(300)");
 
-                    b.HasKey("refundId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Apptransid")
                         .IsUnique()

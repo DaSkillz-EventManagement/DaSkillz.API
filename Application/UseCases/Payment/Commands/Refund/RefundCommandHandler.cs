@@ -49,7 +49,7 @@ namespace Application.UseCases.Payment.Commands.Refund
 
             var apiResponse = await _zaloPayService.Refund(existTransaction.Zptransid, existTransaction.Amount, request.description);
 
-            var returnCode = (int)apiResponse["return_code"];
+            var returnCode = Convert.ToInt32(apiResponse["return_code"]);
             var returnMessage = apiResponse["return_message"].ToString();
             var refundId = (long)apiResponse["refund_id"];
             var refundAmount = existTransaction.Amount;
