@@ -2,6 +2,7 @@
 {
     public interface IQuartzService
     {
+        Task StartCheckTransactionStatusJob();
         Task StartEventStatusToOngoingJob(Guid eventId, DateTime startTime);
         Task StartEventStatusToEndedJob(Guid eventId, DateTime startTime);
         Task StartEventStartingEmailNoticeJob(Guid eventId, DateTime startTime);

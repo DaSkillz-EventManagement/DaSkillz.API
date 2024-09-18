@@ -13,5 +13,6 @@ namespace Application.UseCases.User.Queries.GetAllUsers
             Page = page;
             Pagesize = pagesize;
         }
+
     }
 }

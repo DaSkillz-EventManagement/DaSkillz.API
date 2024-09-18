@@ -1,4 +1,5 @@
-﻿using Application.ResponseMessage;
+﻿using Application.Abstractions.Caching;
+using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.User.Response;
 using Domain.Models.Response;
@@ -12,12 +13,21 @@ namespace Application.UseCases.User.Queries.GetAllUsers
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IRedisCaching redisCaching;
 
-        public GetAllUserQueryHandler(IUserRepository userRepository, IMapper mapper)
+        public GetAllUserQueryHandler(IUserRepository userRepository, IMapper mapper, IRedisCaching redisCaching)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            this.redisCaching = redisCaching;
         }
+
+
+        //public GetAllUserQueryHandler(IUserRepository userRepository, IMapper mapper)
+        //{
+        //    _userRepository = userRepository;
+        //    _mapper = mapper;
+        //}
 
         public async Task<APIResponse> Handle(GetAllUserQuery request, CancellationToken cancellationToken)
         {
@@ -27,7 +37,7 @@ namespace Application.UseCases.User.Queries.GetAllUsers
             {
                 StatusResponse = HttpStatusCode.OK,
                 Message = MessageCommon.Complete,
-                Data = usersResponse
+                Data = redisCaching.SearchKeysAsync("user")
             };
         }
     }
