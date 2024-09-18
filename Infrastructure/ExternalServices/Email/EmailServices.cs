@@ -6,7 +6,7 @@ using MimeKit;
 
 namespace Infrastructure.ExternalServices.Email
 {
-    
+
     public class EmailServices : IEmailService
     {
         private readonly EmailSetting _emailSetting;

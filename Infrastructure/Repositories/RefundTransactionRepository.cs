@@ -9,7 +9,7 @@ namespace Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
 
-        public RefundTransactionRepository(ApplicationDbContext context) : base(context) 
+        public RefundTransactionRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }

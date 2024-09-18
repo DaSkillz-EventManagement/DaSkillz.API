@@ -111,6 +111,33 @@ namespace Infrastructure.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Feedback", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserID");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("EventID");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "EventId")
+                        .HasName("PK__Feedback__001C802BACDA8C5B");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Feedback", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Logo", b =>
                 {
                     b.Property<int>("LogoId")
@@ -170,6 +197,43 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RoleEventId");
 
                     b.ToTable("Participant", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.Property<int>("PriceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriceId"));
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PriceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long?>("UpdatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("amount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("note")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("PriceId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.ToTable("Price", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -476,6 +540,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("CreatedByNavigation");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Feedback", b =>
+                {
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("EventId")
+                        .IsRequired()
+                        .HasConstraintName("FK__Feedback__EventI__4E88ABD4");
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("UserId")
+                        .IsRequired()
+                        .HasConstraintName("FK__Feedback__UserID__4D94879B");
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Participant", b =>
                 {
                     b.HasOne("Domain.Entities.Event", "Event")
@@ -497,6 +580,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("RoleEvent");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatedByNavigation")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByNavigation");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -601,6 +695,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
+                    b.Navigation("Feedbacks");
+
                     b.Navigation("Participants");
 
                     b.Navigation("Transactions");
@@ -624,6 +720,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("Events");
+
+                    b.Navigation("Feedbacks");
 
                     b.Navigation("Participants");
 
