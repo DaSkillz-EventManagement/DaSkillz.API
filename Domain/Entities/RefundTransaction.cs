@@ -2,6 +2,7 @@
 {
     public class RefundTransaction
     {
+        public long Id { get; set; }
         public long refundId { get; set; }
         public int returnCode { get; set; }
         public string? returnMessage { get; set; }

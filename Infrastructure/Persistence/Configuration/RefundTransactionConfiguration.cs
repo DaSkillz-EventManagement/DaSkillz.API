@@ -10,7 +10,11 @@ namespace Infrastructure.Persistence.Configuration
         {
             entity.ToTable("RefundTransactions");
 
-            entity.HasKey(r => r.refundId);
+            entity.HasKey(r => r.Id);
+
+            entity.Property(t => t.refundId)
+                .HasMaxLength(100)
+                .IsRequired();
 
             entity.Property(r => r.refundAmount)
                 .IsRequired();

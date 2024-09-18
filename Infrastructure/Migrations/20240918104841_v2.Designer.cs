@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240917022726_refund")]
-    partial class refund
+    [Migration("20240918104841_v2")]
+    partial class v2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -208,11 +208,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
                 {
-                    b.Property<long>("refundId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("refundId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Apptransid")
                         .HasMaxLength(100)
@@ -224,6 +224,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("refundAt")
                         .HasColumnType("datetime");
 
+                    b.Property<long>("refundId")
+                        .HasMaxLength(100)
+                        .HasColumnType("bigint");
+
                     b.Property<int>("returnCode")
                         .HasColumnType("int");
 
@@ -232,7 +236,7 @@ namespace Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(300)");
 
-                    b.HasKey("refundId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Apptransid")
                         .IsUnique()
