@@ -12,19 +12,22 @@ using Domain.Entities;
 using Application.ResponseMessage;
 using System.Net;
 using Domain.DTOs.PriceDto;
+using Elastic.Clients.Elasticsearch.Security;
 
 namespace Application.UseCases.Prices.Commands.Update;
 
 public class UpdatePriceHandler : IRequestHandler<UpdatePriceCommand, APIResponse>
 {
     private readonly IPriceRepository _pricerepo;
+    private readonly IUserRepository _userRepo;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    public UpdatePriceHandler(IPriceRepository pricerepo, IUnitOfWork unitOfWork, IMapper mapper)
+    public UpdatePriceHandler(IPriceRepository pricerepo, IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepo)
     {
         _pricerepo = pricerepo;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _userRepo = userRepo;
     }
     public async Task<APIResponse> Handle(UpdatePriceCommand request, CancellationToken cancellationToken)
     {
@@ -42,13 +45,25 @@ public class UpdatePriceHandler : IRequestHandler<UpdatePriceCommand, APIRespons
         entity.note = request.PriceDto.note!;
         entity.PriceType = request.PriceDto.PriceType.ToString();
         entity.UpdatedAt = DateTime.Now;
-        if(await _unitOfWork.SaveChangesAsync() > 0)
+        ResponsePriceDto response = new ResponsePriceDto();
+        response.PriceId = entity.PriceId;
+        response.PriceType = entity.PriceType;
+        response.note = entity.note;
+        response.amount = entity.amount;
+        response.UpdatedAt = entity.UpdatedAt;
+        response.CreatedAt = entity.CreatedAt;
+        var user = await _userRepo.GetById(entity.CreatedBy);
+        response.CreatedBy.email = user!.Email!;
+        response.CreatedBy.Name = user.FullName;
+        response.CreatedBy.avatar = user.Avatar; 
+        response.CreatedBy.Id = user.UserId;
+        if (await _unitOfWork.SaveChangesAsync() > 0)
         {
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
                 Message = MessageCommon.UpdateSuccesfully,
-                Data = _mapper.Map<ResponsePriceDto>(entity)
+                Data = response
             };
         }
         return new APIResponse

@@ -17,5 +17,5 @@ public class ResponsePriceDto
     public string note { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public CreatedByUserDto CreatedBy { get; set; }
+    public CreatedByUserDto? CreatedBy { get; set; } = new CreatedByUserDto();
 }

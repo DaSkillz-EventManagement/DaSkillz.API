@@ -18,10 +18,12 @@ public class GetAllPriceHandler : IRequestHandler<GetAllPriceQuery, APIResponse>
 {
     private readonly IPriceRepository _pricerepo;
     private readonly IMapper _mapper;
-    public GetAllPriceHandler(IPriceRepository pricerepo, IMapper mapper)
+    private readonly IUserRepository _userRepo;
+    public GetAllPriceHandler(IPriceRepository pricerepo, IMapper mapper, IUserRepository userRepo)
     {
         _pricerepo = pricerepo;
         _mapper = mapper;
+        _userRepo = userRepo;
     }
     public async Task<APIResponse> Handle(GetAllPriceQuery request, CancellationToken cancellationToken)
     {
@@ -35,11 +37,28 @@ public class GetAllPriceHandler : IRequestHandler<GetAllPriceQuery, APIResponse>
                 Data = null
             };
         }
+        List<ResponsePriceDto> responses = new List<ResponsePriceDto>();
+        foreach(var item in result)
+        {
+            ResponsePriceDto response = new ResponsePriceDto();
+            response.PriceId = item.PriceId;
+            response.PriceType = item.PriceType;
+            response.note = item.note;
+            response.amount = item.amount;
+            response.UpdatedAt = item.UpdatedAt;
+            response.CreatedAt = item.CreatedAt;
+            var user = await _userRepo.GetById(item.CreatedBy);
+            response.CreatedBy.email = user!.Email!;
+            response.CreatedBy.Name = user.FullName;
+            response.CreatedBy.avatar = user.Avatar;
+            response.CreatedBy.Id = user.UserId;
+            responses.Add(response);
+        }
         return new APIResponse
         {
             StatusResponse = HttpStatusCode.OK,
             Message = MessageCommon.Complete,
-            Data = _mapper.Map<List<ResponsePriceDto>>(result)
+            Data = responses
         };
     }
 }
