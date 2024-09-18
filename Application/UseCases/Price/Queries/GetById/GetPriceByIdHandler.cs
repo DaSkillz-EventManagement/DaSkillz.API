@@ -1,6 +1,7 @@
 ﻿using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.PriceDto;
+using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
@@ -17,10 +18,12 @@ public class GetPriceByIdHandler : IRequestHandler<GetPriceByIdQuery, APIRespons
 {
     private readonly IPriceRepository _pricerepo;
     private readonly IMapper _mapper;
-    public GetPriceByIdHandler(IPriceRepository pricerepo, IMapper mapper)
+    private readonly IUserRepository _userRepo;
+    public GetPriceByIdHandler(IPriceRepository pricerepo, IMapper mapper, IUserRepository userRepo)
     {
         _pricerepo = pricerepo;
         _mapper = mapper;
+        _userRepo = userRepo;
     }
     public async Task<APIResponse> Handle(GetPriceByIdQuery request, CancellationToken cancellationToken)
     {
@@ -34,11 +37,23 @@ public class GetPriceByIdHandler : IRequestHandler<GetPriceByIdQuery, APIRespons
                 Data = null
             };
         }
+        ResponsePriceDto response = new ResponsePriceDto();
+        response.PriceId = result.PriceId;
+        response.PriceType = result.PriceType;
+        response.note = result.note;
+        response.amount = result.amount;
+        response.UpdatedAt = result.UpdatedAt;
+        response.CreatedAt = result.CreatedAt;
+        var user = await _userRepo.GetById(result.CreatedBy);
+        response.CreatedBy.email = user!.Email!;
+        response.CreatedBy.Name = user.FullName;
+        response.CreatedBy.avatar = user.Avatar;
+        response.CreatedBy.Id = user.UserId;
         return new APIResponse
         {
             StatusResponse = HttpStatusCode.OK,
             Message = MessageCommon.Complete,
-            Data = _mapper.Map<ResponsePriceDto>(result)
+            Data = response
         };
     }
 }
