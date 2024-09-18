@@ -132,9 +132,8 @@ namespace Infrastructure.Migrations
                     PriceType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     amount = table.Column<double>(type: "float", nullable: false),
                     note = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
-                    status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<long>(type: "bigint", nullable: false),
+                    UpdatedAt = table.Column<long>(type: "bigint", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -334,9 +333,8 @@ namespace Infrastructure.Migrations
                 name: "RefundTransactions",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    refundId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    refundId = table.Column<long>(type: "bigint", maxLength: 100, nullable: false),
                     returnCode = table.Column<int>(type: "int", nullable: false),
                     returnMessage = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     refundAmount = table.Column<long>(type: "bigint", nullable: false),
@@ -345,7 +343,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefundTransactions", x => x.Id);
+                    table.PrimaryKey("PK_RefundTransactions", x => x.refundId);
                     table.ForeignKey(
                         name: "FK_RefundTransaction_Transaction",
                         column: x => x.Apptransid,
