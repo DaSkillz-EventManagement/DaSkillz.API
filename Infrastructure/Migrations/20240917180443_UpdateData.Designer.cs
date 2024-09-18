@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240916003459_Test")]
-    partial class Test
+    [Migration("20240917180443_UpdateData")]
+    partial class UpdateData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,6 +202,43 @@ namespace Infrastructure.Migrations
                     b.ToTable("Participant", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.Property<int>("PriceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriceId"));
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PriceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long?>("UpdatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("amount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("note")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("PriceId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.ToTable("Price", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("RefreshTokenId")
@@ -231,6 +268,41 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshToken", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
+                {
+                    b.Property<long>("refundId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("refundId"));
+
+                    b.Property<string>("Apptransid")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<long>("refundAmount")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("refundAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("returnCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("returnMessage")
+                        .HasMaxLength(300)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.HasKey("refundId");
+
+                    b.HasIndex("Apptransid")
+                        .IsUnique()
+                        .HasFilter("[Apptransid] IS NOT NULL");
+
+                    b.ToTable("RefundTransactions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -329,6 +401,49 @@ namespace Infrastructure.Migrations
                     b.HasKey("TagId");
 
                     b.ToTable("Tag", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Property<string>("Apptransid")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Amount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Timestamp")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Zptransid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Apptransid");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -466,6 +581,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatedByNavigation")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByNavigation");
+                });
+
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -474,6 +600,17 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("FK__RefreshTo__UserI__5535A963");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
+                {
+                    b.HasOne("Domain.Entities.Transaction", "Transaction")
+                        .WithOne("RefundTransaction")
+                        .HasForeignKey("Domain.Entities.RefundTransaction", "Apptransid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_RefundTransaction_Transaction");
+
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.SponsorEvent", b =>
@@ -491,6 +628,23 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__SponsorEv__UserI__60A75C0F");
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany("Transactions")
+                        .HasForeignKey("EventId")
+                        .HasConstraintName("FK_Transaction_Event");
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_Transaction_User");
 
                     b.Navigation("Event");
 
@@ -543,6 +697,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Participants");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -555,6 +711,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Participants");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Navigation("RefundTransaction");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("Events");
@@ -564,6 +725,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

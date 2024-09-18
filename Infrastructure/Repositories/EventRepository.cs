@@ -1,7 +1,6 @@
 ﻿using Application.Helper;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.ResponseDto;
-using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Pagination;

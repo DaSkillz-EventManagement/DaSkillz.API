@@ -124,6 +124,30 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Price",
+                columns: table => new
+                {
+                    PriceId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PriceType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    amount = table.Column<double>(type: "float", nullable: false),
+                    note = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    CreatedAt = table.Column<long>(type: "bigint", nullable: false),
+                    UpdatedAt = table.Column<long>(type: "bigint", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Price", x => x.PriceId);
+                    table.ForeignKey(
+                        name: "FK_Price_User_CreatedBy",
+                        column: x => x.CreatedBy,
+                        principalTable: "User",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RefreshToken",
                 columns: table => new
                 {
@@ -189,6 +213,31 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Feedback",
+                columns: table => new
+                {
+                    UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    Rating = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__Feedback__001C802BACDA8C5B", x => new { x.UserID, x.EventID });
+                    table.ForeignKey(
+                        name: "FK__Feedback__EventI__4E88ABD4",
+                        column: x => x.EventID,
+                        principalTable: "Events",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK__Feedback__UserID__4D94879B",
+                        column: x => x.UserID,
+                        principalTable: "User",
+                        principalColumn: "UserID");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Participant",
                 columns: table => new
                 {
@@ -251,6 +300,58 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    Apptransid = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Zptransid = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Amount = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Timestamp = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.Apptransid);
+                    table.ForeignKey(
+                        name: "FK_Transaction_Event",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Transaction_User",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefundTransactions",
+                columns: table => new
+                {
+                    refundId = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    returnCode = table.Column<int>(type: "int", nullable: false),
+                    returnMessage = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    refundAmount = table.Column<long>(type: "bigint", nullable: false),
+                    refundAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Apptransid = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefundTransactions", x => x.refundId);
+                    table.ForeignKey(
+                        name: "FK_RefundTransaction_Transaction",
+                        column: x => x.Apptransid,
+                        principalTable: "Transactions",
+                        principalColumn: "Apptransid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_EventLogo_EventID",
                 table: "EventLogo",
@@ -267,6 +368,11 @@ namespace Infrastructure.Migrations
                 column: "EventID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Feedback_EventID",
+                table: "Feedback",
+                column: "EventID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Participant_EventID",
                 table: "Participant",
                 column: "EventID");
@@ -277,14 +383,36 @@ namespace Infrastructure.Migrations
                 column: "RoleEventID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Price_CreatedBy",
+                table: "Price",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_UserID",
                 table: "RefreshToken",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefundTransactions_Apptransid",
+                table: "RefundTransactions",
+                column: "Apptransid",
+                unique: true,
+                filter: "[Apptransid] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SponsorEvent_UserID",
                 table: "SponsorEvent",
                 column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_EventId",
+                table: "Transactions",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_UserId",
+                table: "Transactions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_RoleID",
@@ -302,10 +430,19 @@ namespace Infrastructure.Migrations
                 name: "EventTag");
 
             migrationBuilder.DropTable(
+                name: "Feedback");
+
+            migrationBuilder.DropTable(
                 name: "Participant");
 
             migrationBuilder.DropTable(
+                name: "Price");
+
+            migrationBuilder.DropTable(
                 name: "RefreshToken");
+
+            migrationBuilder.DropTable(
+                name: "RefundTransactions");
 
             migrationBuilder.DropTable(
                 name: "SponsorEvent");
@@ -318,6 +455,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleEvent");
+
+            migrationBuilder.DropTable(
+                name: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "Events");

@@ -57,8 +57,8 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
                 options.UseSqlServer(
-                    //configuration.GetConnectionString("local"),
-                    configuration.GetConnectionString("production"),
+                    configuration.GetConnectionString("local"),
+                    //configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
@@ -118,7 +118,7 @@ namespace Infrastructure
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
-
+            services.AddScoped<IPriceRepository, PriceRepository>();
 
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();

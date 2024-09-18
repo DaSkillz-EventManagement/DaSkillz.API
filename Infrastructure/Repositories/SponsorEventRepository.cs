@@ -1,10 +1,8 @@
-﻿using Application.UseCases.Sponsor.Queries;
-using Domain.DTOs.Sponsors;
+﻿using Domain.DTOs.Sponsors;
 using Domain.Entities;
 using Domain.Enum.Sponsor;
 using Domain.Models.Pagination;
 using Domain.Repositories;
-using Event_Management.Domain.Enum.Sponsor;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;

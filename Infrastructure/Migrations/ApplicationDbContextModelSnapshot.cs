@@ -199,6 +199,43 @@ namespace Infrastructure.Migrations
                     b.ToTable("Participant", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.Property<int>("PriceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriceId"));
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PriceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long?>("UpdatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("amount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("note")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("PriceId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.ToTable("Price", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("RefreshTokenId")
@@ -539,6 +576,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("RoleEvent");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatedByNavigation")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByNavigation");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
