@@ -1,5 +1,6 @@
 ﻿using Application.ExternalServices.Quartz;
 using Application.Helper;
+using Infrastructure.ExternalServices.Quartz.PaymentScheduler;
 using Quartz;
 using Quartz.Impl.Matchers;
 
@@ -140,5 +141,26 @@ namespace Infrastructure.ExternalServices.Quartz
             Console.WriteLine($"ScheduleJob: Event status changed to Ongoing with id {jobKey}");
             //await scheduler.TriggerJob(jobKey);
         }
+
+
+
+        public async Task StartCheckTransactionStatusJob()
+        {
+            IScheduler scheduler = await _schedulerFactory.GetScheduler();
+
+            var jobKey = new JobKey("CheckTransactionStatusJob");
+
+            IJobDetail job = JobBuilder.Create<CheckTransactionStatusJob>()
+                .WithIdentity(jobKey)
+                .Build();
+
+            var newTrigger = TriggerBuilder.Create()
+                .ForJob(jobKey)
+                .WithSchedule(CronScheduleBuilder.CronSchedule("0 */2 * * * ?"))
+                .Build();
+
+            await scheduler.ScheduleJob(job, newTrigger);
+        }
+
     }
 }

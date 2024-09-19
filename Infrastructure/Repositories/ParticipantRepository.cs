@@ -1,20 +1,13 @@
 ﻿using Domain.DTOs.ParticipantDto;
 using Domain.Entities;
-using Domain.Enum.Events;
 using Domain.Enum.Participant;
 using Domain.Models.Pagination;
 using Domain.Repositories;
-using Event_Management.Domain.Enum;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories;
 

@@ -2,6 +2,7 @@
 using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -13,5 +14,11 @@ namespace Infrastructure.Repositories
         {
             _context = context;
         }
+
+        public async Task<Transaction?> getTransactionByUserIdAsync(Guid guid)
+        {
+            return await _context.Transactions.FirstOrDefaultAsync(x => x.UserId.Equals(guid));
+        }
+
     }
 }

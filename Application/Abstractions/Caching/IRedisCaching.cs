@@ -1,4 +1,6 @@
-﻿namespace Application.Abstractions.Caching
+﻿using StackExchange.Redis;
+
+namespace Application.Abstractions.Caching
 {
     public interface IRedisCaching
     {
@@ -28,5 +30,13 @@
         Task RemoveAsync(string key);
 
         Task InvalidateCacheByPattern(string pattern);
+        List<string> SearchKeysAsync(string keyword);
+
+        Task FlushByRelatedKey(string keyword);
+
+        Task HashSetAsync(string key, HashEntry[] hashEntries, int TimeToLive);
+        Task<string?> HashGetSpecificKeyAsync(string key, string field);
+
+        Task<bool> DeleteKeyAsync(string key);
     }
 }

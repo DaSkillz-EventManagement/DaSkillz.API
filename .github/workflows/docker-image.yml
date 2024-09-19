@@ -1,0 +1,37 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main/BE" ]
+  pull_request:
+    branches: [ "main/BE" ]
+
+jobs:
+
+  build:
+    if: github.ref == 'refs/heads/main/BE'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Set Docker Hub username in GitHub Secrets
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}  # Set Docker Hub password in GitHub Secrets
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64  
+          push: true                           
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/daskillz:latest
+
+      - name: Logout from Docker Hub
+        run: docker logout

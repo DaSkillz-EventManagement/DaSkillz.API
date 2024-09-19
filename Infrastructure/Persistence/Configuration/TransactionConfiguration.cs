@@ -13,14 +13,14 @@
             entity.HasKey(t => t.Apptransid);
 
             entity.Property(t => t.Apptransid)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsRequired();
 
             entity.Property(t => t.Zptransid)
-                .IsRequired(false); 
+                .IsRequired(false);
 
             entity.Property(t => t.Amount)
-                .IsRequired(); 
+                .IsRequired();
 
             entity.Property(t => t.Description)
                 .HasMaxLength(500)
@@ -31,11 +31,17 @@
                 .IsRequired();
 
             entity.Property(t => t.Status)
-                .IsRequired(); 
+                .IsRequired();
 
             entity.Property(t => t.CreatedAt)
                 .HasColumnType("datetime")
                 .IsRequired();
+
+            entity.HasOne(t => t.RefundTransaction)
+                .WithOne(r => r.Transaction)
+                .HasForeignKey<RefundTransaction>(r => r.Apptransid)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_RefundTransaction_Transaction");
 
             entity.HasOne(t => t.Event)
                 .WithMany(e => e.Transactions)

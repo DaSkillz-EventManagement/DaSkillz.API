@@ -59,7 +59,7 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
             param.Add("app_trans_id", app_trans_id);
             param.Add("embed_data", JsonConvert.SerializeObject(embed_data));
             param.Add("item", JsonConvert.SerializeObject(items));
-            param.Add("callback_url", "");
+            param.Add("callback_url", _zaloPaySettings.CallbackUrl!);
             param.Add("description", description + app_trans_id);
             param.Add("bank_code", "");
 
@@ -73,8 +73,16 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
 
         public bool ValidateMac(string dataStr, string reqMac)
         {
-            var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySettings.Key2, dataStr);
-            return reqMac.Equals(mac);
+            try
+            {
+
+                var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySettings.Key2, dataStr);
+                return reqMac.Equals(mac);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public Dictionary<string, object> DeserializeData(string dataStr)
@@ -96,75 +104,26 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
             return await HttpHelper.PostFormAsync("https://sb-openapi.zalopay.vn/v2/query", param);
         }
 
-        //public IActionResult CallBack([FromBody] dynamic cbdata)
-        //{
-        //    var result = new Dictionary<string, object>();
+        public async Task<Dictionary<string, object>> Refund(string zpTransId, string amount, string description)
+        {
+            var timestamp = Utils.GetTimeStamp().ToString();
+            var rand = new Random();
+            var uid = timestamp + "" + rand.Next(111, 999).ToString();
 
-        //    try
-        //    {
-        //        var dataStr = Convert.ToString(cbdata["data"]);
-        //        var reqMac = Convert.ToString(cbdata["mac"]);
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            param.Add("app_id", _zaloPaySettings.Appid!);
+            param.Add("m_refund_id", DateTime.Now.ToString("yyMMdd") + "_" + _zaloPaySettings.Appid! + "_" + uid);
+            param.Add("zp_trans_id", zpTransId);
+            param.Add("amount", amount);
+            param.Add("timestamp", timestamp);
+            param.Add("description", description);
 
-        //        var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, key2, dataStr);
+            var data = _zaloPaySettings.Appid! + "|" + param["zp_trans_id"] + "|" + param["amount"] + "|" + param["description"] + "|" + param["timestamp"];
+            param.Add("mac", HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySettings.Key1!, data));
 
-        //        Console.WriteLine("mac = {0}", mac);
-
-        //        // kiểm tra callback hợp lệ (đến từ ZaloPay server)
-        //        if (!reqMac.Equals(mac))
-        //        {
-        //            // callback không hợp lệ
-        //            result["return_code"] = -1;
-        //            result["return_message"] = "mac not equal";
-        //        }
-        //        else
-        //        {
-        //            var dataJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(dataStr);
-        //            Console.WriteLine("update order's status = success where app_trans_id = {0}", dataJson["app_trans_id"]);
-
-        //            result["return_code"] = 1;
-        //            result["return_message"] = "success";
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result["return_code"] = 0; // ZaloPay server sẽ callback lại (tối đa 3 lần)
-        //        result["return_message"] = ex.Message;
-        //    }
-
-        //    // thông báo kết quả cho ZaloPay server
-        //    return Ok(result);
-        //}
-
-
-        //truy vấn trạng thái đơn hàng
-        private readonly string queryOrderUrl = "https://sb-openapi.zalopay.vn/v2/query";
-
-        //[HttpGet("query-order")]
-        //public async Task<IActionResult> QueryOrder()
-        //{
-
-        //    try
-        //    {
-        //        var param = new Dictionary<string, string>
-        //        {
-        //            { "app_id", "2553" },
-        //            { "app_trans_id", "240910_153047" }
-        //        };
-
-        //        var data = $"{"2553"}|{"240910_153047"}|{"PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL"}";
-        //        param.Add("mac", HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL", data));
-
-        //        var result = await HttpHelper.PostFormAsync(queryOrderUrl, param);
-
-        //        // Trả về kết quả truy vấn trạng thái đơn hàng
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Xử lý ngoại lệ và trả về lỗi
-        //        return StatusCode(500, new { message = ex.Message });
-        //    }
-        //}
+            var result = await HttpHelper.PostFormAsync(_zaloPaySettings.RefundUrl!, param);
+            return result;
+        }
 
     }
 }

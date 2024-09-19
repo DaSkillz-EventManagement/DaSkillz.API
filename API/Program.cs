@@ -1,11 +1,15 @@
 using API.Configuration;
 using API.Middleware;
 using Application;
+using Application.Helper;
+using Domain.Enum.Price;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.ExternalServices.ElasticSearch.Setting;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,7 +60,7 @@ app.UseCors(app => app
             .AllowAnyHeader());
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.ConfigureSwaggerUI();

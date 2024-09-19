@@ -9,6 +9,7 @@ using Application.ExternalServices.BackgroundTák;
 using Application.ExternalServices.Images;
 using Application.ExternalServices.Mail;
 using Application.ExternalServices.Quartz;
+using Application.Helper;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using Elastic.Clients.Elasticsearch;
@@ -28,6 +29,7 @@ using Infrastructure.ExternalServices.Oauth2;
 using Infrastructure.ExternalServices.Payment.ZaloPay;
 using Infrastructure.ExternalServices.Payment.ZaloPay.Setting;
 using Infrastructure.ExternalServices.Quartz;
+using Infrastructure.ExternalServices.Quartz.PaymentScheduler;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +38,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
+using StackExchange.Redis;
 using System.Text;
 
 namespace Infrastructure
@@ -58,6 +61,7 @@ namespace Infrastructure
             {
                 options.UseSqlServer(
                     configuration.GetConnectionString("local"),
+                    //configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
@@ -67,9 +71,14 @@ namespace Infrastructure
             });
 
             //Add redis
+            var redisConnection = configuration["Redis:HostName"];
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                return ConnectionMultiplexer.Connect(redisConnection);
+            });
+
             services.AddStackExchangeRedisCache(options =>
             {
-                var redisConnection = configuration["Redis:HostName"];
                 //var redisPassword = configuration["Redis:Password"];
                 //options.Configuration = $"{redisConnection},password={redisPassword}";
                 options.Configuration = redisConnection;
@@ -117,10 +126,13 @@ namespace Infrastructure
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
+            services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
+            services.AddScoped<IPriceRepository, PriceRepository>();
 
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
             services.AddScoped<IParticipantRepository, ParticipantRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IAvatarApiClient, AvatarApiClient>();
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();
@@ -130,8 +142,16 @@ namespace Infrastructure
             services.AddScoped<IQuartzService, QuartzService>();
             services.AddScoped<ISendMailTask, SendMailTask>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-            services.AddQuartz();
-
+            services.AddQuartz(q => {
+                // Cấu hình CheckTransactionStatusJob
+                var checkJobKey = new JobKey("CheckTransactionStatusJob");
+                q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
+                q.AddTrigger(opts => opts
+                    .ForJob(checkJobKey)
+                    .WithIdentity("CheckTransactionStatusTrigger")
+                    .WithSchedule(CronScheduleBuilder.CronSchedule(DateTimeHelper.GetCronExpression(DateTime.UtcNow.AddMinutes(1)))));
+            });
+            services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
             return services;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Payment.ZaloPay;
+﻿using Application.Abstractions.Caching;
+using Application.Abstractions.Payment.ZaloPay;
 using Application.Helper.ZaloPayHelper.Crypto;
 using Domain.Enum.Payment;
 using Domain.Models.Response;
@@ -19,12 +20,13 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
         private readonly IZaloPayService _zaloPayService;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IUnitOfWork _unitOfWork;
-
-        public GetOrderQueryQueryHandler(IZaloPayService zaloPayService, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork)
+        private readonly IRedisCaching _caching;
+        public GetOrderQueryQueryHandler(IZaloPayService zaloPayService, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IRedisCaching caching)
         {
             _zaloPayService = zaloPayService;
             _transactionRepository = transactionRepository;
             _unitOfWork = unitOfWork;
+            _caching = caching;
         }
 
         public async Task<APIResponse> Handle(GetOrderStatusQuery request, CancellationToken cancellationToken)
@@ -38,8 +40,10 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                 {
                     exist.Status = (int)TransactionStatus.SUCCESS;
                 }
+                await _transactionRepository.Update(exist);
                 await _unitOfWork.SaveChangesAsync();
-                
+
+                await _caching.RemoveAsync($"payment_{request.appTransId}");
             }
             return new APIResponse
             {

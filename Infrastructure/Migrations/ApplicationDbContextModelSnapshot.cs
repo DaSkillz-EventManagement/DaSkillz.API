@@ -137,6 +137,33 @@ namespace Infrastructure.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Feedback", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserID");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("EventID");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "EventId")
+                        .HasName("PK__Feedback__001C802BACDA8C5B");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Feedback", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Logo", b =>
                 {
                     b.Property<int>("LogoId")
@@ -198,6 +225,43 @@ namespace Infrastructure.Migrations
                     b.ToTable("Participant", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.Property<int>("PriceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriceId"));
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PriceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long?>("UpdatedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("amount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("note")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("PriceId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.ToTable("Price", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("RefreshTokenId")
@@ -227,6 +291,45 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshToken", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Apptransid")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<long>("refundAmount")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("refundAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<long>("refundId")
+                        .HasMaxLength(100)
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("returnCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("returnMessage")
+                        .HasMaxLength(300)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Apptransid")
+                        .IsUnique()
+                        .HasFilter("[Apptransid] IS NOT NULL");
+
+                    b.ToTable("RefundTransactions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -330,8 +433,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
                 {
                     b.Property<string>("Apptransid")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Amount")
                         .IsRequired()
@@ -469,6 +572,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("CreatedByNavigation");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Feedback", b =>
+                {
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("EventId")
+                        .IsRequired()
+                        .HasConstraintName("FK__Feedback__EventI__4E88ABD4");
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("UserId")
+                        .IsRequired()
+                        .HasConstraintName("FK__Feedback__UserID__4D94879B");
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Participant", b =>
                 {
                     b.HasOne("Domain.Entities.Event", "Event")
@@ -492,6 +614,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Price", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatedByNavigation")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByNavigation");
+                });
+
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -500,6 +633,17 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("FK__RefreshTo__UserI__5535A963");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RefundTransaction", b =>
+                {
+                    b.HasOne("Domain.Entities.Transaction", "Transaction")
+                        .WithOne("RefundTransaction")
+                        .HasForeignKey("Domain.Entities.RefundTransaction", "Apptransid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_RefundTransaction_Transaction");
+
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.SponsorEvent", b =>
@@ -588,6 +732,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
+                    b.Navigation("Feedbacks");
+
                     b.Navigation("Participants");
 
                     b.Navigation("Transactions");
@@ -603,9 +749,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Participants");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Navigation("RefundTransaction");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("Events");
+
+                    b.Navigation("Feedbacks");
 
                     b.Navigation("Participants");
 

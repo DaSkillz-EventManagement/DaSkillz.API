@@ -12,5 +12,11 @@ namespace Application.UseCases.Payment.Commands.Callback
     {
         public string? data { get; set; }
         public string? mac { get; set; }
+
+        public CallbackCommand(string? data, string? mac)
+        {
+            this.data = data;
+            this.mac = mac;
+        }
     }
 }
