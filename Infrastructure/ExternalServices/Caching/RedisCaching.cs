@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Caching;
+using Infrastructure.ExternalServices.Caching.Setting;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using StackExchange.Redis;
