@@ -21,8 +21,10 @@ namespace Infrastructure.Persistence
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
+        public virtual DbSet<Coupon> Coupons { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<RefundTransaction> RefundTransaction { get; set; }
+        public virtual DbSet<AdvertisedEvent> AdvertisedEvents { get; set; } = null!;
         public virtual DbSet<SponsorEvent> SponsorEvents { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

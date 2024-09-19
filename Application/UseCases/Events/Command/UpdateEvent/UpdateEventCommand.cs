@@ -10,9 +10,11 @@ namespace Application.UseCases.Events.Command.UpdateEvent
         public Guid UserId { get; set; }
         public Guid EventId { get; set; }
 
-        public UpdateEventCommand(EventRequestDto eventRequestDto, Guid eventId)
+
+        public UpdateEventCommand(EventRequestDto eventRequestDto, Guid userId, Guid eventId)
         {
             EventRequestDto = eventRequestDto;
+            UserId = userId;
             EventId = eventId;
         }
     }
