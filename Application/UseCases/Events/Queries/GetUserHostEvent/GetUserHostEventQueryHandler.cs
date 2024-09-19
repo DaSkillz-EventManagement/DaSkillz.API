@@ -1,8 +1,10 @@
 ﻿using Application.Abstractions.Caching;
+using Application.Helper;
 using Application.UseCases.Events.Queries.GetTopLocationByEventCount;
 using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.ResponseDto;
+using Domain.Entities;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using MediatR;
@@ -37,9 +39,24 @@ namespace Application.UseCases.Events.Queries.GetUserHostEvent
             }
 
             var result = await _eventRepo.GetUserHostEvent(request.UserId);
-            var eventPreview = _mapper.Map<List<EventPreviewDto>>(result);
+            var eventPreview = await Task.WhenAll(result.Select(ToEventPreview));
+
             await _redisCaching.SetAsync(cacheKey, eventPreview, 10);
-            return eventPreview;
+            return eventPreview.ToList();
+        }
+
+        private async Task<EventPreviewDto> ToEventPreview(Event entity)
+        {
+
+            EventPreviewDto response = new EventPreviewDto();
+            response.EventId = entity.Id;
+            response.EventName = entity.EventName;
+            response.Location = entity.Location;
+            response.Status = entity.Status;
+            response.Image = entity.Image;
+            response.StartDate = entity.StartDate;
+            response.Host = await _eventRepo.GetHostInfo((Guid)entity.CreatedBy!);
+            return response;
         }
     }
 }

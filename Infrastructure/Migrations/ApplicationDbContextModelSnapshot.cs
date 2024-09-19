@@ -25,9 +25,33 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.Advertisement", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("EndDate")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("StartDate")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EventId");
+
+                    b.ToTable("Advertisements");
+                });
+
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
                     b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AdvertisementsEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Approval")
@@ -105,6 +129,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AdvertisementsEventId");
 
                     b.HasIndex("CreatedByNavigationUserId");
 
@@ -240,6 +266,47 @@ namespace Infrastructure.Migrations
                     b.HasKey("RoleEventId");
 
                     b.ToTable("RoleEvent", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.SponsorEvent", b =>
+                {
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("EventID");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserID");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(19, 2)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool?>("IsSponsored")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SponsorType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("EventId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SponsorEvent", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Tag", b =>
@@ -389,9 +456,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
+                    b.HasOne("Domain.Entities.Advertisement", "Advertisements")
+                        .WithMany("Events")
+                        .HasForeignKey("AdvertisementsEventId");
+
                     b.HasOne("Domain.Entities.User", "CreatedByNavigation")
                         .WithMany("Events")
                         .HasForeignKey("CreatedByNavigationUserId");
+
+                    b.Navigation("Advertisements");
 
                     b.Navigation("CreatedByNavigation");
                 });
@@ -425,6 +498,27 @@ namespace Infrastructure.Migrations
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK__RefreshTo__UserI__5535A963");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SponsorEvent", b =>
+                {
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__SponsorEv__Event__5FB337D6");
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__SponsorEv__UserI__60A75C0F");
+
+                    b.Navigation("Event");
 
                     b.Navigation("User");
                 });
@@ -485,6 +579,11 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("TagId")
                         .IsRequired()
                         .HasConstraintName("FK__EventTag__TagID__440B1D61");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Advertisement", b =>
+                {
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("Domain.Entities.Event", b =>

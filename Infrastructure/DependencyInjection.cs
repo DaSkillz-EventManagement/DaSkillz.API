@@ -116,6 +116,7 @@ namespace Infrastructure
             services.AddScoped<ILogoRepository, LogoRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
 
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();

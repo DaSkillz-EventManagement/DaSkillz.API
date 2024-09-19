@@ -9,24 +9,9 @@ namespace Application.Helper
 {
     public static class EventHelper
     {
-        private static IUserRepository _userRepo;
-        private static IRedisCaching _redisCaching;
+       
 
-        public static void Initialize(IUserRepository userRepo, IRedisCaching redisCaching)
-        {
-            _userRepo = userRepo ?? throw new ArgumentNullException(nameof(userRepo));
-            _redisCaching = redisCaching ?? throw new ArgumentNullException(nameof(redisCaching));
-        }
-
-        public static CreatedByUserDto GetHostInfo(Guid userId)
-        {
-            var user = _userRepo.GetUserById(userId);
-            CreatedByUserDto response = new CreatedByUserDto();
-            response.avatar = user!.Avatar;
-            response.Id = user.UserId;
-            response.Name = user.FullName;
-            return response;
-        }
+        
 
         public static string GenerateCacheKeyFilteredEvent(EventFilterObjectDto filter, int pageNo, int eachPage)
         {
@@ -87,22 +72,22 @@ namespace Application.Helper
             return $"Events_by_tags_{tagIds}_page_{request.PageNo}_size_{request.ElementEachPage}";
         }
 
-        public static async Task InvalidateEventCacheAsync()
-        {
-            string getEventByTagPattern = $"Events_by_tags_*";
-            await _redisCaching.InvalidateCacheByPattern(getEventByTagPattern);
+        //public static async Task InvalidateEventCacheAsync()
+        //{
+        //    string getEventByTagPattern = $"Events_by_tags_*";
+        //    await _redisCaching.InvalidateCacheByPattern(getEventByTagPattern);
 
-            string getEventByUserRolePattern = $"GetEventByUserRole_*";
-            await _redisCaching.InvalidateCacheByPattern(getEventByUserRolePattern);
+        //    string getEventByUserRolePattern = $"GetEventByUserRole_*";
+        //    await _redisCaching.InvalidateCacheByPattern(getEventByUserRolePattern);
 
-            string getEventParticipatedByUserPattern = $"GetEventParticipatedByUser_*";
-            await _redisCaching.InvalidateCacheByPattern(getEventParticipatedByUserPattern);
+        //    string getEventParticipatedByUserPattern = $"GetEventParticipatedByUser_*";
+        //    await _redisCaching.InvalidateCacheByPattern(getEventParticipatedByUserPattern);
 
-            string getFilteredEventPattern = $"FilteredEvents_*";
-            await _redisCaching.InvalidateCacheByPattern(getFilteredEventPattern);
+        //    string getFilteredEventPattern = $"FilteredEvents_*";
+        //    await _redisCaching.InvalidateCacheByPattern(getFilteredEventPattern);
 
 
-        }
+        //}
 
         
 

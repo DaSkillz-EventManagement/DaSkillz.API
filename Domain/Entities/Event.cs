@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Event
+    public partial class Event
     {
         public Event()
         {
@@ -40,6 +40,7 @@ namespace Domain.Entities
         public virtual ICollection<Logo> Logos { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }
+        public virtual Advertisement? Advertisements { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
     }

@@ -1,6 +1,7 @@
 ﻿using Application.Helper;
 using Application.UseCases.Events.Command.CreateEvent;
 using AutoMapper;
+using Domain.DTOs;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
 using Domain.DTOs.Events.ResponseDto;
@@ -44,6 +45,7 @@ namespace Application.Configuration
                     .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.eventTags)) // Mapping eventTags to Tags
                     .ReverseMap();
             CreateMap<PagedList<Event>, PagedList<EventResponseDto>>().ReverseMap();
+            CreateMap<List<Event>, List<EventResponseDto>>().ReverseMap();
 
             CreateMap<Event, EventResponseDto>()
             //.ForMember(dest => dest.Host,
@@ -66,12 +68,21 @@ namespace Application.Configuration
 
 
             CreateMap<Event, EventPreviewDto>()
-                .ForMember(dest => dest.Host, opt => opt.MapFrom(src =>
-                    src.CreatedBy != null ? EventHelper.GetHostInfo(src.CreatedBy) : null))
+                //.AfterMap((src, dest) =>
+                //{
+                //    if (src.CreatedBy.HasValue)
+                //    {
+                //        dest.Host = EventHelper.GetHostInfo(src.CreatedBy.Value);
+                //    }
+                //    else
+                //    {
+                //        dest.Host = null;
+                //    }
+                //})
                 .ReverseMap();
 
 
-
+            CreateMap<Advertisement, AdvertisementRequestDto>().ReverseMap();
             CreateMap<EventTagDto, Tag>().ReverseMap();
         }
     }

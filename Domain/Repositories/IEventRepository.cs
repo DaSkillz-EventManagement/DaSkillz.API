@@ -1,5 +1,6 @@
 ﻿using Domain.DTOs.Events;
 using Domain.DTOs.Events.ResponseDto;
+using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Models.Pagination;
@@ -44,5 +45,7 @@ namespace Domain.Repositories
         public Task<PagedList<Event>> GetEventsByListTags(List<int> tagIds, int pageNo, int elementEachPage);
         
         Task<List<Event>> GetUserHostEvent(Guid userId);
+        Task<List<Event>> GetEventsByIdsAsync(List<Guid> eventIds);
+        Task<CreatedByUserDto> GetHostInfo(Guid userId);
     }
 }

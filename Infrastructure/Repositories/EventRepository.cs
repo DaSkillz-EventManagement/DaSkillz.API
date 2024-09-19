@@ -410,5 +410,23 @@ namespace Infrastructure.Repositories
             }
             return result!;
         }
+
+        public async Task<List<Event>> GetEventsByIdsAsync(List<Guid> eventIds)
+        {
+            return await _context.Set<Event>()
+                             .Where(e => eventIds.Contains(e.Id))
+                             .Include(e => e.Advertisements)
+                             .ToListAsync();
+        }
+
+        public async Task<CreatedByUserDto> GetHostInfo(Guid userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);   
+            CreatedByUserDto response = new CreatedByUserDto();
+            response.avatar = user!.Avatar;
+            response.Id = user.UserId;
+            response.Name = user.FullName;
+            return response;
+        }
     }
 }

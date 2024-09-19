@@ -18,7 +18,7 @@ namespace Infrastructure.Repositories
 
         public User? GetUserById(Guid userId)
         {
-            return _context.Users.Find(userId);
+            return _context.Users.FirstOrDefault(u => u.UserId.Equals(userId));
         }
 
         public async Task<IEnumerable<User>> GetUsersByKeywordAsync(string keyword)
