@@ -61,8 +61,9 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 Description = request.Description,
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,
-                //UserId = request.UserId,
+                UserId = request.UserId,
                 //EventId = request.EventId,
+                IsSubscription = request.isSubscription
             };
 
             //save transaction to db and also save in redis if create transaction successfully in zalopay
@@ -75,7 +76,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 var hashEntries = new HashEntry[]
                         {
                             new HashEntry("transactionId",$"{newTrans.Apptransid}"),
-                            new HashEntry("Status", $"{newTrans.Status}")
+                            new HashEntry("timestamp", $"{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}")
                         };
                 await _caching.HashSetAsync(cacheKey, hashEntries, 16);
             }

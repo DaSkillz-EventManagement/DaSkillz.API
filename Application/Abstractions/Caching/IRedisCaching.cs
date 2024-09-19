@@ -29,7 +29,7 @@ namespace Application.Abstractions.Caching
         /// <returns></returns>
         Task RemoveAsync(string key);
 
-        List<string> SearchKeysAsync(string keyword);
+        Task<List<string>> SearchKeysAsync(string keyword);
 
         Task FlushByRelatedKey(string keyword);
 

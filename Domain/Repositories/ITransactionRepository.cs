@@ -5,6 +5,6 @@ namespace Domain.Repositories
 {
     public interface ITransactionRepository : IRepository<Transaction>
     {
-        Task<Transaction?> getTransactionByUserIdAsync(Guid guid);
+        Task<Transaction?> getTransactionByUserIdAsync(Guid? guid);
     }
 }
