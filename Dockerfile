@@ -37,6 +37,6 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Copy the template folder into the container
-COPY /src/API/Template /app/template 
+COPY ./API/Template /app/template 
 
 ENTRYPOINT ["dotnet", "API.dll"]
