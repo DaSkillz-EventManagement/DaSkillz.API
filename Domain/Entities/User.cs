@@ -24,7 +24,7 @@
 
         public virtual Role Role { get; set; } = null!;
         public virtual ICollection<Event> Events { get; set; }
-        //public virtual ICollection<Feedback> Feedbacks { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
         //public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }

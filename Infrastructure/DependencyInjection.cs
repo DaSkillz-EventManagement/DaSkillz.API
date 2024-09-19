@@ -125,12 +125,14 @@ namespace Infrastructure
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
+            services.AddScoped<IPriceRepository, PriceRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
 
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
             services.AddScoped<IParticipantRepository, ParticipantRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IAvatarApiClient, AvatarApiClient>();
             services.AddScoped<IGoogleTokenValidation, GoogleTokenValidation>();
