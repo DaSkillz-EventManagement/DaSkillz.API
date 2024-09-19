@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Events.Queries.GetEventParticipatedByUser;
+﻿using Application.Abstractions.Caching;
+using Application.UseCases.Events.Queries.GetEventParticipatedByUser;
 using Domain.DTOs.Events.ResponseDto;
 using Domain.Models.Pagination;
 using Domain.Repositories;
@@ -14,15 +15,25 @@ namespace Application.UseCases.Events.Queries.GetTopCreatorsByEventCount
     public class GetTopCreatorsByEventQueryHandler : IRequestHandler<GetTopCreatorsByEventQuery, List<EventCreatorLeaderBoardDto>>
     {
         private readonly IEventRepository _eventRepo;
+        private readonly IRedisCaching _redisCaching;
 
-        public GetTopCreatorsByEventQueryHandler(IEventRepository eventRepo)
+        public GetTopCreatorsByEventQueryHandler(IEventRepository eventRepo, IRedisCaching redisCaching)
         {
             _eventRepo = eventRepo;
+            _redisCaching = redisCaching;
         }
 
         public async Task<List<EventCreatorLeaderBoardDto>> Handle(GetTopCreatorsByEventQuery request, CancellationToken cancellationToken)
         {
-            return await _eventRepo.GetTop10CreatorsByEventCount();
+            string cacheKey = $"GetTopCreatorsByEvent";
+            var cachedDataString = await _redisCaching.GetAsync<List<EventCreatorLeaderBoardDto>>(cacheKey);
+            if (cachedDataString != null)
+            {
+                return cachedDataString;
+            }
+            var result = await _eventRepo.GetTop10CreatorsByEventCount();
+            await _redisCaching.SetAsync(cacheKey, result, 10);
+            return result;
         }
     }
 }

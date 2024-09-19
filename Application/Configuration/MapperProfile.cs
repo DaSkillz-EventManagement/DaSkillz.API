@@ -72,8 +72,6 @@ namespace Application.Configuration
 
 
             CreateMap<Event, EventPreviewDto>()
-                .ForMember(dest => dest.Host, opt => opt.MapFrom(src =>
-                    src.CreatedBy != null ? EventHelper.GetHostInfo((Guid)src.CreatedBy) : null))
                 .ReverseMap();
 
 
