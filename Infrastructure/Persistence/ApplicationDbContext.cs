@@ -24,6 +24,7 @@ namespace Infrastructure.Persistence
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<RefundTransaction> RefundTransaction { get; set; }
         public virtual DbSet<SponsorEvent> SponsorEvents { get; set; } = null!;
+        public virtual DbSet<Subscription> Subscription { get; set; } 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

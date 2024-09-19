@@ -9,7 +9,6 @@ using Application.ExternalServices.BackgroundTák;
 using Application.ExternalServices.Images;
 using Application.ExternalServices.Mail;
 using Application.ExternalServices.Quartz;
-using Application.Helper;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using Elastic.Clients.Elasticsearch;
@@ -60,8 +59,8 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
                 options.UseSqlServer(
-                    configuration.GetConnectionString("local"),
-                    //configuration.GetConnectionString("production"),
+                    //configuration.GetConnectionString("local"),
+                    configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
@@ -127,6 +126,8 @@ namespace Infrastructure
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
             services.AddScoped<IPriceRepository, PriceRepository>();
+            services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+
 
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
@@ -141,15 +142,21 @@ namespace Infrastructure
             services.AddScoped<IQuartzService, QuartzService>();
             services.AddScoped<ISendMailTask, SendMailTask>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-            services.AddQuartz(q => {
-                // Cấu hình CheckTransactionStatusJob
+            services.AddQuartz(q =>
+            {
                 var checkJobKey = new JobKey("CheckTransactionStatusJob");
                 q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
+
                 q.AddTrigger(opts => opts
                     .ForJob(checkJobKey)
                     .WithIdentity("CheckTransactionStatusTrigger")
-                    .WithSchedule(CronScheduleBuilder.CronSchedule(DateTimeHelper.GetCronExpression(DateTime.UtcNow.AddMinutes(1)))));
+                    .StartNow()
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInMinutes(2)
+                        .RepeatForever()
+                        .Build()));
             });
+
             services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
             return services;
         }

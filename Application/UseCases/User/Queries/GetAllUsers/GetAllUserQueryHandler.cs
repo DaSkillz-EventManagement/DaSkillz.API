@@ -13,21 +13,16 @@ namespace Application.UseCases.User.Queries.GetAllUsers
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly IRedisCaching redisCaching;
+        private readonly IRedisCaching _caching;
 
-        public GetAllUserQueryHandler(IUserRepository userRepository, IMapper mapper, IRedisCaching redisCaching)
+        public GetAllUserQueryHandler(IUserRepository userRepository, IMapper mapper, IRedisCaching caching)
         {
             _userRepository = userRepository;
             _mapper = mapper;
-            this.redisCaching = redisCaching;
+            _caching = caching;
         }
 
 
-        //public GetAllUserQueryHandler(IUserRepository userRepository, IMapper mapper)
-        //{
-        //    _userRepository = userRepository;
-        //    _mapper = mapper;
-        //}
 
         public async Task<APIResponse> Handle(GetAllUserQuery request, CancellationToken cancellationToken)
         {
@@ -37,7 +32,7 @@ namespace Application.UseCases.User.Queries.GetAllUsers
             {
                 StatusResponse = HttpStatusCode.OK,
                 Message = MessageCommon.Complete,
-                Data = redisCaching.SearchKeysAsync("user")
+                Data = usersResponse
             };
         }
     }

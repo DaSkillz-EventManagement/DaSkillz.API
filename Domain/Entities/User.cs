@@ -29,5 +29,6 @@
         public virtual ICollection<Participant> Participants { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
+        public virtual Subscription? Subscription { get; set; }
     }
 }

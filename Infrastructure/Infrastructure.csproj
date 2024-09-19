@@ -30,6 +30,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Quartz" Version="3.13.0" />
 		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 	</ItemGroup>
 
 </Project>

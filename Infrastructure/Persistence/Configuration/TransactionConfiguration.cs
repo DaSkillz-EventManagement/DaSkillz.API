@@ -25,7 +25,7 @@
             entity.Property(t => t.Description)
                 .HasMaxLength(500)
                 .IsUnicode(true)
-                .IsRequired(); // Nullable
+                .IsRequired();
 
             entity.Property(t => t.Timestamp)
                 .IsRequired();
@@ -35,6 +35,12 @@
 
             entity.Property(t => t.CreatedAt)
                 .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(t => t.Status)
+                .IsRequired();
+
+            entity.Property(t => t.IsSubscription)
                 .IsRequired();
 
             entity.HasOne(t => t.RefundTransaction)

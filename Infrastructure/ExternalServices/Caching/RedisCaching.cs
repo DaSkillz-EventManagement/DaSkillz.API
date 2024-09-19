@@ -1,13 +1,15 @@
 ﻿using Application.Abstractions.Caching;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Infrastructure.ExternalServices.Caching
 {
     public class RedisCaching : IRedisCaching
     {
-        
+
         private readonly IDistributedCache _distributedCache;
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         private readonly IDatabase _database;
@@ -94,16 +96,24 @@ namespace Infrastructure.ExternalServices.Caching
         /// </summary>
         /// <param name="keyword"></param>
         /// <returns></returns>
-        public List<string> SearchKeysAsync(string keyword)
+        public async Task<List<string>> SearchKeysAsync(string keyword)
         {
             // Get the Redis server (works for a single server setup)
             var server = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
             // Search for keys that match the pattern (e.g., "user*")
-            var keys = server.Keys(pattern: $"{keyword}*").Select(key => (string)key!).ToList();
+            //var keys = server.Keys(pattern: $"{keyword}*").Select(key => (string)key!).ToList();
 
-            // Return the list of keys
-            return keys;
+            var data = new List<string>();
+
+            var scanResult = server.KeysAsync(pattern: $"{keyword}*");
+
+            await foreach (var key in scanResult)
+            {
+                data.Add(key.ToString());
+            }
+
+            return data;
         }
 
         /// <summary>
@@ -113,7 +123,7 @@ namespace Infrastructure.ExternalServices.Caching
         /// <returns></returns>
         public async Task FlushByRelatedKey(string keyword)
         {
-            var keys = SearchKeysAsync(keyword);
+            var keys = await SearchKeysAsync(keyword);
             if (keys.Any())
             {
                 await _database.KeyDeleteAsync(keys.Select(k => (RedisKey)k).ToArray());
