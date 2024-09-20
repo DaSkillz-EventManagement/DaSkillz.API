@@ -128,6 +128,11 @@ namespace Infrastructure
             services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
             services.AddScoped<IPriceRepository, PriceRepository>();
 
+            //Quiz service
+            services.AddScoped<IQuizRepository, QuizRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<IUserAnswerRepository, UserAnswerRepository>();
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
             services.AddScoped<IParticipantRepository, ParticipantRepository>();
