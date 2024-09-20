@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
+using Elastic.Clients.Elasticsearch.Security;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,17 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Transaction?> getTransactionByUserIdAsync(Guid guid)
+        public async Task<Transaction?> getTransactionByUserIdAsync(Guid? guid)
         {
             return await _context.Transactions.FirstOrDefaultAsync(x => x.UserId.Equals(guid));
+        }
+
+        public async Task<Transaction?> GetLatestTransactionIsSubscribe(Guid userId)
+        {
+            return await _context.Transactions
+                    .Where(t => t.UserId == userId && t.IsSubscription && t.Status == 1)
+                    .OrderByDescending(t => t.CreatedAt) 
+                    .FirstOrDefaultAsync();
         }
 
     }

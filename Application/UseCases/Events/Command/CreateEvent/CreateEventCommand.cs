@@ -8,6 +8,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
     public class CreateEventCommand : IRequest<APIResponse>
     {
         public EventRequestDto EventRequestDto { get; set; }
+        public Guid UserId {  get; set; }
 
         public CreateEventCommand(EventRequestDto eventRequestDto)
         {

@@ -9,5 +9,6 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
         public string? Description { get; set; }
         public string Amount { get; set; }
         public Guid EventId { get; set; }
+        public bool isSubscription { get; set; }
     }
 }

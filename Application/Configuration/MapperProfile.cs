@@ -10,6 +10,7 @@ using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Models.Pagination;
 using Domain.DTOs.PriceDto;
+using Domain.DTOs.Coupons;
 
 namespace Application.Configuration
 {
@@ -29,6 +30,7 @@ namespace Application.Configuration
 
             CreateMap<User, UserByKeywordResponseDto>().ReverseMap();
             CreateMap<User, UserUpdatedResponseDto>().ReverseMap();
+            CreateMap<User, UserResponseDto>().ReverseMap();
 
             CreateMap<Event, CreateEventCommand>().ReverseMap();
             CreateMap<Event, EventRequestDto>().ReverseMap();
@@ -72,14 +74,12 @@ namespace Application.Configuration
 
 
             CreateMap<Event, EventPreviewDto>()
-                .ForMember(dest => dest.Host, opt => opt.MapFrom(src =>
-                    src.CreatedBy != null ? EventHelper.GetHostInfo((Guid)src.CreatedBy) : null))
                 .ReverseMap();
 
 
 
             CreateMap<EventTagDto, Tag>().ReverseMap();
-
+            CreateMap<CouponDto, Coupon>().ReverseMap();
             CreateMap<PriceDto, Price>().ReverseMap();
             CreateMap<Price, ResponsePriceDto>();
                 //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));

@@ -32,5 +32,11 @@ RUN dotnet publish "./API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:Use
 # Final Stage
 FROM base AS final
 WORKDIR /app
+
+# Copy the published output from the previous stage
 COPY --from=publish /app/publish .
+
+# Copy the template folder into the container
+COPY ./API/Template /app/template 
+
 ENTRYPOINT ["dotnet", "API.dll"]

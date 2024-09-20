@@ -1,4 +1,5 @@
-﻿using Application.ResponseMessage;
+﻿using Application.Abstractions.Caching;
+using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.Enum.Events;
@@ -14,17 +15,32 @@ namespace Application.UseCases.Events.Queries.GetEventInfo
         private readonly IEventRepository _eventRepo;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+        private readonly IRedisCaching _redisCaching;
 
-        public GetEventInfoQueryHandler(IEventRepository eventRepo, IMapper mapper, IUserRepository userRepository)
+        public GetEventInfoQueryHandler(IEventRepository eventRepo, IMapper mapper, IUserRepository userRepository, IRedisCaching redisCaching)
         {
             _eventRepo = eventRepo;
             _mapper = mapper;
             _userRepository = userRepository;
+            _redisCaching = redisCaching;
         }
 
         public async Task<APIResponse> Handle(GetEventInfoQuery request, CancellationToken cancellationToken)
         {
-            var eventInfo = await _eventRepo.GetById(request);
+            string cacheKey = $"GetEventInfo_{request.Id}";
+            var cachedDataString = await _redisCaching.GetAsync<EventDetailDto>(cacheKey);
+            if (cachedDataString != null)
+            {
+
+
+                return new APIResponse
+                {
+                    Message = MessageCommon.Complete,
+                    StatusResponse = HttpStatusCode.OK,
+                    Data = cachedDataString
+                };
+            }
+            var eventInfo = await _eventRepo.GetById(request.Id);
 
             if (eventInfo!.Status!.Equals(EventStatus.Deleted.ToString(), StringComparison.OrdinalIgnoreCase))
             {
@@ -48,6 +64,10 @@ namespace Application.UseCases.Events.Queries.GetEventInfo
                 eventDetailDto.UpdatedAt = eventInfo.UpdatedAt.HasValue ? eventInfo.UpdatedAt.Value : null;
 
                 eventDetailDto.eventTags = _mapper.Map<List<EventTagDto>>(eventInfo.Tags);
+
+
+                await _redisCaching.SetAsync(cacheKey, eventDetailDto, 10);
+
                 return new APIResponse
                 {
                     Message = MessageCommon.Complete,

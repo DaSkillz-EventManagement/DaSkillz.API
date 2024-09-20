@@ -13,6 +13,7 @@ namespace Domain.Entities
             Participants = new HashSet<Participant>();
             Tags = new HashSet<Tag>();
             Logos = new HashSet<Logo>();
+            Coupons = new HashSet<Coupon>();
            
         }
 
@@ -37,7 +38,9 @@ namespace Domain.Entities
         public string? Theme { get; set; }
 
         public virtual User? CreatedByNavigation { get; set; }
+        public virtual AdvertisedEvent? AdvertisedEvent { get; set; }
         public virtual ICollection<Logo> Logos { get; set; }
+        public virtual ICollection<Coupon> Coupons { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }

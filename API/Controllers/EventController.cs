@@ -153,7 +153,8 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> AddEvent([FromBody] CreateEventCommand command, CancellationToken cancellationToken = default)
         {
-            //string userId = User.GetUserIdFromToken();
+            string userId = User.GetUserIdFromToken();
+            command.UserId = Guid.Parse(userId);
             var result = await _mediator.Send(command, cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
@@ -167,6 +168,7 @@ namespace API.Controllers
         public async Task<ActionResult<APIResponse>> UpdateEvent([FromBody] UpdateEventCommand command, CancellationToken cancellationToken = default)
         {
             string userId = User.GetUserIdFromToken();
+            command.UserId = Guid.Parse(userId);
             var result = await _mediator.Send(command, cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }

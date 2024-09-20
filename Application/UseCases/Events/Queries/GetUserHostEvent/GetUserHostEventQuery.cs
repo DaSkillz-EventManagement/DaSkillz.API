@@ -13,6 +13,10 @@ namespace Application.UseCases.Events.Queries.GetUserHostEvent
     {
         public Guid UserId { get; set; }
 
+        public GetUserHostEventQuery()
+        {
+        }
+
         public GetUserHostEventQuery(Guid userId)
         {
             UserId = userId;

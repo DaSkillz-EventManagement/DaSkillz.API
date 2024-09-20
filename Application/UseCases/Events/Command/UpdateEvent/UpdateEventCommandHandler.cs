@@ -55,7 +55,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                     StatusResponse = HttpStatusCode.Unauthorized,
                 };
             }
-            if (!request.UserId.Equals(eventEntity.CreatedBy!.Value.ToString()))
+            if (!request.UserId.Equals(eventEntity.CreatedBy!.Value))
             {
                 return new APIResponse
                 {
