@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateTable : Migration
+    public partial class Update : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,8 +30,7 @@ namespace Infrastructure.Migrations
                 name: "Coupons",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<long>(type: "bigint", nullable: false),
                     ExpiredDate = table.Column<long>(type: "bigint", nullable: false),
                     NOAttempts = table.Column<int>(type: "int", nullable: false, defaultValue: 1, comment: "Number of attempts allowed for the coupon"),
@@ -118,6 +117,30 @@ namespace Infrastructure.Migrations
                         column: x => x.RoleID,
                         principalTable: "Role",
                         principalColumn: "RoleID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CouponUser",
+                columns: table => new
+                {
+                    CouponsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UsersUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CouponUser", x => new { x.CouponsId, x.UsersUserId });
+                    table.ForeignKey(
+                        name: "FK_CouponUser_Coupons_CouponsId",
+                        column: x => x.CouponsId,
+                        principalTable: "Coupons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CouponUser_User_UsersUserId",
+                        column: x => x.UsersUserId,
+                        principalTable: "User",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,7 +235,7 @@ namespace Infrastructure.Migrations
                 name: "CouponEvent",
                 columns: table => new
                 {
-                    CouponsId = table.Column<int>(type: "int", nullable: false),
+                    CouponsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     EventsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -423,6 +446,11 @@ namespace Infrastructure.Migrations
                 column: "EventsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CouponUser_UsersUserId",
+                table: "CouponUser",
+                column: "UsersUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EventLogo_EventID",
                 table: "EventLogo",
                 column: "EventID");
@@ -500,6 +528,9 @@ namespace Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CouponEvent");
+
+            migrationBuilder.DropTable(
+                name: "CouponUser");
 
             migrationBuilder.DropTable(
                 name: "EventLogo");

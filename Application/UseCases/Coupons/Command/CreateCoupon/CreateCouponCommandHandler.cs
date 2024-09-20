@@ -24,36 +24,54 @@ namespace Application.UseCases.Coupons.Command.CreateCoupon
         private readonly ICouponRepository _couponRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEventRepository _eventRepository;
 
-        public CreateCouponCommandHandler(ICouponRepository couponRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public CreateCouponCommandHandler(ICouponRepository couponRepository, IMapper mapper, IUnitOfWork unitOfWork, IEventRepository eventRepository)
         {
             _couponRepository = couponRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _eventRepository = eventRepository;
         }
 
         public async Task<APIResponse> Handle(CreateCouponCommand request, CancellationToken cancellationToken)
         {
-            var couponEntity = _mapper.Map<Coupon>(request.Coupon);
-            couponEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
-            var response = _couponRepository.Add(couponEntity);
-            if (await _unitOfWork.SaveChangesAsync() > 0)
+            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.UserId, request.CouponEventDto.EventId);
+            if (isOwner)
             {
-                return new APIResponse()
+                var couponEntity = _mapper.Map<Coupon>(request.Coupon);
+                couponEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
+                couponEntity.Id = Guid.NewGuid().ToString();
+                var response = _couponRepository.Add(couponEntity);
+                if (await _unitOfWork.SaveChangesAsync() > 0)
                 {
-                    StatusResponse = HttpStatusCode.OK,
-                    Message = MessageCommon.CreateSuccesfully,
-                    Data = couponEntity,
-                };
-            } else
+                    return new APIResponse()
+                    {
+                        StatusResponse = HttpStatusCode.OK,
+                        Message = MessageCommon.CreateSuccesfully,
+                        Data = couponEntity,
+                    };
+                }
+                else
+                {
+                    return new APIResponse()
+                    {
+                        StatusResponse = HttpStatusCode.BadRequest,
+                        Message = MessageCommon.CreateFailed,
+                        Data = null,
+                    };
+                }
+            }
+            else
             {
                 return new APIResponse()
                 {
                     StatusResponse = HttpStatusCode.BadRequest,
-                    Message = MessageCommon.CreateFailed,
+                    Message = MessageEvent.OnlyHostCanUpdateEvent,
                     Data = null,
                 };
             }
+            
                 
         }
     }

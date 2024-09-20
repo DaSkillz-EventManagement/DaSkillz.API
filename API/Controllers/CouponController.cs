@@ -1,15 +1,20 @@
-﻿using Application.ResponseMessage;
+﻿using Application.Helper;
+using Application.ResponseMessage;
 using Application.UseCases.Coupons.Command.CreateCoupon;
 using Application.UseCases.Coupons.Command.DeleteCoupon;
 using Application.UseCases.Coupons.Command.UpdateCoupon;
+using Application.UseCases.Coupons.Command.UseCoupon;
 using Application.UseCases.Coupons.Queries.GetCoupon;
+using Application.UseCases.Coupons.Queries.GetUsersByCoupon;
 using Application.UseCases.Events.Queries.GetEventInfo;
 using Domain.Models.Response;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace API.Controllers
 {
@@ -43,20 +48,25 @@ namespace API.Controllers
         }
 
         [HttpPost("")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateCoupon([FromQuery, Required] CreateCouponCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> CreateCoupon([FromBody, Required] CreateCouponCommand command, CancellationToken cancellationToken = default)
         {
+            string userId = User.GetUserIdFromToken();
+            command.CouponEventDto.UserId = Guid.Parse(userId);
             var result = await _mediator.Send(command, cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
 
         }
 
 
+        
         [HttpPut("")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateCoupon([FromQuery, Required] UpdateCouponCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> UpdateCoupon([FromBody, Required] UpdateCouponCommand command, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
@@ -64,6 +74,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> DeleteCoupon([FromQuery, Required] DeleteCouponCommand command, CancellationToken cancellationToken = default)
@@ -87,6 +98,33 @@ namespace API.Controllers
                     Data = null
                 };
             }
+
+
+            
+        }
+
+        [HttpPost("use-coupon")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> UseCoupon([FromBody, Required] UseCouponCommand command, CancellationToken cancellationToken = default)
+        {
+            string userId = User.GetUserIdFromToken();
+            command.CouponEventDto.UserId = Guid.Parse(userId);
+            var result = await _mediator.Send(command, cancellationToken);
+            return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
+
+        }
+
+
+        [HttpGet("user-coupon")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetUsersByCoupon([FromQuery, Required] GetUsersByCouponQuery query, CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
+
         }
 
     }

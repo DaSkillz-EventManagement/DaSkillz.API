@@ -13,10 +13,16 @@ namespace Application.UseCases.Coupons.Command.UpdateCoupon
     public class UpdateCouponCommand : IRequest<APIResponse>
     {
         public Coupon Coupon { get; set; }
+        public CouponEventDto CouponEventDto {  get; set; }
 
-        public UpdateCouponCommand(Coupon coupon)
+        public UpdateCouponCommand()
+        {
+        }
+
+        public UpdateCouponCommand(Coupon coupon, CouponEventDto couponEventDto)
         {
             Coupon = coupon;
+            CouponEventDto = couponEventDto;
         }
     }
 }

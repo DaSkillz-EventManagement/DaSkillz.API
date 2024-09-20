@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240919163137_UpdateCoupon")]
-    partial class UpdateCoupon
+    [Migration("20240920062245_Update")]
+    partial class Update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,8 +30,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("CouponEvent", b =>
                 {
-                    b.Property<int>("CouponsId")
-                        .HasColumnType("int");
+                    b.Property<string>("CouponsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("EventsId")
                         .HasColumnType("uniqueidentifier");
@@ -41,6 +41,21 @@ namespace Infrastructure.Migrations
                     b.HasIndex("EventsId");
 
                     b.ToTable("CouponEvent");
+                });
+
+            modelBuilder.Entity("CouponUser", b =>
+                {
+                    b.Property<string>("CouponsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("UsersUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CouponsId", "UsersUserId");
+
+                    b.HasIndex("UsersUserId");
+
+                    b.ToTable("CouponUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.AdvertisedEvent", b =>
@@ -67,11 +82,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Coupon", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<long>("CreatedDate")
                         .HasColumnType("bigint");
@@ -630,6 +642,21 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Event", null)
                         .WithMany()
                         .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CouponUser", b =>
+                {
+                    b.HasOne("Domain.Entities.Coupon", null)
+                        .WithMany()
+                        .HasForeignKey("CouponsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

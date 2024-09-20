@@ -19,49 +19,65 @@ namespace Application.UseCases.Coupons.Command.UpdateCoupon
         private readonly ICouponRepository _couponRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEventRepository _eventRepository;
 
-        public UpdateCouponCommandHandler(ICouponRepository couponRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public UpdateCouponCommandHandler(ICouponRepository couponRepository, IMapper mapper, IUnitOfWork unitOfWork, IEventRepository eventRepository)
         {
             _couponRepository = couponRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _eventRepository = eventRepository;
         }
 
         public async Task<APIResponse> Handle(UpdateCouponCommand request, CancellationToken cancellationToken)
         {
-            var couponEntity = await _couponRepository.GetById(request.Coupon.Id);
-            if(couponEntity == null)
+            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.UserId, request.CouponEventDto.EventId);
+            if (isOwner)
             {
-                return new APIResponse()
+                var couponEntity = await _couponRepository.GetById(request.Coupon.Id);
+                if (couponEntity == null)
                 {
-                    StatusResponse = HttpStatusCode.NotFound,
-                    Message = MessageCommon.NotFound,
-                    Data = null,
-                };
-            }
+                    return new APIResponse()
+                    {
+                        StatusResponse = HttpStatusCode.NotFound,
+                        Message = MessageCommon.NotFound,
+                        Data = null,
+                    };
+                }
 
-            _mapper.Map(request.Coupon, couponEntity);
+                _mapper.Map(request.Coupon, couponEntity);
 
-            
-            _couponRepository.Update(couponEntity);
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new APIResponse()
+
+                _couponRepository.Update(couponEntity);
+                if (await _unitOfWork.SaveChangesAsync() > 0)
                 {
-                    StatusResponse = HttpStatusCode.OK,
-                    Message = MessageCommon.UpdateSuccesfully,
-                    Data = couponEntity,
-                };
+                    return new APIResponse()
+                    {
+                        StatusResponse = HttpStatusCode.OK,
+                        Message = MessageCommon.UpdateSuccesfully,
+                        Data = couponEntity,
+                    };
+                }
+                else
+                {
+                    return new APIResponse()
+                    {
+                        StatusResponse = HttpStatusCode.BadRequest,
+                        Message = MessageCommon.UpdateFailed,
+                        Data = request.Coupon,
+                    };
+                }
             }
             else
             {
                 return new APIResponse()
                 {
                     StatusResponse = HttpStatusCode.BadRequest,
-                    Message = MessageCommon.UpdateFailed,
-                    Data = request.Coupon,
+                    Message = MessageEvent.OnlyHostCanUpdateEvent,
+                    Data = null,
                 };
             }
+
         }
     }
 }

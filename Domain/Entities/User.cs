@@ -5,11 +5,12 @@
         public User()
         {
             Events = new HashSet<Event>();
-            //Feedbacks = new HashSet<Feedback>();
+            Feedbacks = new HashSet<Feedback>();
             //Notifications = new HashSet<Notification>();
             Participants = new HashSet<Participant>();
             //PaymentTransactions = new HashSet<PaymentTransaction>();
             RefreshTokens = new HashSet<RefreshToken>();
+            Coupons = new HashSet<Coupon>();
         }
 
         public Guid UserId { get; set; }
@@ -27,6 +28,7 @@
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         //public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }
+        public virtual ICollection<Coupon> Coupons { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
     }

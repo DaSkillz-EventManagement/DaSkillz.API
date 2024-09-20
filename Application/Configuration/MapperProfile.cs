@@ -30,6 +30,7 @@ namespace Application.Configuration
 
             CreateMap<User, UserByKeywordResponseDto>().ReverseMap();
             CreateMap<User, UserUpdatedResponseDto>().ReverseMap();
+            CreateMap<User, UserResponseDto>().ReverseMap();
 
             CreateMap<Event, CreateEventCommand>().ReverseMap();
             CreateMap<Event, EventRequestDto>().ReverseMap();

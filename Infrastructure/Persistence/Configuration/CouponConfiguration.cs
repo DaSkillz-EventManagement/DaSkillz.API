@@ -17,7 +17,6 @@ namespace Infrastructure.Persistence.Configuration
             builder.HasKey(c => c.Id);  // Set Id as the primary key
 
             builder.Property(c => c.Id)
-                   .ValueGeneratedOnAdd()  // Configure auto-increment behavior
                    .IsRequired();  // Make sure Id is required
 
             // Configure ExpiredDate property

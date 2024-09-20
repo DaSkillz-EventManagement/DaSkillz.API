@@ -7,20 +7,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Coupons.Command.DeleteCoupon
+namespace Application.UseCases.Coupons.Command.UseCoupon
 {
-    public class DeleteCouponCommand : IRequest<bool>
+    public class UseCouponCommand : IRequest<APIResponse>
     {
-        public int Id;
+        public string CouponId { get; set; }
         public CouponEventDto CouponEventDto { get; set; }
+        
 
-        public DeleteCouponCommand()
+        public UseCouponCommand()
         {
         }
 
-        public DeleteCouponCommand(int id, CouponEventDto couponEventDto)
+        public UseCouponCommand(string couponId, CouponEventDto couponEventDto)
         {
-            Id = id;
+            CouponId = couponId;
             CouponEventDto = couponEventDto;
         }
     }
