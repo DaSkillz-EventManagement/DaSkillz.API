@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240920062245_Update")]
+    partial class Update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -483,34 +486,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("SponsorEvent", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Subscription", b =>
-                {
-                    b.Property<int>("SubscriptionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionId"));
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SubscriptionId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Subscriptions", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.Tag", b =>
                 {
                     b.Property<int>("TagId")
@@ -550,9 +525,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid?>("EventId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsSubscription")
-                        .HasColumnType("bit");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -799,18 +771,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Subscription", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithOne("Subscription")
-                        .HasForeignKey("Domain.Entities.Subscription", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Subscription_User");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
                 {
                     b.HasOne("Domain.Entities.Event", "Event")
@@ -907,8 +867,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("Subscription");
 
                     b.Navigation("Transactions");
                 });

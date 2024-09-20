@@ -13,6 +13,10 @@ namespace Application.UseCases.Events.Command.DeleteEvent
         public Guid EventId { get; set; }
         public Guid UserId {  get; set; }
 
+        public DeleteEventCommand()
+        {
+        }
+
         public DeleteEventCommand(Guid eventId)
         {
             EventId = eventId;
