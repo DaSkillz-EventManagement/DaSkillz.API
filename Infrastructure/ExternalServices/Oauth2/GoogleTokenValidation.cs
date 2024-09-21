@@ -36,7 +36,17 @@ namespace Infrastructure.ExternalServices.Oauth2
                 var responseString = await response.Content.ReadAsStringAsync();
                 var tokenInfo = JsonConvert.DeserializeObject<GoogleTokenInfo>(responseString);
 
-                if (tokenInfo == null || tokenInfo.Audience != _setting.Audience)
+                //if (tokenInfo == null || tokenInfo.Audience != _setting.Audience)
+                //{
+                //    return new APIResponse
+                //    {
+                //        StatusResponse = HttpStatusCode.Unauthorized,
+                //        Message = "Invalid Google token",
+                //        Data = null
+                //    };
+                //}
+                
+                if (tokenInfo == null)
                 {
                     return new APIResponse
                     {

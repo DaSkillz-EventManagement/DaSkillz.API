@@ -22,6 +22,11 @@ namespace Application.Configuration
 
             CreateMap<User, UserResponseDto>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
+                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore()) 
+                .AfterMap((src, dest) =>
+                {
+                    dest.IsPremiumUser = src.Subscription != null && src.Subscription.IsActive;
+                })
                 .ReverseMap();
 
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
@@ -61,7 +66,7 @@ namespace Application.Configuration
                 Coord = src.LocationCoord,
                 Url = src.LocationUrl
             }))
-           
+
             .ForMember(dest => dest.eventTags, opt => opt.MapFrom(src => src.Tags)) // Mapping Tags to eventTags
             .ReverseMap()
             .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.Location.Id))
@@ -80,7 +85,7 @@ namespace Application.Configuration
 
             CreateMap<PriceDto, Price>().ReverseMap();
             CreateMap<Price, ResponsePriceDto>();
-                //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
+            //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
         }
     }
 }
