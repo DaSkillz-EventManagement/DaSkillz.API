@@ -40,7 +40,6 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
 
         public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation("Executing CheckTransactionStatusJob at {Time}", DateTime.UtcNow);
             //get scheduler
             IScheduler scheduler = await _scheduler.GetScheduler();
             IJobDetail currentJob = context.JobDetail;
@@ -97,32 +96,6 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                                 };
                                 await _subscriptionRepository.Add(subscription);
                             }
-                            //var userIdBySubscriptionCache = await _caching.HashGetSpecificKeyAsync($"payment_{transactionId}", "userId");
-                            //var subscription = await _subscriptionRepository.GetByUserId(Guid.Parse(userIdBySubscriptionCache!));
-                            //if (subscription != null)
-                            //{
-                            //    if (subscription.EndDate >= DateTime.UtcNow)
-                            //    {
-                            //        subscription.EndDate = subscription.EndDate.AddMonths(1);
-                            //    }
-                            //    else
-                            //    {
-                            //        subscription.StartDate = DateTime.UtcNow;
-                            //        subscription.EndDate = DateTime.UtcNow.AddMonths(1);
-                            //    }
-                            //    subscription.IsActive = true;
-                            //}
-                            //else
-                            //{
-                            //    subscription = new Subscription
-                            //    {
-                            //        UserId = (Guid)exist.UserId!,
-                            //        StartDate = DateTime.UtcNow,
-                            //        EndDate = DateTime.UtcNow.AddMonths(1),
-                            //        IsActive = true
-                            //    };
-                            //    await _subscriptionRepository.Add(subscription);
-                            //}
                         }
 
 
@@ -147,8 +120,6 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
 
             // Xóa job sau khi hoàn thành
             //await scheduler.DeleteJob(currentJob.Key);
-
-            _logger.LogInformation("Finish job CheckTransactionStatusJob at {Time}", DateTime.UtcNow);
         }
 
     }

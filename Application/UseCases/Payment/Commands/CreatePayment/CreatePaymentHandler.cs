@@ -36,7 +36,6 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
         {
             string app_trans_id = DateTime.UtcNow.ToString("yyMMdd") + "_" + new Random().Next(100000);
             string cacheKey = $"payment_{app_trans_id}";
-            string subscriptionCache = $"subscription_{app_trans_id}";
             var appUser = "user123";
 
             //call api to create transaction
@@ -62,7 +61,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,
                 UserId = request.UserId,
-                //EventId = request.EventId,
+                EventId = request.isSubscription ? request.EventId : null,
                 IsSubscription = request.isSubscription
             };
 
@@ -71,16 +70,6 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
             {
                 await _transactionRepository.Add(newTrans);
                 await _unitOfWork.SaveChangesAsync();
-
-                if (request.isSubscription)
-                {
-                    var hashSet = new HashEntry[]
-                       {
-                            new HashEntry("userId",$"{request.UserId}"),
-                            new HashEntry("timestamp", $"{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}")
-                       };
-                    await _caching.HashSetAsync(subscriptionCache, hashSet, 15);
-                }
 
                 //caching transaction
                 var hashEntries = new HashEntry[]

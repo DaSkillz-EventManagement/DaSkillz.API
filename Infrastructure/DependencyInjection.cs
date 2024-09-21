@@ -151,7 +151,6 @@ namespace Infrastructure
             {
                 var checkJobKey = new JobKey("CheckTransactionStatusJob");
                 q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
-
                 q.AddTrigger(opts => opts
                     .ForJob(checkJobKey)
                     .WithIdentity("CheckTransactionStatusTrigger")
@@ -160,6 +159,16 @@ namespace Infrastructure
                         .WithIntervalInMinutes(2)
                         .RepeatForever()
                         .Build()));
+
+                var deactivateJobKey = new JobKey("DeactivateExpiredSubscriptionsJob");
+                q.AddJob<DeactivateExpiredSubscriptionsJob>(opts => opts.WithIdentity(deactivateJobKey));
+                q.AddTrigger(opts => opts
+                    .ForJob(deactivateJobKey)
+                    .WithIdentity("DeactivateExpiredSubscriptionsTrigger")
+                    .StartNow()
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInMinutes(1)  // Run every 1 minute
+                        .RepeatForever()));
             });
 
             services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
