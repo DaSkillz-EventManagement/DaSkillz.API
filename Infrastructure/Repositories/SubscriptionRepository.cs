@@ -19,5 +19,14 @@ namespace Infrastructure.Repositories
         {
             return await _context.Subscription.FirstOrDefaultAsync(x => x.UserId == userId);
         }
+
+        public async Task<int> UpdateExpiredSubscription()
+        {
+            return await _context.Subscription
+                .Where(s => s.IsActive && s.EndDate <= DateTime.UtcNow)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsActive, false));
+
+
+        }
     }
 }
