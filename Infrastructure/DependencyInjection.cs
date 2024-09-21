@@ -26,6 +26,7 @@ using Infrastructure.ExternalServices.Email;
 using Infrastructure.ExternalServices.Email.Setting;
 using Infrastructure.ExternalServices.Images;
 using Infrastructure.ExternalServices.Oauth2;
+using Infrastructure.ExternalServices.Oauth2.Setting;
 using Infrastructure.ExternalServices.Payment.ZaloPay;
 using Infrastructure.ExternalServices.Payment.ZaloPay.Setting;
 using Infrastructure.ExternalServices.Quartz;
@@ -54,6 +55,7 @@ namespace Infrastructure
             services.Configure<EmailSetting>(configuration.GetSection("SmtpSettings"));
             services.Configure<ZaloPaySetting>(configuration.GetSection("ZaloPay"));
             services.Configure<AvatarApiSetting>(configuration.GetSection("AvatarApi"));
+            services.Configure<GoogleSetting>(configuration.GetSection("GoogleToken"));
 
 
 
