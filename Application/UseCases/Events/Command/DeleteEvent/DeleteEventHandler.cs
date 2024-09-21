@@ -29,7 +29,7 @@ namespace Application.UseCases.Events.Command.DeleteEvent
         {
             try
             {
-                bool isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
+                bool isOwner = await _eventRepository.IsOwner(request.UserId, request.EventId);
                 //not Complete
                 //bool isDeletable = await IsDeletable(eventId);
                 var userInfo = await _userRepository.GetById(request.UserId);

@@ -15,9 +15,19 @@ namespace Infrastructure.ExternalServices.Quartz
             _schedulerFactory = schedulerFactory;
         }
 
-        public Task DeleteJobsByEventId(string eventId)
+        public async Task DeleteJobsByEventId(string eventId)
         {
-            throw new NotImplementedException();
+            IScheduler scheduler = await _schedulerFactory.GetScheduler();
+            var allJobKeys = await scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
+            foreach (var jobKey in allJobKeys)
+            {
+                if (jobKey.Name.Contains(eventId))
+                {
+                    Console.WriteLine("Delete JobKey: " + jobKey.Name);
+                    await scheduler.DeleteJob(jobKey);
+
+                }
+            }
         }
 
         public async Task ExcuteJob(string key, int type)
