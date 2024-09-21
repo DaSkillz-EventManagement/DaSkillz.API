@@ -61,8 +61,8 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
                 options.UseSqlServer(
-                    configuration.GetConnectionString("local"),
-                    //configuration.GetConnectionString("production"),
+                    //configuration.GetConnectionString("local"),
+                    configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
