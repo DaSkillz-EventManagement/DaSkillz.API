@@ -7,7 +7,7 @@
             IConfiguration configuration)
         {
             var connectionString = configuration.GetSection("Redis:HostName").Get<string>();
-            var sqlserver = configuration.GetSection("ConnectionStrings:local").Get<string>();
+            var sqlserver = configuration.GetSection("ConnectionStrings:production").Get<string>();
             var elasticSearch = configuration.GetSection("ElasticSearch:Url").Get<string>();
             services.AddHealthChecks()
                     .AddRedis(connectionString!)

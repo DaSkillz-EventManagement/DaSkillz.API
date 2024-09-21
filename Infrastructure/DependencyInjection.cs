@@ -16,6 +16,7 @@ using Elastic.Transport;
 using Infrastructure.ExternalServices.Authentication;
 using Infrastructure.ExternalServices.Authentication.Setting;
 using Infrastructure.ExternalServices.AvatarApi;
+using Infrastructure.ExternalServices.AvatarApi.Setting;
 using Infrastructure.ExternalServices.BackgroundTask;
 using Infrastructure.ExternalServices.Caching;
 using Infrastructure.ExternalServices.Caching.Setting;
@@ -52,6 +53,7 @@ namespace Infrastructure
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.Configure<EmailSetting>(configuration.GetSection("SmtpSettings"));
             services.Configure<ZaloPaySetting>(configuration.GetSection("ZaloPay"));
+            services.Configure<AvatarApiSetting>(configuration.GetSection("AvatarApi"));
 
 
 
@@ -59,8 +61,8 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
                 options.UseSqlServer(
-                    //configuration.GetConnectionString("local"),
-                    configuration.GetConnectionString("production"),
+                    configuration.GetConnectionString("local"),
+                    //configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);

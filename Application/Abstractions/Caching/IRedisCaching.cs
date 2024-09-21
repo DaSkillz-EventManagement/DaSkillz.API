@@ -37,5 +37,6 @@ namespace Application.Abstractions.Caching
         Task<string?> HashGetSpecificKeyAsync(string key, string field);
 
         Task<bool> DeleteKeyAsync(string key);
+        Task<Dictionary<string, string>?> GetAllHashDataAsync(string key);
     }
 }

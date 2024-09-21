@@ -10,4 +10,5 @@ public class UserResponseDto
     public int RoleId { get; set; }
     public string? RoleName { get; set; }
     public string? Avatar { get; set; }
+    public bool? IsPremiumUser { get; set; } = false;
 }
