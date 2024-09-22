@@ -38,7 +38,7 @@ namespace Domain.Entities
         public string? Theme { get; set; }
 
         public virtual User? CreatedByNavigation { get; set; }
-        public virtual AdvertisedEvent? AdvertisedEvent { get; set; }
+        public virtual ICollection<AdvertisedEvent?> AdvertisedEvents { get; set; }
         public virtual ICollection<Logo> Logos { get; set; }
         public virtual ICollection<Coupon> Coupons { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }

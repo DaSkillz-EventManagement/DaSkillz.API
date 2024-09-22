@@ -9,10 +9,7 @@ namespace Domain.Entities
     public class AdvertisedEvent
     {
 
-        public AdvertisedEvent()
-        {
-            Events = new HashSet<Event>();
-        }
+        
 
 
         public Guid PurchaserId { get; set; }
@@ -22,6 +19,6 @@ namespace Domain.Entities
         public long EndDate { get; set; }
         public decimal PurchasedPrice { get; set; }
 
-        public virtual ICollection<Event> Events { get; set; }
+        public virtual Event Event { get; set; }
     }
 }
