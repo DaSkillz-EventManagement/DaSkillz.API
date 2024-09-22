@@ -95,25 +95,17 @@ namespace API.Controllers
         public async Task<ActionResult<APIResponse>> GetAllEvents([FromQuery] GetFilteredEventQuery command, CancellationToken cancellationToken = default)
         {
             var response = await _mediator.Send(command, cancellationToken);
-            if (response.TotalItems > 0)
-            {
-
-                Response.Headers.Add("X-Total-Element", response.TotalItems.ToString());
-                Response.Headers.Add("X-Total-Page", response.TotalPages.ToString());
-                Response.Headers.Add("X-Current-Page", response.CurrentPage.ToString());
-                return Ok(new APIResponse
-                {
-                    StatusResponse = HttpStatusCode.OK,
-                    Message = MessageEvent.GetAllEvent,
-                    Data = response
-                });
-            }
+           
+            Response.Headers.Add("X-Total-Element", response.TotalItems.ToString());
+            Response.Headers.Add("X-Total-Page", response.TotalPages.ToString());
+            Response.Headers.Add("X-Current-Page", response.CurrentPage.ToString());
             return Ok(new APIResponse
             {
-                StatusResponse = HttpStatusCode.NotFound,
-                Message = MessageCommon.NotFound,
-                Data = null
+                StatusResponse = HttpStatusCode.OK,
+                Message = MessageEvent.GetAllEvent,
+                Data = response
             });
+           
         }
 
         [Authorize]
