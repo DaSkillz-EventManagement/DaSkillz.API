@@ -11,6 +11,8 @@ using Domain.Entities;
 using Domain.Models.Pagination;
 using Domain.DTOs.PriceDto;
 using Domain.DTOs.Coupons;
+using Domain.DTOs.Quiz.Request;
+using Domain.DTOs.Quiz.Response;
 
 namespace Application.Configuration
 {
@@ -83,6 +85,9 @@ namespace Application.Configuration
             CreateMap<PriceDto, Price>().ReverseMap();
             CreateMap<Price, ResponsePriceDto>();
                 //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
+            CreateMap<CreateQuizDto, Quiz>().ReverseMap();
+            CreateMap<Quiz, ResponseQuizDto>();
+            CreateMap<ResponseQuestionDto, Question>();
         }
     }
 }

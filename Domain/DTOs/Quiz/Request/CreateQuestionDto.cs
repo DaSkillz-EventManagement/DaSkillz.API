@@ -6,8 +6,6 @@ namespace Domain.DTOs.Quiz.Request;
 
 public class CreateQuestionDto
 {
-    [Required(ErrorMessage = "QuizId is required!")]
-    public Guid QuizId { get; set; }
 
     [Required(ErrorMessage = "QuestionName is required!")]
     [MaxLength(500, ErrorMessage = "QuestionName max length is 500 characters!")]
