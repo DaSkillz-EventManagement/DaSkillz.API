@@ -4,24 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Domain.DTOs.AdvertisedEvents
 {
-    public class AdvertisedEvent
+    public class AdvertisedEventDto
     {
-
-        public AdvertisedEvent()
-        {
-            Events = new HashSet<Event>();
-        }
-
-
         public Guid PurchaserId { get; set; }
         public Guid EventId { get; set; }
-        public long CreatedDate {  get; set; }
         public long StartDate { get; set; }
         public long EndDate { get; set; }
         public decimal PurchasedPrice { get; set; }
-
-        public virtual ICollection<Event> Events { get; set; }
     }
 }
