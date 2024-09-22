@@ -1,11 +1,15 @@
 ﻿using Application.UseCases.User.Commands.DeleteUser;
 using Application.UseCases.User.Commands.UpdateUser;
 using Application.UseCases.User.Queries.GetAllUsers;
+using Application.UseCases.User.Queries.GetByUserId;
+using Application.UseCases.User.Queries.GetUserByKeyword;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Threading;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace API.Controllers;
 
@@ -20,15 +24,6 @@ public class UserController : Controller
 
     }
 
-    //[HttpGet("id")]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> GetUserById([FromQuery, Required] Guid userId, CancellationToken cancellationToken)
-    //{
-    //    var result = await _mediator.Send(new GetAllUserQuery(pageNo, eachPage), cancellationToken);
-    //    return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
-    //}
-
     [HttpGet("all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -37,16 +32,6 @@ public class UserController : Controller
         var result = await _mediator.Send(new GetAllUserQuery(pageNo, eachPage), cancellationToken);
         return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
     }
-
-    //[Authorize]
-    //[HttpGet("keyword")]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> GetUserByKeyword([FromQuery] string keyword)
-    //{
-    //    var result = await _mediator.Send(new GetAllUserQuery(pageNo, eachPage), cancellationToken);
-    //    return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
-    //}
 
     [Authorize]
     [HttpPut("update")]
@@ -68,4 +53,22 @@ public class UserController : Controller
         return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
     }
 
+    //[Authorize]
+    [HttpGet("keyword")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetUserByKeyword([FromQuery] string keyword, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetUserByKeyword(keyword), cancellationToken);
+        return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+    }
+
+    [HttpGet("id")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetUserById([FromQuery, Required] Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetUserById(userId), cancellationToken);
+        return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+    }
 }
