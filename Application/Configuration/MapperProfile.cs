@@ -29,9 +29,26 @@ namespace Application.Configuration
                 .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    dest.IsPremiumUser = src.Subscription != null && src.Subscription.IsActive;
+                    dest.IsPremiumUser = src.Subscription.IsActive;
                 })
                 .ReverseMap();
+            
+            CreateMap<User, UserUpdatedResponseDto>()
+                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    dest.IsPremiumUser = src.Subscription.IsActive;
+                })
+                .ReverseMap();
+
+            CreateMap<User, UserByKeywordResponseDto>()
+                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    dest.IsPremiumUser = src.Subscription.IsActive;
+                })
+                .ReverseMap();
+
 
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)).ReverseMap();

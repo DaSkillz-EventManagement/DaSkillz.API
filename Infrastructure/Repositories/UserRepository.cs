@@ -23,12 +23,12 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<User>> GetUsersByKeywordAsync(string keyword)
         {
-            return await _context.Users.Where(a => a.Email!.StartsWith(keyword) || a.Email.Contains(keyword)).ToListAsync();
+            return await _context.Users.Include(a => a.Subscription).Where(a => a.Email!.StartsWith(keyword) || a.Email.Contains(keyword)).ToListAsync();
         }
 
         public async Task<User?> GetUserByIdAsync(Guid userId)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.UserId!.Equals(userId));
+            return await _context.Users.Include(a => a.Subscription).FirstOrDefaultAsync(x => x.UserId!.Equals(userId));
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
@@ -55,7 +55,11 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetAllUser(int page, int pagesize, string sortBy, bool isAscending = false)
         {
             //var cacheKey = $"GetAllUser_{page}_{pagesize}_{sortBy}_{isAscending}";
-            var entities = await _context.Users.Include(a => a.Role).PaginateAndSort(page, pagesize, sortBy, isAscending).ToListAsync();
+            var entities = await _context.Users.
+                Include(a => a.Role).
+                Include(a => a.Subscription).
+                AsSplitQuery().
+                PaginateAndSort(page, pagesize, sortBy, isAscending).ToListAsync();
             return entities;
         }
 

@@ -24,8 +24,7 @@
 
             entity.Property(t => t.Description)
                 .HasMaxLength(500)
-                .IsUnicode(true)
-                .IsRequired();
+                .IsUnicode(true);
 
             entity.Property(t => t.Timestamp)
                 .IsRequired();
