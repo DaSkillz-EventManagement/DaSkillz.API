@@ -1,5 +1,7 @@
 ﻿using Application.ResponseMessage;
 using AutoMapper;
+using Domain.DTOs.Tag;
+using Domain.Models.Pagination;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
@@ -28,7 +30,7 @@ namespace Application.UseCases.Tags.Queries.GetAllTag
             {
                 response.StatusResponse = HttpStatusCode.OK;
                 response.Message = MessageCommon.Complete;
-                response.Data = result;
+                response.Data = _mapper.Map<PagedList<TagDto>>(result);
             }
             else
             {

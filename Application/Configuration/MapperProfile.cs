@@ -93,6 +93,7 @@ namespace Application.Configuration
 
             //Mapper Tag
             CreateMap<TagDto, Tag>().ReverseMap();
+            CreateMap<PagedList<TagDto>, PagedList<Tag>>().ReverseMap();
             CreateMap<EventTagDto, Tag>().ReverseMap();
             CreateMap<AdvertisedEvent, AdvertisedEventDto>();
         }
