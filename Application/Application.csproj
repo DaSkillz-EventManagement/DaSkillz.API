@@ -6,6 +6,10 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Remove="UseCases\Tags\Commands\AddTag\AddTagCommandHandler.cs~RF2603d722.TMP" />
+	</ItemGroup>
+
 	
 	<ItemGroup>
 		<ProjectReference Include="..\Domain\Domain.csproj" />

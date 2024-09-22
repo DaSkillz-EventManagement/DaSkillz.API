@@ -1,157 +1,80 @@
-﻿//using Application.ResponseMessage;
-//using Domain.Models.Response;
-//using Microsoft.AspNetCore.Mvc;
-//using System.ComponentModel.DataAnnotations;
-//using System.Net;
+﻿using Application.ResponseMessage;
+using Application.UseCases.Payment.Queries.GetTransactionByUser;
+using Application.UseCases.Tags.Commands.AddTag;
+using Application.UseCases.Tags.Commands.DeleteTag;
+using Application.UseCases.Tags.Queries.GetAllTag;
+using Application.UseCases.Tags.Queries.GetById;
+using Application.UseCases.Tags.Queries.GetTrendingTags;
+using Application.UseCases.Tags.Queries.SearchTag;
+using Domain.Models.Response;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Threading;
 
-//namespace API.Controllers
-//{
-//    [Route("api/v1/tags")]
-//    [ApiController]
-//    public class TagController : ControllerBase
-//    {
-//        [HttpGet("all")]
-//        [ProducesResponseType(StatusCodes.Status200OK)]
-//        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-//        public async Task<APIResponse> GetAllTag([FromQuery, Range(1, int.MaxValue)] int page = 1,
-//                                                                  [FromQuery, Range(1, int.MaxValue)] int eachPage = 10)
-//        {
-//            APIResponse response = new APIResponse();
-//            var result = await _tagService.GetAllTag(page, eachPage);
+namespace API.Controllers
+{
+    [Route("api/v1/tags")]
+    [ApiController]
+    public class TagController : ControllerBase
+    {
+        private readonly IMediator _mediator;
 
+        public TagController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
-//            if (result.Any())
-//            {
-//                response.StatusResponse = HttpStatusCode.OK;
-//                response.Message = MessageCommon.Complete;
-//                response.Data = result;
-//            }
-//            else
-//            {
-//                response.StatusResponse = HttpStatusCode.BadRequest;
-//                response.Message = MessageCommon.NotFound;
-//            }
-//            return response;
+        [HttpGet("all")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllTag([FromQuery, Range(1, int.MaxValue)] int page = 1, [FromQuery, Range(1, int.MaxValue)] int eachPage = 10, CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetAllTagQuery(page, eachPage), cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
 
-//        }
+        [HttpPost("")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AddTag([FromBody] AddTagCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
 
-//        [HttpPost("")]
-//        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-//        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-//        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-//        public async Task<APIResponse> AddTag([FromBody] TagDto tagDTO)
-//        {
-//            APIResponse response = new APIResponse();
-//            var result = await _tagService.AddTag(tagDTO);
-
-//            if (result != null)
-//            {
-//                response.StatusResponse = HttpStatusCode.Created;
-//                response.Message = MessageCommon.CreateSuccesfully;
-//                response.Data = result;
-
-//            }
-//            else
-//            {
-//                response.StatusResponse = HttpStatusCode.BadRequest;
-//                response.Message = MessageCommon.CreateFailed;
-//            }
-//            return response;
-
-//        }
-
-//        //[HttpPut("")]
-//        //[ProducesResponseType(StatusCodes.Status204NoContent)]
-//        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-//        //public async Task<APIResponse> UpdateTag([FromBody] TagDto tagDTO)
-//        //{
-//        //    APIResponse response = new APIResponse();
-//        //    var result = await _tagService.UpdateTag(tagDTO);
-//        //    if (result)
-//        //    {
-//        //        response.StatusResponse = HttpStatusCode.OK;
-//        //        response.Message = MessageCommon.UpdateSuccesfully;
-//        //        response.Data = result;
-
-//        //    }
-//        //    else
-//        //    {
-//        //        response.StatusResponse = HttpStatusCode.BadRequest;
-//        //        response.Message = MessageCommon.UpdateFailed;
-//        //    }
-//        //    return response;
-//        //}
-
-//        [HttpDelete("")]
-//        public async Task<APIResponse> DeleteTag(int TagId)
-//        {
-//            APIResponse response = new APIResponse();
-//            var result = await _tagService.DeleteTag(TagId);
-//            if (result)
-//            {
-//                response.StatusResponse = HttpStatusCode.OK;
-//                response.Message = MessageCommon.DeleteSuccessfully;
-//                response.Data = result;
-
-//            }
-//            else
-//            {
-//                response.StatusResponse = HttpStatusCode.BadRequest;
-//                response.Message = MessageCommon.DeleteFailed;
-//            }
-//            return response;
-//        }
+        [HttpDelete("")]
+        public async Task<IActionResult> DeleteTag([FromQuery] DeleteTagCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
 
 
-//        [HttpGet("keyword")]
-//        public async Task<APIResponse> SearchByKeyWord(string searchTerm)
-//        {
-//            APIResponse response = new APIResponse();
-//            var result = await _tagService.SearchTag(searchTerm);
-//            if (result.Count() > 0)
-//            {
-//                response.StatusResponse = HttpStatusCode.OK;
-//                response.Message = MessageCommon.ReturnListHasValue;
-//                response.Data = result;
+        [HttpGet("keyword")]
+        public async Task<IActionResult> SearchByKeyWord([FromQuery] SearchTagQuery query, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
 
-//            }
-//            else
-//            {
-//                response.StatusResponse = HttpStatusCode.BadRequest;
-//                response.Message = MessageCommon.ReturnNullList;
-//            }
-//            return response;
-//        }
-//        [HttpGet("")]
-//        public async Task<IActionResult> GetTagById([FromQuery, Required] int tagId)
-//        {
-//            var tag = await _tagService.GetById(tagId);
-//            if (tag != null)
-//            {
-//                return Ok(new APIResponse
-//                {
-//                    StatusResponse = HttpStatusCode.OK,
-//                    Message = MessageCommon.Complete,
-//                    Data = tag
-//                });
-//            }
-//            return Ok(new APIResponse
-//            {
-//                StatusResponse = HttpStatusCode.OK,
-//                Message = MessageCommon.Complete,
-//                Data = null
-//            });
-//        }
-//        [HttpGet("trending")]
-//        public async Task<IActionResult> TrendingTask()
-//        {
-//            var result = await _tagService.TrendingsTags();
-//            return Ok(new APIResponse
-//            {
-//                StatusResponse = HttpStatusCode.OK,
-//                Message = MessageCommon.Complete,
-//                Data = result
-//            });
-//        }
-//    }
-//}
+        [HttpGet("")]
+        public async Task<IActionResult> GetTagById([FromQuery] GetTagByIdQuery query, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
+
+        [HttpGet("trending")]
+        public async Task<IActionResult> TrendingTask(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetTrendingTagQuery(), cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
+
+
+    }
+}

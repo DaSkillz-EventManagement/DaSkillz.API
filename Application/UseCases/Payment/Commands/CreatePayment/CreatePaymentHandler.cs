@@ -61,7 +61,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,
                 UserId = request.UserId,
-                EventId = request.isSubscription ? request.EventId : null,
+                EventId = (!request.isSubscription) ? request.EventId : null,
                 IsSubscription = request.isSubscription
             };
 
