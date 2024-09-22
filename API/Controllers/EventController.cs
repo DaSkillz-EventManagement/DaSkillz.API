@@ -14,6 +14,7 @@ using Application.UseCases.Events.Queries.GetFilteredEvent;
 using Application.UseCases.Events.Queries.GetTopCreatorsByEventCount;
 using Application.UseCases.Events.Queries.GetTopLocationByEventCount;
 using Application.UseCases.Events.Queries.GetUserHostEvent;
+using Domain.DTOs.Events.RequestDto;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -143,11 +144,11 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> AddEvent(CreateEventCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> AddEvent(EventRequestDto eventRequestDto, CancellationToken cancellationToken = default)
         {
-            string userId = User.GetUserIdFromToken();
-            command.UserId = Guid.Parse(userId);
-            var result = await _mediator.Send(command, cancellationToken);
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            
+            var result = await _mediator.Send(new CreateEventCommand(eventRequestDto, userId), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
 
