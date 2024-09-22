@@ -4,6 +4,7 @@ using Application.UseCases.Events.Command.CreateEvent;
 using Application.UseCases.Events.Command.DeleteEvent;
 using Application.UseCases.Events.Command.UpdateEvent;
 using Application.UseCases.Events.Command.UploadEventSponsorLogo;
+using Application.UseCases.Events.Queries.GetAllBlobUris;
 using Application.UseCases.Events.Queries.GetAllEventBlobUris;
 using Application.UseCases.Events.Queries.GetBlobUri;
 using Application.UseCases.Events.Queries.GetEventByTag;
@@ -14,7 +15,10 @@ using Application.UseCases.Events.Queries.GetFilteredEvent;
 using Application.UseCases.Events.Queries.GetTopCreatorsByEventCount;
 using Application.UseCases.Events.Queries.GetTopLocationByEventCount;
 using Application.UseCases.Events.Queries.GetUserHostEvent;
+using Application.UseCases.Events.Queries.GetUserPastAndIncomingEvent;
+using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
+using Domain.Enum.Events;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -38,20 +42,22 @@ namespace API.Controllers
         }
 
         [HttpGet("info")]
-        public async Task<ActionResult<APIResponse>> GetEventInfo([FromQuery, Required] GetEventInfoQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetEventInfo([FromQuery, Required] Guid eventId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new GetEventInfoQuery(eventId), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
 
 
         [Authorize]
         [HttpGet("user-event-role")]
-        public async Task<ActionResult<APIResponse>> GetEventByUserRole([FromQuery] GetEventByUserRoleQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetEventByUserRole([FromQuery, Required] EventRole eventRole,
+                                                        [FromQuery, Range(1, int.MaxValue)] int pageNo = 1,
+                                                        [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10,CancellationToken cancellationToken = default)
         {
-            string userId = User.GetUserIdFromToken();
-            command.UserId = Guid.Parse(userId);
-            var result = await _mediator.Send(command, cancellationToken);
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            
+            var result = await _mediator.Send(new GetEventByUserRoleQuery(eventRole, userId, pageNo, elementEachPage), cancellationToken);
             Response.Headers.Add("X-Total-Element", result.TotalItems.ToString());
             Response.Headers.Add("X-Total-Page", result.TotalPages.ToString());
             Response.Headers.Add("X-Current-Page", result.CurrentPage.ToString());
@@ -66,9 +72,11 @@ namespace API.Controllers
         [HttpGet("tag")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetEventsByTag([FromQuery] GetEventByTagQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetEventsByTag([FromQuery] List<int> TagId,
+                                                        [FromQuery, Range(1, int.MaxValue)] int pageNo = 1,
+                                                        [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10, CancellationToken cancellationToken = default)
         {
-            var response = await _mediator.Send(command, cancellationToken);
+            var response = await _mediator.Send(new GetEventByTagQuery(TagId, pageNo, elementEachPage), cancellationToken);
             if (response.TotalItems > 0)
             {
                 Response.Headers.Add("X-Total-Element", response.TotalItems.ToString());
@@ -93,9 +101,11 @@ namespace API.Controllers
         [HttpGet("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetAllEvents([FromQuery] GetFilteredEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetAllEvents([FromQuery] EventFilterObjectDto filterObject,
+                                                      [FromQuery, Range(1, int.MaxValue)] int pageNo = 1,
+                                                      [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10, CancellationToken cancellationToken = default)
         {
-            var response = await _mediator.Send(command, cancellationToken);
+            var response = await _mediator.Send(new GetFilteredEventQuery(filterObject, pageNo, elementEachPage), cancellationToken);
            
             Response.Headers.Add("X-Total-Element", response.TotalItems.ToString());
             Response.Headers.Add("X-Total-Page", response.TotalPages.ToString());
@@ -113,11 +123,13 @@ namespace API.Controllers
         [HttpGet("user-participated")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetUserParticipatedEvents([FromQuery] GetEventParticipatedByUserQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetUserParticipatedEvents([FromQuery] EventFilterObjectDto filter,
+                                                                   [FromQuery, Range(1, int.MaxValue)] int pageNo = 1,
+                                                                   [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10, CancellationToken cancellationToken = default)
         {
-            string userId = User.GetUserIdFromToken();
-            command.UserId = Guid.Parse(userId);
-            var response = await _mediator.Send(command, cancellationToken);
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            
+            var response = await _mediator.Send(new GetEventParticipatedByUserQuery(filter, userId, pageNo, elementEachPage), cancellationToken);
             if (response.TotalItems > 0)
             {
 
@@ -138,6 +150,22 @@ namespace API.Controllers
                 Data = null
             });
         }
+        [Authorize]
+        [HttpGet("user-past-and-incoming")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetUserPastAndIncomingEvent(CancellationToken cancellationToken = default)
+        {
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            var response = await _mediator.Send(new GetUserPastAndIncomingEventQuery(userId), cancellationToken);
+            return Ok(new APIResponse
+            {
+                StatusResponse = HttpStatusCode.OK,
+                Message = MessageCommon.Complete,
+                Data = response
+            });
+        }
+
 
         [Authorize]
         [HttpPost("")]
@@ -158,23 +186,23 @@ namespace API.Controllers
         [HttpPut("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateEvent([FromBody] UpdateEventCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> UpdateEvent([FromBody] EventRequestDto eventRequestDto, [FromQuery, Required]  Guid eventId, CancellationToken cancellationToken = default)
         {
-            string userId = User.GetUserIdFromToken();
-            command.UserId = Guid.Parse(userId);
-            var result = await _mediator.Send(command, cancellationToken);
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+
+            var result = await _mediator.Send(new UpdateEventCommand(eventRequestDto, eventId, userId), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
 
 
         [Authorize]
         [HttpDelete("")]
-        public async Task<ActionResult<APIResponse>> DeleteEvent([FromQuery, Required] DeleteEventCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> DeleteEvent([FromQuery, Required] Guid eventId, CancellationToken cancellationToken = default)
         {
-            string userId = User.GetUserIdFromToken();
-            command.UserId = Guid.Parse(userId);
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+
             APIResponse response = new APIResponse();
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new DeleteEventCommand(eventId, userId), cancellationToken);
             if (result)
             {
                 response.StatusResponse = HttpStatusCode.OK;
@@ -192,9 +220,9 @@ namespace API.Controllers
         }
 
         [HttpPost("logo-upload")]
-        public async Task<ActionResult<APIResponse>> UploadEventLogoImage([FromBody] UploadEventSponsorLogoCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> UploadEventLogoImage([FromBody] FileUploadDto dto, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new UploadEventSponsorLogoCommand(dto), cancellationToken);
             if (result != null)
             {
                 return Ok(new APIResponse
@@ -214,9 +242,9 @@ namespace API.Controllers
 
 
         [HttpGet("/logo")]
-        public async Task<ActionResult<APIResponse>> GetBlobUri([FromQuery] GetBlobUriQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetBlobUri([FromQuery] string brandName, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new GetBlobUriQuery(brandName), cancellationToken);
             return Ok(new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
@@ -227,9 +255,9 @@ namespace API.Controllers
         }
 
         [HttpGet("/logo/all")]
-        public async Task<ActionResult<APIResponse>> GetAllLogos([FromQuery] GetBlobUriQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> GetAllLogos(CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new GetAllBlobUrisQuery(), cancellationToken);
             return Ok(new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
@@ -240,9 +268,9 @@ namespace API.Controllers
         }
 
         [HttpGet("/logo/event-logo")]
-        public async Task<ActionResult> GetAllEventBlobUri([FromQuery] GetAllEventBlobUrisQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetAllEventBlobUri([FromQuery] Guid eventId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new GetAllBlobUrisQuery(), cancellationToken);
             return Ok(new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
@@ -255,9 +283,9 @@ namespace API.Controllers
         [HttpGet("popular/organizers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> PopularOrganizers(GetTopCreatorsByEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> PopularOrganizers(CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new GetTopCreatorsByEventQuery(), cancellationToken);
             return Ok(new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
@@ -269,9 +297,9 @@ namespace API.Controllers
         [HttpGet("popular/locations")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Locations(GetTopLocationByEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> Locations(CancellationToken cancellationToken = default)
         {
-            var result = _mediator.Send(command, cancellationToken);
+            var result = _mediator.Send(new GetTopCreatorsByEventQuery(), cancellationToken);
             return Ok(new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
@@ -281,9 +309,9 @@ namespace API.Controllers
         }
 
         [HttpGet("user-hosted")]
-        public async Task<ActionResult> GetUserHostEvent([FromQuery, Required] GetUserHostEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetUserHostEvent([FromQuery, Required] Guid userId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new GetUserHostEventQuery(userId), cancellationToken);
             if (result != null)
             {
                 return Ok(new APIResponse

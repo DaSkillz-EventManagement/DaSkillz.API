@@ -12,9 +12,10 @@ namespace Application.UseCases.Events.Queries.GetEventByUserRole
         public int PageNo { get; set; }
         public int ElementEachPage { get; set; }
 
-        public GetEventByUserRoleQuery(EventRole eventRole, int pageNo, int elementEachPage)
+        public GetEventByUserRoleQuery(EventRole eventRole, Guid userId, int pageNo, int elementEachPage)
         {
             EventRole = eventRole;
+            UserId = userId;
             PageNo = pageNo;
             ElementEachPage = elementEachPage;
         }

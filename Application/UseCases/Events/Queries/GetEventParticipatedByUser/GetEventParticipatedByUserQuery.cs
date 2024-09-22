@@ -8,19 +8,21 @@ namespace Application.UseCases.Events.Queries.GetEventParticipatedByUser
     public class GetEventParticipatedByUserQuery : IRequest<PagedList<EventResponseDto>>
     {
         public EventFilterObjectDto Filter { get; set; }
-
+        public Guid UserId { get; set; }
         public int PageNo { get; set; }
         public int ElementEachPage { get; set; }
 
-        // Add UserId to the command, but it is not input by the user
-        public Guid UserId { get; set; }
-
-
-        public GetEventParticipatedByUserQuery(EventFilterObjectDto filter, int pageNo, int elementEachPage)
+        public GetEventParticipatedByUserQuery(EventFilterObjectDto filter, Guid userId, int pageNo, int elementEachPage)
         {
             Filter = filter;
+            UserId = userId;
             PageNo = pageNo;
             ElementEachPage = elementEachPage;
         }
+
+        // Add UserId to the command, but it is not input by the user
+
+
+
     }
 }

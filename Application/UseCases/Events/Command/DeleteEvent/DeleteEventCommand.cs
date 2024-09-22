@@ -17,10 +17,10 @@ namespace Application.UseCases.Events.Command.DeleteEvent
         {
         }
 
-        public DeleteEventCommand(Guid eventId)
+        public DeleteEventCommand(Guid eventId, Guid userId)
         {
             EventId = eventId;
-           
+            UserId = userId;
         }
     }
 }
