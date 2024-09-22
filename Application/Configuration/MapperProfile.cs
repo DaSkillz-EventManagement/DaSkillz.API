@@ -11,6 +11,9 @@ using Domain.DTOs.Tag;
 using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Models.Pagination;
+using Domain.DTOs.PriceDto;
+using Domain.DTOs.Coupons;
+using Domain.DTOs.AdvertisedEvents;
 
 namespace Application.Configuration
 {
@@ -91,6 +94,7 @@ namespace Application.Configuration
             //Mapper Tag
             CreateMap<TagDto, Tag>().ReverseMap();
             CreateMap<EventTagDto, Tag>().ReverseMap();
+            CreateMap<AdvertisedEvent, AdvertisedEventDto>();
         }
     }
 }

@@ -16,5 +16,6 @@
         public const string TagLimitValidation = "Event's maximum tags is 5!";
         public const string UpdateEventWithStatus = "Can only update Event with status NotYet";
         public const string OnlyHostCanUpdateEvent = "Only host can update this event";
+        public const string YouAreNotOwnerOfThisEvent = "You are not owner of this event";
     }
 }

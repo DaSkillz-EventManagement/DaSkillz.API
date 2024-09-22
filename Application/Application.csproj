@@ -35,6 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="UseCases\AdvertiseEvents\Queries\" />
 	  <Folder Include="UseCases\Role\" />
 	</ItemGroup>
 
