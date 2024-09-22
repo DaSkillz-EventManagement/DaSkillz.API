@@ -143,7 +143,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> AddEvent([FromBody] CreateEventCommand command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> AddEvent(CreateEventCommand command, CancellationToken cancellationToken = default)
         {
             string userId = User.GetUserIdFromToken();
             command.UserId = Guid.Parse(userId);
@@ -254,7 +254,7 @@ namespace API.Controllers
         [HttpGet("popular/organizers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> PopularOrganizers([FromQuery] GetTopCreatorsByEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> PopularOrganizers(GetTopCreatorsByEventQuery command, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return Ok(new APIResponse
@@ -268,7 +268,7 @@ namespace API.Controllers
         [HttpGet("popular/locations")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Locations([FromQuery] GetTopLocationByEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> Locations(GetTopLocationByEventQuery command, CancellationToken cancellationToken = default)
         {
             var result = _mediator.Send(command, cancellationToken);
             return Ok(new APIResponse
