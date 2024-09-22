@@ -299,7 +299,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Locations(CancellationToken cancellationToken = default)
         {
-            var result = _mediator.Send(new GetTopCreatorsByEventQuery(), cancellationToken);
+            var result = _mediator.Send(new GetTopLocationByEventQuery(), cancellationToken);
             return Ok(new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
