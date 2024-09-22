@@ -267,6 +267,7 @@ namespace Infrastructure.Repositories
         {
 
             var eventResponse = await _context.Events
+                .Include(e => e.CreatedByNavigation)
                 .Where(e => e.CreatedBy == userId && e.EndDate < DateTimeHelper.GetCurrentTimeAsLong())
                 .ToListAsync();
             var events = await GetUserRegisterdEventsQuery(userId);
@@ -278,6 +279,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Event>> UserIncomingEvents(Guid userId)
         {
             var eventResponse = await _context.Events
+                .Include(e => e.CreatedByNavigation)
                 .Where(e => e.CreatedBy == userId && e.StartDate >= DateTimeHelper.GetCurrentTimeAsLong())
                 .ToListAsync();
             var incomingEvents = await GetUserRegisterdEventsQuery(userId);
@@ -406,6 +408,36 @@ namespace Infrastructure.Repositories
             response.avatar = user!.Avatar;
             response.Id = user.UserId;
             response.Name = user.FullName;
+            return response;
+        }
+
+        public  EventPreviewDto ToEventPreview(Event entity)
+        {
+            EventPreviewDto response = new EventPreviewDto();
+            response.EventId = entity.Id;
+            response.EventName = entity.EventName;
+            response.Location = entity.Location;
+            response.Status = entity.Status;
+            response.Image = entity.Image;
+            response.StartDate = entity.StartDate;
+            response.Host = getHostInfo((Guid)entity.CreatedBy!);
+            return response;
+        }
+
+        public CreatedByUserDto getHostInfo(Guid userId)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.UserId == userId); // Use FirstOrDefault for synchronous operation
+
+           
+
+            CreatedByUserDto response = new CreatedByUserDto
+            {
+                avatar = user.Avatar, // Correct mapping from User entity
+                Id = user.UserId,
+                Name = user.FullName,
+                email = user.Email
+            };
+
             return response;
         }
     }
