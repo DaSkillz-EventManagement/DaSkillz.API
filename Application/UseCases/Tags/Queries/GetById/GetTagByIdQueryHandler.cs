@@ -8,6 +8,7 @@ using MediatR;
 using System.Net;
 using Elastic.Clients.Elasticsearch;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Domain.DTOs.Tag;
 
 namespace Application.UseCases.Tags.Queries.GetById
 {
@@ -38,7 +39,7 @@ namespace Application.UseCases.Tags.Queries.GetById
             {
                 StatusResponse = HttpStatusCode.OK,
                 Message = MessageCommon.Complete,
-                Data = result
+                Data = _mapper.Map<TagDto>(result)
             };
         }
     }
