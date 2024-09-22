@@ -267,10 +267,10 @@ namespace Infrastructure.Repositories
         {
 
             var eventResponse = await _context.Events
-                .Where(e => e.CreatedBy == userId && DateTimeHelper.ToDateTime(e.EndDate) < DateTime.Now)
+                .Where(e => e.CreatedBy == userId && e.EndDate < DateTimeHelper.GetCurrentTimeAsLong())
                 .ToListAsync();
             var events = await GetUserRegisterdEventsQuery(userId);
-            var eventList = await events.Where(e => DateTimeHelper.ToDateTime(e.EndDate) < DateTime.Now)
+            var eventList = await events.Where(e => e.EndDate < DateTimeHelper.GetCurrentTimeAsLong())
                 .OrderByDescending(e => e.EndDate).ToListAsync();
             return eventResponse.Concat(eventList).DistinctBy(e => e.Id).ToList();
         }
@@ -278,10 +278,10 @@ namespace Infrastructure.Repositories
         public async Task<List<Event>> UserIncomingEvents(Guid userId)
         {
             var eventResponse = await _context.Events
-                .Where(e => e.CreatedBy == userId && DateTimeHelper.ToDateTime(e.StartDate) >= DateTime.Now)
+                .Where(e => e.CreatedBy == userId && e.StartDate >= DateTimeHelper.GetCurrentTimeAsLong())
                 .ToListAsync();
             var incomingEvents = await GetUserRegisterdEventsQuery(userId);
-            var eventList = await incomingEvents.Where(e => DateTimeHelper.ToDateTime(e.StartDate) >= DateTime.Now)
+            var eventList = await incomingEvents.Where(e => e.StartDate >= DateTimeHelper.GetCurrentTimeAsLong())
                 .OrderByDescending(e => e.StartDate).ToListAsync();
             return eventResponse.Concat(eventList).DistinctBy(e => e.Id).ToList();
         }
@@ -296,7 +296,7 @@ namespace Infrastructure.Repositories
 
         public bool UpdateEventStatusToOnGoing()
         {
-            var ongoingEvents = _context.Events.Where(e => e.StartDate <= DateTimeHelper.ToJsDateType(DateTime.Now) &&
+            var ongoingEvents = _context.Events.Where(e => e.StartDate <= DateTimeHelper.GetCurrentTimeAsLong() &&
             e.Status!.Equals(EventStatus.NotYet.ToString())).ToList();
             ongoingEvents.ForEach(e => e.Status = EventStatus.OnGoing.ToString());
             _context.UpdateRange(ongoingEvents);
@@ -313,7 +313,7 @@ namespace Infrastructure.Repositories
 
         public bool UpdateEventStatusToEnded()
         {
-            var endedEvents = _context.Events.Where(e => e.EndDate <= DateTimeHelper.ToJsDateType(DateTime.Now) &&
+            var endedEvents = _context.Events.Where(e => e.EndDate <= DateTimeHelper.GetCurrentTimeAsLong() &&
             e.Status!.Equals(EventStatus.OnGoing.ToString())).ToList();
             endedEvents.ForEach(e => e.Status = EventStatus.Ended.ToString());
             _context.UpdateRange(endedEvents);
