@@ -1,16 +1,16 @@
-﻿using Application.Helper;
-using Application.UseCases.Events.Command.CreateEvent;
+﻿using Application.UseCases.Events.Command.CreateEvent;
 using AutoMapper;
+using Domain.DTOs.Coupons;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
 using Domain.DTOs.Events.ResponseDto;
-using Domain.DTOs.Payment.Response;
 using Domain.DTOs.Feedbacks;
+using Domain.DTOs.Payment.Response;
+using Domain.DTOs.PriceDto;
+using Domain.DTOs.Tag;
 using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Models.Pagination;
-using Domain.DTOs.PriceDto;
-using Domain.DTOs.Coupons;
 
 namespace Application.Configuration
 {
@@ -23,7 +23,7 @@ namespace Application.Configuration
 
             CreateMap<User, UserResponseDto>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
-                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore()) 
+                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.IsPremiumUser = src.Subscription != null && src.Subscription.IsActive;
@@ -83,11 +83,14 @@ namespace Application.Configuration
 
 
 
-            CreateMap<EventTagDto, Tag>().ReverseMap();
             CreateMap<CouponDto, Coupon>().ReverseMap();
             CreateMap<PriceDto, Price>().ReverseMap();
             CreateMap<Price, ResponsePriceDto>();
             //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
+
+            //Mapper Tag
+            CreateMap<TagDto, Tag>().ReverseMap();
+            CreateMap<EventTagDto, Tag>().ReverseMap();
         }
     }
 }
