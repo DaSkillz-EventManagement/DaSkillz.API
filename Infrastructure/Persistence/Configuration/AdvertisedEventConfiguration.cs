@@ -26,6 +26,7 @@ namespace Infrastructure.Persistence.Configuration
             builder.Property(e => e.EventId)
                 .IsRequired(); // Make EventId required
 
+            builder.Property(e => e.CreatedDate).IsRequired();
             // Configure the StartDate property
             builder.Property(e => e.StartDate)
                 .IsRequired(); // Make StartDate required

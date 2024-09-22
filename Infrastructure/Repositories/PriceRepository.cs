@@ -44,5 +44,13 @@ namespace Infrastructure.Repositories
             }
             return await result.ToListAsync();
         }
+
+        public async Task<Price> GetAllPriceAdvertised()
+        {
+            var advertisementPrice = await _context.Prices
+            .Where(p => p.PriceType == "advertisement" && p.status == "active")
+            .FirstOrDefaultAsync();
+            return advertisementPrice;
+        }
     }
 }

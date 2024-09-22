@@ -40,7 +40,6 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
 
         public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation("Executing CheckTransactionStatusJob at {Time}", DateTime.UtcNow);
             //get scheduler
             IScheduler scheduler = await _scheduler.GetScheduler();
             IJobDetail currentJob = context.JobDetail;
@@ -98,7 +97,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                                 await _subscriptionRepository.Add(subscription);
                             }
                         }
-                        
+
 
                         await _unitOfWork.SaveChangesAsync();
                         await _caching.RemoveAsync(key);
@@ -116,12 +115,11 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
             });
 
 
+
             await Task.WhenAll(tasks);
 
             // Xóa job sau khi hoàn thành
             //await scheduler.DeleteJob(currentJob.Key);
-
-            _logger.LogInformation("Finish job CheckTransactionStatusJob at {Time}", DateTime.UtcNow);
         }
 
     }

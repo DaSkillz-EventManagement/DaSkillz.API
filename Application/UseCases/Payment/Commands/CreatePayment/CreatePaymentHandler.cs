@@ -58,11 +58,10 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 Apptransid = app_trans_id,
                 Amount = request.Amount,
                 Timestamp = Utils.GetTimeStamp(),
-                Description = request.Description,
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,
                 UserId = request.UserId,
-                //EventId = request.EventId,
+                EventId = request.isSubscription ? request.EventId : null,
                 IsSubscription = request.isSubscription
             };
 

@@ -129,5 +129,30 @@ namespace Infrastructure.ExternalServices.Caching
                 await _database.KeyDeleteAsync(keys.Select(k => (RedisKey)k).ToArray());
             }
         }
+
+        /// <summary>
+        /// Get all fields and values from a Redis hash by key
+        /// </summary>
+        /// <param name="key">The Redis key where the hash is stored</param>
+        /// <returns>A dictionary containing all fields and their values, or null if the key does not exist</returns>
+        public async Task<Dictionary<string, string>?> GetAllHashDataAsync(string key)
+        {
+            // Retrieve all the fields and values from the hash
+            HashEntry[] hashEntries = await _database.HashGetAllAsync(key);
+
+            // If the key does not exist or the hash is empty, return null
+            if (!(hashEntries.Length > 0))
+                return null;
+
+            // Convert the HashEntry array into a dictionary
+            var result = new Dictionary<string, string>();
+
+            foreach (var entry in hashEntries)
+            {
+                result[entry.Name!] = entry.Value!;
+            }
+
+            return result;
+        }
     }
 }

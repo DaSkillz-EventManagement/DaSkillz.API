@@ -16,6 +16,7 @@ using Elastic.Transport;
 using Infrastructure.ExternalServices.Authentication;
 using Infrastructure.ExternalServices.Authentication.Setting;
 using Infrastructure.ExternalServices.AvatarApi;
+using Infrastructure.ExternalServices.AvatarApi.Setting;
 using Infrastructure.ExternalServices.BackgroundTask;
 using Infrastructure.ExternalServices.Caching;
 using Infrastructure.ExternalServices.Caching.Setting;
@@ -25,6 +26,7 @@ using Infrastructure.ExternalServices.Email;
 using Infrastructure.ExternalServices.Email.Setting;
 using Infrastructure.ExternalServices.Images;
 using Infrastructure.ExternalServices.Oauth2;
+using Infrastructure.ExternalServices.Oauth2.Setting;
 using Infrastructure.ExternalServices.Payment.ZaloPay;
 using Infrastructure.ExternalServices.Payment.ZaloPay.Setting;
 using Infrastructure.ExternalServices.Quartz;
@@ -52,6 +54,8 @@ namespace Infrastructure
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.Configure<EmailSetting>(configuration.GetSection("SmtpSettings"));
             services.Configure<ZaloPaySetting>(configuration.GetSection("ZaloPay"));
+            services.Configure<AvatarApiSetting>(configuration.GetSection("AvatarApi"));
+            services.Configure<GoogleSetting>(configuration.GetSection("GoogleToken"));
 
 
 
@@ -129,6 +133,7 @@ namespace Infrastructure
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
             services.AddScoped<ICouponRepository, CouponRepository>();
+            services.AddScoped<IAdvertisedEventRepository, AdvertisedEventRepository>();
 
             //Quiz service
             services.AddScoped<IQuizRepository, QuizRepository>();
@@ -152,7 +157,6 @@ namespace Infrastructure
             {
                 var checkJobKey = new JobKey("CheckTransactionStatusJob");
                 q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
-
                 q.AddTrigger(opts => opts
                     .ForJob(checkJobKey)
                     .WithIdentity("CheckTransactionStatusTrigger")
@@ -161,6 +165,16 @@ namespace Infrastructure
                         .WithIntervalInMinutes(2)
                         .RepeatForever()
                         .Build()));
+
+                var deactivateJobKey = new JobKey("DeactivateExpiredSubscriptionsJob");
+                q.AddJob<DeactivateExpiredSubscriptionsJob>(opts => opts.WithIdentity(deactivateJobKey));
+                q.AddTrigger(opts => opts
+                    .ForJob(deactivateJobKey)
+                    .WithIdentity("DeactivateExpiredSubscriptionsTrigger")
+                    .StartNow()
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInMinutes(1)  // Run every 1 minute
+                        .RepeatForever()));
             });
 
             services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

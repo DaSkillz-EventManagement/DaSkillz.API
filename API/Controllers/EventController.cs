@@ -146,7 +146,7 @@ namespace API.Controllers
             });
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -161,7 +161,7 @@ namespace API.Controllers
 
 
 
-        //[Authorize]
+        [Authorize]
         [HttpPut("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -247,7 +247,7 @@ namespace API.Controllers
         }
 
         [HttpGet("/logo/event-logo")]
-        public async Task<IActionResult> GetAllEventBlobUri([FromQuery] GetAllEventBlobUrisQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetAllEventBlobUri([FromQuery] GetAllEventBlobUrisQuery command, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return Ok(new APIResponse
@@ -262,7 +262,7 @@ namespace API.Controllers
         [HttpGet("popular/organizers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PopularOrganizers([FromQuery] GetTopCreatorsByEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> PopularOrganizers([FromQuery] GetTopCreatorsByEventQuery command, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return Ok(new APIResponse
@@ -276,7 +276,7 @@ namespace API.Controllers
         [HttpGet("popular/locations")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Locations([FromQuery] GetTopLocationByEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> Locations([FromQuery] GetTopLocationByEventQuery command, CancellationToken cancellationToken = default)
         {
             var result = _mediator.Send(command, cancellationToken);
             return Ok(new APIResponse
@@ -288,7 +288,7 @@ namespace API.Controllers
         }
 
         [HttpGet("user-hosted")]
-        public async Task<IActionResult> GetUserHostEvent([FromQuery, Required] GetUserHostEventQuery command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetUserHostEvent([FromQuery, Required] GetUserHostEventQuery command, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);
             if (result != null)
