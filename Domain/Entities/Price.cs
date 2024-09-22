@@ -11,4 +11,5 @@ public class Price
     public DateTime? UpdatedAt { get; set; }
     public Guid CreatedBy { get; set; }
     public virtual User? CreatedByNavigation { get; set; }
+
 }

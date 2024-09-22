@@ -128,6 +128,7 @@ namespace Infrastructure
             services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
             services.AddScoped<IPriceRepository, PriceRepository>();
             services.AddScoped<ICouponRepository, CouponRepository>();
+            services.AddScoped<IAdvertisedEventRepository, AdvertisedEventRepository>();
 
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();

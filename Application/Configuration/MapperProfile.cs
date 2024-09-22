@@ -11,6 +11,7 @@ using Domain.Entities;
 using Domain.Models.Pagination;
 using Domain.DTOs.PriceDto;
 using Domain.DTOs.Coupons;
+using Domain.DTOs.AdvertisedEvents;
 
 namespace Application.Configuration
 {
@@ -82,7 +83,7 @@ namespace Application.Configuration
             CreateMap<CouponDto, Coupon>().ReverseMap();
             CreateMap<PriceDto, Price>().ReverseMap();
             CreateMap<Price, ResponsePriceDto>();
-                //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
+            CreateMap<AdvertisedEvent, AdvertisedEventDto>();
         }
     }
 }
