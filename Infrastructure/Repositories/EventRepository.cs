@@ -33,7 +33,7 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
 
             return _context.Events.Include(e => e.Participants)
-                .Where(e => participants.Contains(e.Id))
+                .Where(e => participants.Contains(e.EventId))
                 .AsNoTracking();
         }
 
@@ -210,7 +210,7 @@ namespace Infrastructure.Repositories
                .ToListAsync();
             var eventIds = userInfo.Select(p => p.EventId).ToList();
             var events = await _context.Events
-                .Where(e => eventIds.Contains(e.Id))
+                .Where(e => eventIds.Contains(e.EventId))
                 .Where(e => e.Status!.Equals(EventStatus.OnGoing.ToString()) || e.Status!.Equals(EventStatus.NotYet.ToString()))
                 .AsSplitQuery().AsNoTracking()
                 .PaginateAndSort(pageNo, elementEachPage, "CreatedAt", false)
@@ -276,7 +276,7 @@ namespace Infrastructure.Repositories
             var events = await GetUserRegisterdEventsQuery(userId);
             var eventList = await events.Where(e => e.EndDate < DateTimeHelper.GetCurrentTimeAsLong())
                 .OrderByDescending(e => e.EndDate).ToListAsync();
-            return eventResponse.Concat(eventList).DistinctBy(e => e.Id).ToList();
+            return eventResponse.Concat(eventList).DistinctBy(e => e.EventId).ToList();
         }
 
         public async Task<List<Event>> UserIncomingEvents(Guid userId)
@@ -288,7 +288,7 @@ namespace Infrastructure.Repositories
             var incomingEvents = await GetUserRegisterdEventsQuery(userId);
             var eventList = await incomingEvents.Where(e => e.StartDate >= DateTimeHelper.GetCurrentTimeAsLong())
                 .OrderByDescending(e => e.StartDate).ToListAsync();
-            return eventResponse.Concat(eventList).DistinctBy(e => e.Id).ToList();
+            return eventResponse.Concat(eventList).DistinctBy(e => e.EventId).ToList();
         }
 
         public bool UpdateEventStatusToOnGoing(Guid eventId)
@@ -327,7 +327,7 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> IsOwner(Guid eventId, Guid UserId)
         {
-            return await _context.Events.AnyAsync(e => e.Id.Equals(eventId) && e.CreatedBy.Equals(UserId));
+            return await _context.Events.AnyAsync(e => e.EventId.Equals(eventId) && e.CreatedBy.Equals(UserId));
         }
 
         public async Task<bool> ChangeEventStatus(Guid eventId, EventStatus status)
@@ -417,7 +417,7 @@ namespace Infrastructure.Repositories
         public  EventPreviewDto ToEventPreview(Event entity)
         {
             EventPreviewDto response = new EventPreviewDto();
-            response.EventId = entity.Id;
+            response.EventId = entity.EventId;
             response.EventName = entity.EventName;
             response.Location = entity.Location;
             response.Status = entity.Status;
@@ -461,7 +461,7 @@ namespace Infrastructure.Repositories
             response.Location.Coord = eventEntity.LocationCoord;
             response.Location.Address = eventEntity.LocationAddress;
             response.Location.Url = eventEntity.LocationUrl;
-            response.Id = eventEntity.Id;
+            response.EventId = eventEntity.EventId;
             response.EventName = eventEntity.EventName;
             response.Host = getHostInfo((Guid)eventEntity.CreatedBy!);
             response.Image = eventEntity.Image;

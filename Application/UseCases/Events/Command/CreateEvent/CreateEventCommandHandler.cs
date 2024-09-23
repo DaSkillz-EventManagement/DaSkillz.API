@@ -61,7 +61,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
                 };
             }
             var eventEntity = _mapper.Map<Event>(request.EventRequestDto);
-            eventEntity.Id = Guid.NewGuid();
+            eventEntity.EventId = Guid.NewGuid();
             eventEntity.StartDate = request.EventRequestDto.StartDate;
             eventEntity.EndDate = request.EventRequestDto.EndDate;
             eventEntity.CreatedAt = DateTimeHelper.GetCurrentTimeAsLong();
@@ -101,10 +101,10 @@ namespace Application.UseCases.Events.Command.CreateEvent
             await _eventRepo.Add(eventEntity);
             if (await _unitOfWork.SaveChangesAsync() > 0)
             {
-                await _quartzService.StartEventStatusToOngoingJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate));
-                await _quartzService.StartEventStatusToEndedJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate));
-                await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
-                await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
+                await _quartzService.StartEventStatusToOngoingJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.StartDate));
+                await _quartzService.StartEventStatusToEndedJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.EndDate));
+                await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
+                await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
                 var response = _mapper.Map<EventResponseDto>(eventEntity);
                 response.Host = _eventRepo.getHostInfo((Guid)eventEntity.CreatedBy);
                 return new APIResponse
