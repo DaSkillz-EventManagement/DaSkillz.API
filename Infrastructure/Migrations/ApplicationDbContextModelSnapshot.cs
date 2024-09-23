@@ -82,6 +82,34 @@ namespace Infrastructure.Migrations
                     b.ToTable("AdvertisedEvents");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Answer", b =>
+                {
+                    b.Property<Guid>("AnswerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AnswerLabel")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsCorrectAnswer")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AnswerId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Answer", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Coupon", b =>
                 {
                     b.Property<string>("Id")
@@ -328,6 +356,79 @@ namespace Infrastructure.Migrations
                     b.HasIndex("CreatedBy");
 
                     b.ToTable("Price", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Question", b =>
+                {
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CorrectAnswerLabel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsMultipleAnswers")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsQuestionAnswered")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("QuestionName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("QuizId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("ShowAnswerAfterChoosing")
+                        .HasColumnType("bit");
+
+                    b.HasKey("QuestionId");
+
+                    b.HasIndex("QuizId");
+
+                    b.ToTable("Question", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Quiz", b =>
+                {
+                    b.Property<Guid>("QuizId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("QuizDescription")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("QuizName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("eventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("QuizId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("eventId");
+
+                    b.ToTable("Quiz", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -624,6 +725,36 @@ namespace Infrastructure.Migrations
                     b.ToTable("User", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserAnswer", b =>
+                {
+                    b.Property<Guid>("UserAnswerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AnswerLabel")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuizId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserAnswerId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("QuizId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAnswer", (string)null);
+                });
+
             modelBuilder.Entity("EventLogo", b =>
                 {
                     b.Property<int>("LogoId")
@@ -701,6 +832,18 @@ namespace Infrastructure.Migrations
                     b.Navigation("Event");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Answer", b =>
+                {
+                    b.HasOne("Domain.Entities.Question", "Question")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Answer_Question_111022");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
                     b.HasOne("Domain.Entities.User", "CreatedByNavigation")
@@ -761,6 +904,37 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("CreatedByNavigation");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Question", b =>
+                {
+                    b.HasOne("Domain.Entities.Quiz", "Quiz")
+                        .WithMany("Question")
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_Quiz_Questions");
+
+                    b.Navigation("Quiz");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Quiz", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany("Quizs")
+                        .HasForeignKey("eventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -845,6 +1019,33 @@ namespace Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserAnswer", b =>
+                {
+                    b.HasOne("Domain.Entities.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Quiz", "Quiz")
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("Quiz");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("EventLogo", b =>
                 {
                     b.HasOne("Domain.Entities.Event", null)
@@ -883,7 +1084,19 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Participants");
 
+                    b.Navigation("Quizs");
+
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Question", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Quiz", b =>
+                {
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>

@@ -27,6 +27,10 @@ namespace Infrastructure.Persistence
         public virtual DbSet<AdvertisedEvent> AdvertisedEvents { get; set; } = null!;
         public virtual DbSet<SponsorEvent> SponsorEvents { get; set; } = null!;
         public virtual DbSet<Subscription> Subscription { get; set; } 
+        public virtual DbSet<Quiz> Quizs { get; set; } = null!;
+        public virtual DbSet<Question> Questions { get; set; } = null!;
+        public virtual DbSet<Answer> Answers { get; set; } = null!;
+        public virtual DbSet<UserAnswer> UserAnswers { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

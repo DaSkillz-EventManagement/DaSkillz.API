@@ -41,6 +41,7 @@ using Microsoft.IdentityModel.Tokens;
 using Quartz;
 using StackExchange.Redis;
 using System.Text;
+using System.Text.Json;
 
 namespace Infrastructure
 {
@@ -63,8 +64,8 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
                 options.UseSqlServer(
-                    //configuration.GetConnectionString("local"),
-                    configuration.GetConnectionString("production"),
+                    configuration.GetConnectionString("local"),
+                    //configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
@@ -116,6 +117,20 @@ namespace Infrastructure
                 .Authentication(new BasicAuthentication(elasticsearchSettings.Username!, elasticsearchSettings.Password!));
             var client = new ElasticsearchClient(settings);
 
+
+            //Add SignalR
+            services
+                .AddSignalR(option =>
+                {
+                    option.EnableDetailedErrors = true;
+                    option.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
+                    option.MaximumReceiveMessageSize = 5 * 1024 * 1024; // 5MB
+                })
+                .AddJsonProtocol(option =>
+                {
+                    option.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
+
             //add life time for the services
             services.AddSingleton(client);
             services.AddSingleton<IRedisCaching, RedisCaching>();
@@ -131,10 +146,14 @@ namespace Infrastructure
             services.AddScoped<IRefundTransactionRepository, RefundTransactionRepository>();
             services.AddScoped<IPriceRepository, PriceRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-
             services.AddScoped<ICouponRepository, CouponRepository>();
             services.AddScoped<IAdvertisedEventRepository, AdvertisedEventRepository>();
 
+            //Quiz service
+            services.AddScoped<IQuizRepository, QuizRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<IUserAnswerRepository, UserAnswerRepository>();
 
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
             services.AddScoped<IParticipantRepository, ParticipantRepository>();

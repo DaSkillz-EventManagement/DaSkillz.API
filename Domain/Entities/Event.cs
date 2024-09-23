@@ -44,7 +44,7 @@ namespace Domain.Entities
         public virtual ICollection<Tag> Tags { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }
-
+        public virtual ICollection<Quiz> Quizs { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }
