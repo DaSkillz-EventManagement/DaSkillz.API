@@ -10,11 +10,11 @@ namespace Application.UseCases.Events.Queries.GetBlobUri
 {
     public class GetBlobUriQuery : IRequest<SponsorLogoDto>
     {
-        public string blobName { get; set; }
+        public string BlobName { get; set; }
 
         public GetBlobUriQuery(string blobName)
         {
-            this.blobName = blobName;
+            BlobName = blobName;
         }
     }
 }

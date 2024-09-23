@@ -44,7 +44,8 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
 
             //var existUser = await _userRepository.GetById(request.UserId);
             //var existEvent = await _eventRepository.GetById(request.EventId);
-            //if (existUser == null || existEvent == null) {
+            //if (existUser == null || existEvent == null)
+            //{
             //    return new APIResponse
             //    {
             //        StatusResponse = HttpStatusCode.NotFound,
@@ -57,11 +58,12 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
             {
                 Apptransid = app_trans_id,
                 Amount = request.Amount,
+                Description = "test",
                 Timestamp = Utils.GetTimeStamp(),
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,
                 UserId = request.UserId,
-                EventId = request.isSubscription ? request.EventId : null,
+                EventId = (!request.isSubscription) ? request.EventId : null,
                 IsSubscription = request.isSubscription
             };
 

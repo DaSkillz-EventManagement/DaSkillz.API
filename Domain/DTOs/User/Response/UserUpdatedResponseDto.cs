@@ -7,4 +7,5 @@ public class UserUpdatedResponseDto
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public string? Avatar { get; set; }
+    public bool? IsPremiumUser { get; set; } = false;
 }

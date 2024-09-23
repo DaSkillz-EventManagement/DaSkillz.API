@@ -10,9 +10,10 @@ namespace Application.UseCases.Events.Command.CreateEvent
         public EventRequestDto EventRequestDto { get; set; }
         public Guid UserId {  get; set; }
 
-        public CreateEventCommand(EventRequestDto eventRequestDto)
+        public CreateEventCommand(EventRequestDto eventRequestDto, Guid userId)
         {
             EventRequestDto = eventRequestDto;
+            UserId = userId;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Models.Response;
+﻿using Domain.DTOs.Events.RequestDto;
+using Domain.Models.Response;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,15 +11,11 @@ namespace Application.UseCases.Events.Command.UploadEventSponsorLogo
 {
     public class UploadEventSponsorLogoCommand : IRequest<string?>
     {
-        public string base64 {  get; set; }
-        public Guid EventId { get; set; }
-        public string sponsorName {  get; set; }
+        public FileUploadDto FileUploadDto {  get; set; }
 
-        public UploadEventSponsorLogoCommand(string base64, Guid eventId, string sponsorName)
+        public UploadEventSponsorLogoCommand(FileUploadDto fileUploadDto)
         {
-            this.base64 = base64;
-            EventId = eventId;
-            this.sponsorName = sponsorName;
+            FileUploadDto = fileUploadDto;
         }
     }
 }

@@ -25,12 +25,12 @@ namespace Application.UseCases.Events.Command.UploadEventSponsorLogo
 
         public async Task<string?> Handle(UploadEventSponsorLogoCommand request, CancellationToken cancellationToken)
         {
-            var logoTemp = await _logoRepository.GetByName(request.sponsorName);
+            var logoTemp = await _logoRepository.GetByName(request.FileUploadDto.sponsorName);
             if (logoTemp != null)
             {
                 return null;
             }
-            Event eventData = await _eventRepository.GetById(request.EventId);
+            Event eventData = await _eventRepository.GetById(request.FileUploadDto.eventId);
             if (eventData != null)
             {
                 var httpHeaders = new BlobHttpHeaders
@@ -38,10 +38,10 @@ namespace Application.UseCases.Events.Command.UploadEventSponsorLogo
                     ContentType = "image/png" // file type
                 };
                 BlobContainerClient blobContainerClient = _imageService.GetBlobContainerClient();
-                BlobClient blobClient = blobContainerClient.GetBlobClient(request.EventId.ToString() + "sponsor-" + request.sponsorName);
+                BlobClient blobClient = blobContainerClient.GetBlobClient(request.FileUploadDto.eventId.ToString() + "sponsor-" + request.FileUploadDto.sponsorName);
 
                 // Decode base64 string to byte array
-                byte[] imageBytes = Convert.FromBase64String(request.base64);
+                byte[] imageBytes = Convert.FromBase64String(request.FileUploadDto.base64);
 
                 using (var memoryStream = new MemoryStream(imageBytes))
                 {
@@ -52,7 +52,7 @@ namespace Application.UseCases.Events.Command.UploadEventSponsorLogo
 
                 Logo newLogo = new Logo
                 {
-                    SponsorBrand = request.sponsorName,
+                    SponsorBrand = request.FileUploadDto.sponsorName,
                     LogoUrl = absPath
                 };
                 await _logoRepository.Add(newLogo);

@@ -52,9 +52,10 @@ namespace Application.UseCases.Events.Queries.GetFilteredEvent
 
 
             var result = await _eventRepo.GetFilteredEvent(request.Filter, request.PageNo, request.ElementEachPage);
-            var response = _mapper.Map<PagedList<EventResponseDto>>(result);
+            List<EventResponseDto> response = new List<EventResponseDto>(); //_mapper.Map<List<EventResponseDto>>(result);
+            response = result.Select(_eventRepo.ToResponseDto).ToList();
             var pages = new PagedList<EventResponseDto>
-                (response, response.TotalItems, request.PageNo, request.ElementEachPage);
+                (response, result.TotalItems, request.PageNo, request.ElementEachPage);
 
             // Serialize and cache the PagedList in Redis
             var serializedPagedList = JsonConvert.SerializeObject(new
