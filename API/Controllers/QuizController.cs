@@ -1,4 +1,5 @@
 ﻿using Application.Helper;
+using Application.UseCases.Quiz.Queries.GetQuizByEventId;
 using Application.UseCases.Quizs.Commands.CreateQuestions;
 using Application.UseCases.Quizs.Commands.CreateQuiz;
 using Domain.DTOs.Quiz.Request;
@@ -76,12 +77,26 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetQuizByEventId([FromQuery, Required] Guid EventId, CancellationToken token = default)
         {
-            return Ok(new NotImplementedException());
+            var result = await _mediator.Send(new GetQuizByEventIdQuery(EventId), token);
+            if(result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
         }
         [HttpGet("info")]
         public async Task<IActionResult> GetQuizQuestions([FromQuery, Required] Guid QuizId, CancellationToken token = default)
         {
-            return Ok(new NotImplementedException());
+            var result = await _mediator.Send(new GetQuizByEventIdQuery(QuizId), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            if (result.StatusResponse == HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
         }
     }
 }

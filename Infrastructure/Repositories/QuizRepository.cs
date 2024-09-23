@@ -2,6 +2,7 @@
 using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -12,5 +13,11 @@ public class QuizRepository : RepositoryBase<Quiz>, IQuizRepository
     public QuizRepository(ApplicationDbContext context) : base(context)
     {
         _context = context;
+    }
+
+    public async Task<List<Quiz>> GetAllQuizsByEventId(Guid eventId)
+    {
+        var quizs = await _context.Quizs.Where(q => q.eventId == eventId).ToListAsync();
+        return quizs;
     }
 }

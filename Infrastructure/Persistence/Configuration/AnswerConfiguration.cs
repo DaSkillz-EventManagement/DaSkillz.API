@@ -31,6 +31,6 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
             .WithMany(q => q.Answers)
             .HasForeignKey(a => a.QuestionId)
             .HasConstraintName("FK_Answer_Question_111022")
-            .OnDelete(DeleteBehavior.Restrict); // delete answer when delete question
+            .OnDelete(DeleteBehavior.Cascade); // delete answer when delete question
     }
 }

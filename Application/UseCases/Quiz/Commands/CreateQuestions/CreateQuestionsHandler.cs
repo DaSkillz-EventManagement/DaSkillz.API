@@ -53,33 +53,55 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
         }
         #endregion
 
-        List<ResponseQuestionDto> response = new List<ResponseQuestionDto>();
-        foreach(var question in request.Dtos)
+        if (request.Dtos == null || !request.Dtos.Any())
         {
-            Question temp = new Question();
-            temp.QuestionId = Guid.NewGuid();
-            temp.QuestionName = question.QuestionName;
-            temp.CorrectAnswerLabel = question.CorrectAnswerLabel;
-            temp.IsMultipleAnswers = question.IsMultipleAnswers;
-            temp.IsQuestionAnswered = question.IsQuestionAnswered;
-            temp.ShowAnswerAfterChoosing = question.ShowAnswerAfterChoosing;
-            await _questionRepository.Add(temp);
-            foreach(var answer in question.Answers)
+            return new APIResponse
             {
-                Answer entity = new Answer();
-                entity.AnswerId = Guid.NewGuid();
-                entity.QuestionId = temp.QuestionId;
-                entity.AnswerLabel = answer.AnswerLabel;
-                entity.Content = answer.Content;
-                entity.IsCorrectAnswer = answer.IsCorrectAnswer;
-                await _answerRepository.Add(entity);
+                StatusResponse = HttpStatusCode.BadRequest,
+                Message = MessageEvent.OnlyHostCanCreateQuiz,
+                Data = null
+            };
+        }
+
+        List<ResponseQuestionDto> response = new List<ResponseQuestionDto>();
+        var tasks = new List<Task>();
+
+        foreach (var question in request.Dtos)
+        {
+            Question temp = new Question
+            {
+                QuestionId = Guid.NewGuid(),
+                QuestionName = question.QuestionName,
+                CorrectAnswerLabel = question.CorrectAnswerLabel,
+                IsMultipleAnswers = question.IsMultipleAnswers,
+                IsQuestionAnswered = question.IsQuestionAnswered,
+                ShowAnswerAfterChoosing = question.ShowAnswerAfterChoosing
+            };
+            tasks.Add(_questionRepository.Add(temp));
+
+            foreach (var answer in question.Answers)
+            {
+                Answer entity = new Answer
+                {
+                    AnswerId = Guid.NewGuid(),
+                    QuestionId = temp.QuestionId,
+                    AnswerLabel = answer.AnswerLabel,
+                    Content = answer.Content,
+                    IsCorrectAnswer = answer.IsCorrectAnswer
+                };
+                tasks.Add(_answerRepository.Add(entity));
+                temp.Answers.Add(entity);
             }
+
             ResponseQuestionDto dto = _mapper.Map<ResponseQuestionDto>(temp);
             response.Add(dto);
         }
+
         #region Saving entity
         try
         {
+            await Task.WhenAll(tasks); // wait all tasks to complete
+
             if (await _unitOfWork.SaveChangesAsync() > 0)
             {
                 return new APIResponse
@@ -89,11 +111,12 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
                     Data = response
                 };
             }
+
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.BadRequest,
                 Message = MessageCommon.CreateFailed,
-                Data = request.Dtos
+                Data = null
             };
         }
         catch (Exception ex)

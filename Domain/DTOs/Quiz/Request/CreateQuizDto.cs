@@ -1,4 +1,5 @@
 ﻿
+using Domain.Enum.Quiz;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.DTOs.Quiz.Request;
@@ -17,4 +18,7 @@ public class CreateQuizDto
     [Required(ErrorMessage = "QuizDescription is required!")]
     [MaxLength(500, ErrorMessage = "QuizDescription max length is 500 characters!")]
     public string QuizDescription { get; set; } = null!;
+
+    [Required(ErrorMessage = "QuizStatus is required!")]
+    public QuizEnum QuizStatus { get; set; }
 }

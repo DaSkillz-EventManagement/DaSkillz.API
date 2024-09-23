@@ -32,8 +32,6 @@
 
 	<ItemGroup>
 	  <Folder Include="UseCases\AdvertiseEvents\Queries\" />
-	  <Folder Include="UseCases\Quiz\Queries\GetQuizByEventId\" />
-	  <Folder Include="UseCases\Quiz\Queries\GetQuizInfo\" />
 	  <Folder Include="UseCases\Subscription\" />
 	  <Folder Include="UseCases\Role\" />
 	</ItemGroup>

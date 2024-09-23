@@ -9,6 +9,7 @@ public class Quiz
     public string QuizDescription { get; set; } = null!;
     public Guid CreatedBy { get; set; }
     public DateTime CreateAt { get; set; }
+    public string status { get; set; } = null!;
 
 
     public virtual Event Event { get; set; } = null!;

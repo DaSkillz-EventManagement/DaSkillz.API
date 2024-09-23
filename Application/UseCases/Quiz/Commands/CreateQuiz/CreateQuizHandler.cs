@@ -43,6 +43,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
         entity.QuizId = Guid.NewGuid();
         entity.CreateAt = DateTime.Now;
         entity.CreatedBy = request.UserId;
+        entity.status = request.QuizDto.QuizStatus.ToString();
         await _quizRepository.Add(entity);
 
         #region Saving entity
