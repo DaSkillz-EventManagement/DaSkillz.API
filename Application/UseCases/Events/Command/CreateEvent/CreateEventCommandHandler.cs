@@ -67,6 +67,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
             eventEntity.CreatedAt = DateTimeHelper.GetCurrentTimeAsLong();
             eventEntity.UpdatedAt = DateTimeHelper.GetCurrentTimeAsLong();
             eventEntity.CreatedBy = request.UserId;
+            eventEntity.Fare = request.EventRequestDto.Ticket;
             if (request.EventRequestDto.Image != null)
             {
                 eventEntity.Image = await _fileService.UploadImage(request.EventRequestDto.Image, Guid.NewGuid());

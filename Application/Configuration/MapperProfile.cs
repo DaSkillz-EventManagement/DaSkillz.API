@@ -70,6 +70,7 @@ namespace Application.Configuration
 
                     .ForMember(dest => dest.eventTags, opt => opt.MapFrom(src => src.Tags)) // Mapping Tags to eventTags
                     .ReverseMap()
+                    .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.Name))
                     .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.Location.Id))
                     .ForMember(dest => dest.LocationAddress, opt => opt.MapFrom(src => src.Location.Address))
                     .ForMember(dest => dest.LocationCoord, opt => opt.MapFrom(src => src.Location.Coord))
@@ -91,6 +92,7 @@ namespace Application.Configuration
             .ForMember(dest => dest.Host, opt => opt.MapFrom(src => src.CreatedByNavigation))
             .ForMember(dest => dest.eventTags, opt => opt.MapFrom(src => src.Tags)) // Mapping Tags to eventTags
             .ReverseMap()
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.Name))
             .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.Location.Id))
             .ForMember(dest => dest.LocationAddress, opt => opt.MapFrom(src => src.Location.Address))
             .ForMember(dest => dest.LocationCoord, opt => opt.MapFrom(src => src.Location.Coord))
