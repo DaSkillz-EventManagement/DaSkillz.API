@@ -43,14 +43,47 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
             //get scheduler
             IScheduler scheduler = await _scheduler.GetScheduler();
             IJobDetail currentJob = context.JobDetail;
+            List<string> cacheKeys = new List<string>();
+            try
+            {
+                cacheKeys = await _caching.SearchKeysAsync("payment");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get keys from Redis. Fallback to database.");
+                var processingTransaction = await _transactionRepository.getProcessingTransaction();
+                cacheKeys = (List<string>)processingTransaction;
+            }
 
-            var cacheKeys = await _caching.SearchKeysAsync("payment");
+            //if (!cacheKeys.Any())
+            //{
+            //    var processingTransaction = await _transactionRepository.getProcessingTransaction();
+            //    cacheKeys = (List<string>)processingTransaction;
+            //}
 
             var tasks = cacheKeys.Select(async key =>
             {
                 // Get transactionId from cache
-                var transactionId = await _caching.HashGetSpecificKeyAsync(key, "transactionId");
-                if (string.IsNullOrEmpty(transactionId)) return;
+                //var transactionId = await _caching.HashGetSpecificKeyAsync(key, "transactionId");
+
+                string? transactionId = null;
+                try
+                {
+                    transactionId = await _caching.HashGetSpecificKeyAsync(key, "transactionId");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to get transactionId from Redis for key {key}.", key);
+                }
+
+                if (string.IsNullOrEmpty(transactionId))
+                {
+                    var existInDb = await _transactionRepository.GetById(key);
+                    if (existInDb == null || existInDb.Status != (int)TransactionStatus.PROCESSING)
+                        return;
+
+                    transactionId = existInDb.Apptransid;
+                }
 
                 // Query ZaloPay API
                 var result = await _zaloPayService.QueryOrderStatus(transactionId);

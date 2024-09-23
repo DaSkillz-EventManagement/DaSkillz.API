@@ -26,32 +26,7 @@ namespace Application.Configuration
             CreateMap<Transaction, TransactionResponseDto>()
                 .ReverseMap();
 
-            CreateMap<User, UserResponseDto>()
-                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
-                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    dest.IsPremiumUser = src.Subscription.IsActive;
-                })
-                .ReverseMap();
             
-            CreateMap<User, UserUpdatedResponseDto>()
-                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    dest.IsPremiumUser = src.Subscription.IsActive;
-                })
-                .ReverseMap();
-
-            CreateMap<User, UserByKeywordResponseDto>()
-                .ForMember(dest => dest.IsPremiumUser, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    dest.IsPremiumUser = src.Subscription.IsActive;
-                })
-                .ReverseMap();
-
-
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)).ReverseMap();
 

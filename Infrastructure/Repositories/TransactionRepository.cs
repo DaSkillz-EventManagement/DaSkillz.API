@@ -29,5 +29,12 @@ namespace Infrastructure.Repositories
                     .FirstOrDefaultAsync();
         }
 
+        public async Task<IList<Transaction>> getProcessingTransaction()
+        {
+            return await _context.Transactions
+                    .Where(t => t.Status == 3)
+                    .OrderByDescending(t => t.CreatedAt).ToListAsync();
+        }
+
     }
 }
