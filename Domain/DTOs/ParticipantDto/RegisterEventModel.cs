@@ -14,7 +14,7 @@ namespace Domain.DTOs.ParticipantDto
         [Required]
         public Guid EventId { get; set; }
         [Required]
-        [Range(1, 4)]
+        [Range(1, 5)]
         public int RoleEventId { get; set; }
 
         public RegisterEventModel()

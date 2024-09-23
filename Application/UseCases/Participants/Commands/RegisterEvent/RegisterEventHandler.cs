@@ -19,11 +19,13 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
     private readonly IEventRepository _eventRepo;
     private readonly IParticipantRepository _participantRepository;
     private readonly IUnitOfWork _unitOfWork;
-    public RegisterEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork)
+    private readonly ISendMailTask _sendMail;
+    public RegisterEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork, ISendMailTask sendMail)
     {
         _eventRepo = eventRepo;
         _participantRepository = participantRepository;
         _unitOfWork = unitOfWork;
+        _sendMail = sendMail;
     }
 
     public async Task<APIResponse> Handle(RegisterEventCommand request, CancellationToken cancellationToken)
@@ -80,10 +82,10 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
         await _participantRepository.Add(participant);
         if (await _unitOfWork.SaveChangesAsync() > 0)
         {
-            /*if (!currentEvent!.Approval)
+            if (!currentEvent!.Approval)
             {
-                _sendMailTask.SendMailTicket(registerEventModel);
-            }*/
+                _sendMail.SendMailTicket(registerEventModel);
+            }
 
             return new APIResponse()
             {

@@ -1,8 +1,12 @@
 ﻿using Application.Abstractions.Email;
+using Domain.Constants.Mail;
+using Domain.DTOs.ParticipantDto;
+using Domain.DTOs.User.Request;
 using Infrastructure.ExternalServices.Email.Setting;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using System.IO;
 
 namespace Infrastructure.ExternalServices.Email
 {
@@ -56,6 +60,45 @@ namespace Infrastructure.ExternalServices.Email
 
                 // Disconnect from the SMTP server
                 await smtpClient.DisconnectAsync(true);
+            }
+        }
+
+        public async Task SendEmailTicket(string template, string title, TicketModel ticket)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(_emailSetting.SenderName, _emailSetting.SenderEmail));
+            message.To.Add(new MailboxAddress("", ticket.Email));
+            message.Subject = "Participant";
+            var htmlContent = await File.ReadAllTextAsync(template);
+            var bodyBuilder = new BodyBuilder
+            {
+                HtmlBody = htmlContent
+            };
+            message.Body = bodyBuilder.ToMessageBody();
+
+            // Send the email using an SMTP client
+            using (var smtpClient = new SmtpClient())
+            {
+                // SMTP server configuration (replace with your SMTP server details)
+                var smtpServer = _emailSetting.SmtpServer;
+                var smtpPort = _emailSetting.Port; // or 465 for SSL
+                var smtpUsername = _emailSetting.Username;
+                var smtpPassword = _emailSetting.Password;
+
+                // Connect to the SMTP server
+                await smtpClient.ConnectAsync(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+                await smtpClient.AuthenticateAsync(smtpUsername, smtpPassword);
+
+                // Send the email
+                await smtpClient.SendAsync(message);
+
+                // Disconnect from the SMTP server
+                await smtpClient.DisconnectAsync(true);
+                /*var response = await _fluentEmail.To(ticket.Email)
+                    .Subject(title)
+                    .UsingTemplateFromFile(template, ticket, true)
+                    .SendAsync();
+                return response.Successful;*/
             }
         }
     }

@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Domain.Constants.Mail;
+
+public class MailConstant
+{
+    public class TicketMail
+    {
+        public const string Title = "Ticket for event";
+        public const string PathTemplate = "./Template/TicketUser.cshtml";
+    }
+
+    public class ReminderMail
+    {
+        public const string Title = "Reminder for event";
+        public const string PathTemplate = "./Template/ReminderEmail.cshtml";
+    }
+
+}

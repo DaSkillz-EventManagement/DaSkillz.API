@@ -6,6 +6,9 @@ using Application.ResponseMessage;
 using System.Net;
 using Domain.Entities;
 using Domain.Enum.Participant;
+using Application.ExternalServices.Mail;
+using Domain.DTOs.ParticipantDto;
+using Domain.Enum.Events;
 
 namespace Application.UseCases.Participants.Commands.AddUserToEventCommand
 {
@@ -14,11 +17,13 @@ namespace Application.UseCases.Participants.Commands.AddUserToEventCommand
         private readonly IEventRepository _eventRepo;
         private readonly IParticipantRepository _participantRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public AddUserToEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork)
+        private readonly ISendMailTask _sendMail;
+        public AddUserToEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork, ISendMailTask sendMailTask)
         {
             _eventRepo = eventRepo;
             _participantRepository = participantRepository;
             _unitOfWork = unitOfWork;
+            _sendMail = sendMailTask;
         }
         public async Task<APIResponse> Handle(AddUserToEventCommand request, CancellationToken cancellationToken)
         {
@@ -52,12 +57,11 @@ namespace Application.UseCases.Participants.Commands.AddUserToEventCommand
                 IsCheckedMail = false,
                 Status = ParticipantStatus.Confirmed.ToString()
             };
-
             await _participantRepository.UpSert(participant);
 
             if (await _unitOfWork.SaveChangesAsync() > 0)
             {
-                //_sendMailTask.SendMailTicket(registerEventModel);
+                _sendMail.SendMailTicket(request.RegisterEventModel);
 
                 return new APIResponse()
                 {

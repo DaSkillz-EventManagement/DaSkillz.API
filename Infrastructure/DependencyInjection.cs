@@ -189,6 +189,20 @@ namespace Infrastructure
                     .WithSimpleSchedule(x => x
                         .WithIntervalInMinutes(1)  // Run every 1 minute
                         .RepeatForever()));
+
+                var jobKey = new JobKey("AllEventStatusToEndedJob");
+                var jobKey2 = new JobKey("AllEventStatusToOngoingJob");
+                q.AddJob<AllEventStatusToOngoingJob>(opts => opts.WithIdentity(jobKey2));
+                q.AddJob<AllEventStatusToEndedJob>(opts => opts.WithIdentity(jobKey));
+
+                q.AddTrigger(opts => opts.ForJob(jobKey2)
+                    .WithSimpleSchedule(x => x.WithIntervalInSeconds(3600).WithRepeatCount(1).Build())
+                    .WithDescription("Auto update status for all events")
+                );
+                q.AddTrigger(opts => opts.ForJob(jobKey)
+                    .WithSimpleSchedule(x => x.WithIntervalInSeconds(3600).WithRepeatCount(1).Build())
+                    .WithDescription("Auto update status for all events")
+                );
             });
 
             services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
