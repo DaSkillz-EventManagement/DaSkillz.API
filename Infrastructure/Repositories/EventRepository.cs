@@ -1,4 +1,5 @@
 ﻿using Application.Helper;
+using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.ResponseDto;
 using Domain.DTOs.User.Response;
@@ -16,10 +17,12 @@ namespace Infrastructure.Repositories
     public class EventRepository : RepositoryBase<Event>, IEventRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public EventRepository(ApplicationDbContext context) : base(context)
+        public EventRepository(ApplicationDbContext context, IMapper mapper) : base(context)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         private async Task<IQueryable<Event>> GetUserRegisterdEventsQuery(Guid userId)
@@ -438,6 +441,35 @@ namespace Infrastructure.Repositories
                 email = user.Email
             };
 
+            return response;
+        }
+
+        
+
+
+        public EventResponseDto ToResponseDto(Event eventEntity)
+        {
+            EventResponseDto response = new EventResponseDto();
+            response.StartDate = eventEntity.StartDate;
+            response.EndDate = eventEntity.EndDate;
+            response.CreatedAt = (long)eventEntity.CreatedAt;
+            response.Status = eventEntity.Status;
+            response.Approval = eventEntity.Approval;
+            response.Description = eventEntity.Description;
+            response.Location!.Name = eventEntity.Location!;
+            response.Location.Id = eventEntity.LocationId;
+            response.Location.Coord = eventEntity.LocationCoord;
+            response.Location.Address = eventEntity.LocationAddress;
+            response.Location.Url = eventEntity.LocationUrl;
+            response.Id = eventEntity.Id;
+            response.EventName = eventEntity.EventName;
+            response.Host = getHostInfo((Guid)eventEntity.CreatedBy!);
+            response.Image = eventEntity.Image;
+            response.Theme = eventEntity.Theme;
+            response.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
+            response.UpdatedAt = eventEntity.UpdatedAt.HasValue ?eventEntity.UpdatedAt : null;
+            response.Fare = eventEntity.Fare;
+            response.Capacity = eventEntity.Capacity;
             return response;
         }
     }
