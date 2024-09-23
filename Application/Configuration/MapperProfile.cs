@@ -121,16 +121,14 @@ namespace Application.Configuration
                 .ReverseMap();
 
             //Participant
+            CreateMap<Participant, ParticipantEventDto>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ReverseMap();
 
-            
-            //CreateMap<Participant, ParticipantEventModel>()
-            //    .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
-            //    .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
-            //    .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
-            //    .ReverseMap();
-
-            //CreateMap<Participant, ParticipantInfo>().ReverseMap();
-            //CreateMap<PagedList<Participant>, PagedList<ParticipantEventModel>>().ReverseMap();
+            CreateMap<PagedList<Participant>, PagedList<ParticipantEventDto>>().ReverseMap();
+            CreateMap<Participant, ParticipantInfo>().ReverseMap();
 
             CreateMap<Participant, ParticipantDto>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
