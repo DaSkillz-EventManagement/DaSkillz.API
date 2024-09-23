@@ -45,7 +45,6 @@ builder.Services.AddCors();
 //});
 //default services
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 
 //build phrase

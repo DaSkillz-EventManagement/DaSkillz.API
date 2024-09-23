@@ -63,7 +63,7 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
         {
             UserId = request.UserId,
             EventId = request.EventId,
-            RoleEventId = (int)EventRole.Visitor
+            RoleEventId = (int)EventRole.Visitor + 1
         };
         var currentEvent = await _eventRepo.GetById(registerEventModel.EventId);
 

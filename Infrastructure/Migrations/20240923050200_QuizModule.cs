@@ -12,21 +12,6 @@ namespace Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AdvertisedEvents",
-                columns: table => new
-                {
-                    PurchaserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StartDate = table.Column<long>(type: "bigint", nullable: false),
-                    EndDate = table.Column<long>(type: "bigint", nullable: false),
-                    PurchasedPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AdvertisedEvents", x => new { x.PurchaserId, x.EventId });
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Coupons",
                 columns: table => new
                 {
@@ -166,18 +151,11 @@ namespace Infrastructure.Migrations
                     LocationID = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: true),
                     LocationAddress = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     Theme = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    CreatedByNavigationUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AdvertisedEventPurchaserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AdvertisedEventEventId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CreatedByNavigationUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Events_AdvertisedEvents_AdvertisedEventPurchaserId_AdvertisedEventEventId",
-                        columns: x => new { x.AdvertisedEventPurchaserId, x.AdvertisedEventEventId },
-                        principalTable: "AdvertisedEvents",
-                        principalColumns: new[] { "PurchaserId", "EventId" });
                     table.ForeignKey(
                         name: "FK_Events_User_CreatedByNavigationUserId",
                         column: x => x.CreatedByNavigationUserId,
@@ -250,6 +228,28 @@ namespace Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdvertisedEvents",
+                columns: table => new
+                {
+                    PurchaserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<long>(type: "bigint", nullable: false),
+                    StartDate = table.Column<long>(type: "bigint", nullable: false),
+                    EndDate = table.Column<long>(type: "bigint", nullable: false),
+                    PurchasedPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdvertisedEvents", x => new { x.PurchaserId, x.EventId });
+                    table.ForeignKey(
+                        name: "FK_AdvertisedEvents_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -388,6 +388,7 @@ namespace Infrastructure.Migrations
                     QuizDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -445,7 +446,7 @@ namespace Infrastructure.Migrations
                     Apptransid = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Zptransid = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Timestamp = table.Column<long>(type: "bigint", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
@@ -532,7 +533,7 @@ namespace Infrastructure.Migrations
                         column: x => x.QuestionId,
                         principalTable: "Question",
                         principalColumn: "QuestionId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -566,6 +567,11 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AdvertisedEvents_EventId",
+                table: "AdvertisedEvents",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Answer_QuestionId",
                 table: "Answer",
                 column: "QuestionId");
@@ -584,11 +590,6 @@ namespace Infrastructure.Migrations
                 name: "IX_EventLogo_EventID",
                 table: "EventLogo",
                 column: "EventID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Events_AdvertisedEventPurchaserId_AdvertisedEventEventId",
-                table: "Events",
-                columns: new[] { "AdvertisedEventPurchaserId", "AdvertisedEventEventId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_CreatedByNavigationUserId",
@@ -693,6 +694,9 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AdvertisedEvents");
+
+            migrationBuilder.DropTable(
                 name: "Answer");
 
             migrationBuilder.DropTable(
@@ -754,9 +758,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Events");
-
-            migrationBuilder.DropTable(
-                name: "AdvertisedEvents");
 
             migrationBuilder.DropTable(
                 name: "User");

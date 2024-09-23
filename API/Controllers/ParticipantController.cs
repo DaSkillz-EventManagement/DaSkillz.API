@@ -35,15 +35,15 @@ public class ParticipantController : ControllerBase
     }
     [HttpPost("register")]
     [Authorize]
-    public async Task<IActionResult> RegisterEvent(Guid eventId, Guid? transactionId, CancellationToken token = default)
+    public async Task<IActionResult> RegisterEvent([FromQuery, Required]Guid eventId, Guid? transactionId, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new RegisterEventCommand(userId, transactionId, eventId), token);
         if(result.StatusResponse != HttpStatusCode.OK)
         {
-            return BadRequest(result);
+            return Ok(result);
         }
-        return Ok(result);
+        return BadRequest(result);
     }
     [HttpPost("add")]
     [Authorize]

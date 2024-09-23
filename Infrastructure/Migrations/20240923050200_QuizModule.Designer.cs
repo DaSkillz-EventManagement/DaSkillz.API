@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240922010618_QuizModule")]
+    [Migration("20240923050200_QuizModule")]
     partial class QuizModule
     {
         /// <inheritdoc />
@@ -66,6 +66,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<long>("CreatedDate")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("EndDate")
                         .HasColumnType("bigint");
 
@@ -76,6 +79,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("PurchaserId", "EventId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("AdvertisedEvents");
                 });
@@ -143,12 +148,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AdvertisedEventEventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AdvertisedEventPurchaserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Approval")
@@ -228,8 +227,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByNavigationUserId");
-
-                    b.HasIndex("AdvertisedEventPurchaserId", "AdvertisedEventEventId");
 
                     b.ToTable("Events");
                 });
@@ -423,6 +420,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid>("eventId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("QuizId");
 
@@ -643,7 +644,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
@@ -819,12 +819,23 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.AdvertisedEvent", b =>
+                {
+                    b.HasOne("Domain.Entities.Event", "Event")
+                        .WithMany("AdvertisedEvents")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("Domain.Entities.Answer", b =>
                 {
                     b.HasOne("Domain.Entities.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Answer_Question_111022");
 
@@ -836,12 +847,6 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.User", "CreatedByNavigation")
                         .WithMany("Events")
                         .HasForeignKey("CreatedByNavigationUserId");
-
-                    b.HasOne("Domain.Entities.AdvertisedEvent", "AdvertisedEvent")
-                        .WithMany("Events")
-                        .HasForeignKey("AdvertisedEventPurchaserId", "AdvertisedEventEventId");
-
-                    b.Navigation("AdvertisedEvent");
 
                     b.Navigation("CreatedByNavigation");
                 });
@@ -1069,13 +1074,10 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("FK__EventTag__TagID__440B1D61");
                 });
 
-            modelBuilder.Entity("Domain.Entities.AdvertisedEvent", b =>
-                {
-                    b.Navigation("Events");
-                });
-
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
+                    b.Navigation("AdvertisedEvents");
+
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Participants");
