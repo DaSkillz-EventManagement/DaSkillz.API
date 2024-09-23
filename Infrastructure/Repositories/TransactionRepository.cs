@@ -4,6 +4,7 @@ using Elastic.Clients.Elasticsearch.Security;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories
 {
@@ -16,14 +17,19 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Transaction?> getTransactionByUserIdAsync(Guid? guid)
+        public async Task<IEnumerable<Transaction?>> getTransactionByUserIdAsync(Guid? guid)
         {
-            return await _context.Transactions.FirstOrDefaultAsync(x => x.UserId.Equals(guid));
+            //return await _context.Transactions
+            //        .Include(t => t.Event)
+            //        .Include(t => t.User)
+            //        .Where(t => t.UserId == guid)
+            //        .ToListAsync();
+            return await _context.Transactions.Where(x => x.UserId.Equals(guid)).ToListAsync();
         }        
         
-        public async Task<Transaction?> getEventTransactionAsync(Guid? eventId)
+        public async Task<IEnumerable<Transaction?>> getEventTransactionAsync(Guid? eventId)
         {
-            return await _context.Transactions.FirstOrDefaultAsync(x => x.EventId.Equals(eventId));
+            return await _context.Transactions.Where(x => x.EventId.Equals(eventId)).ToListAsync();
         }
 
         public async Task<Transaction?> GetLatestTransactionIsSubscribe(Guid userId)
