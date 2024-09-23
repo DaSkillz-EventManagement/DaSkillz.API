@@ -42,23 +42,34 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
             var result = await _zaloPayService.CreateOrderAsync(request.Amount, appUser, request.Description!, app_trans_id);
             var returnCode = (long)result["return_code"];
 
-            //var existUser = await _userRepository.GetById(request.UserId);
-            //var existEvent = await _eventRepository.GetById(request.EventId);
-            //if (existUser == null || existEvent == null)
-            //{
-            //    return new APIResponse
-            //    {
-            //        StatusResponse = HttpStatusCode.NotFound,
-            //        Message = existUser == null ? MessageUser.UserNotFound : existEvent == null ? MessageEvent.EventIdNotExist : "Success",
-            //        Data = null
-            //    };
-            //}
+            var existUser = await _userRepository.GetById(request.UserId);
+            if (existUser == null)
+            {
+                return new APIResponse
+                {
+                    StatusResponse = HttpStatusCode.NotFound,
+                    Message = MessageUser.UserNotFound
+                };
+            }
+
+            if (!request.isSubscription)
+            {
+                var existEvent = await _eventRepository.GetById(request.EventId);
+                if (existEvent == null)
+                {
+                    return new APIResponse
+                    {
+                        StatusResponse = HttpStatusCode.NotFound,
+                        Message = MessageEvent.EventIdNotExist
+                    };
+                }
+            }
+            
 
             var newTrans = new Transaction
             {
                 Apptransid = app_trans_id,
                 Amount = request.Amount,
-                Description = "test",
                 Timestamp = Utils.GetTimeStamp(),
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,

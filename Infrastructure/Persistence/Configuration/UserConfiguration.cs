@@ -41,6 +41,10 @@ namespace Infrastructure.Persistence.Configuration
 
             builder.Property(e => e.UpdatedAt).HasColumnType("datetime");
 
+            builder.Property(e => e.IsPremiumUser)
+                .HasDefaultValue(false);
+
+
             builder.HasOne(d => d.Role)
                 .WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
