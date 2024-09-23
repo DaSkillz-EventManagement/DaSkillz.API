@@ -63,6 +63,11 @@ namespace Infrastructure.ExternalServices.Email
             }
         }
 
+        public Task SendEmailAsync(string recipientEmail, string username, string otp, string path)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task SendEmailTicket(string template, string title, TicketModel ticket)
         {
             var message = new MimeMessage();
