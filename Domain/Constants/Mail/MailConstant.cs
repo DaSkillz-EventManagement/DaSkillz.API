@@ -13,7 +13,6 @@ public class MailConstant
         public const string Title = "Ticket for event";
         public const string PathTemplate = "./template/TicketUser.cshtml";
     }
-
     public class ReminderMail
     {
         public const string Title = "Reminder for event";
