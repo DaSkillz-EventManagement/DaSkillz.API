@@ -41,23 +41,23 @@ namespace Infrastructure.ExternalServices.Email
             });
         }
 
-        public void SendMailVerify(UserMailDto userMailDto)
-        {
-            _taskQueue.QueueBackgroundWorkItem(async token =>
-            {
-                await VerifyMail(userMailDto);
-            });
-        }
+        //public void SendMailVerify(UserMailDto userMailDto)
+        //{
+        //    _taskQueue.QueueBackgroundWorkItem(async token =>
+        //    {
+        //        await VerifyMail(userMailDto);
+        //    });
+        //}
 
 
-        public async Task VerifyMail(UserMailDto userMailDto)
-        {
-            var _emailService = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailService>();
-            await _emailService.SendEmailAsync(userMailDto.Email, userMailDto.UserName, userMailDto.OTP, path);
+        //public async Task VerifyMail(UserMailDto userMailDto)
+        //{
+        //    var _emailService = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailService>();
+        //    await _emailService.SendEmailAsync(userMailDto.Email, userMailDto.UserName, userMailDto.OTP, path);
 
-            Console.WriteLine("Send mail complete!");
+        //    Console.WriteLine("Send mail complete!");
 
-        }
+        //}
 
 
         public async Task ReminderEvent(Guid eventId)
