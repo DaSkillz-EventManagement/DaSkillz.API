@@ -111,7 +111,7 @@ namespace Infrastructure.ExternalServices.Email
             var _unitOfWork = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>();
 
             var currentEvent = await _eventRepository.GetById(registerEventModel.EventId);
-
+            var Owner = await _userRepository.GetById(currentEvent!.CreatedBy!);
             if (currentEvent == null)
             {
                 return;
@@ -132,7 +132,7 @@ namespace Infrastructure.ExternalServices.Email
                 Email = user.Email,
                 RoleEventId = registerEventModel.RoleEventId,
                 FullName = user.FullName,
-                Avatar = currentEvent?.CreatedByNavigation?.Avatar,
+                Avatar = Owner!.Avatar!,
                 EventName = currentEvent?.EventName,
                 Location = currentEvent?.Location,
                 LocationAddress = currentEvent?.LocationAddress,

@@ -1,5 +1,8 @@
-﻿using Application.ExternalServices.Mail;
+﻿using Application.Abstractions.Email;
+using Application.ExternalServices.Mail;
+using Application.Helper;
 using Application.ResponseMessage;
+using Domain.Constants.Mail;
 using Domain.DTOs.ParticipantDto;
 using Domain.Entities;
 using Domain.Enum.Events;
@@ -19,13 +22,16 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
     private readonly IEventRepository _eventRepo;
     private readonly IParticipantRepository _participantRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ISendMailTask _sendMail;
-    public RegisterEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork, ISendMailTask sendMail)
+    private readonly IEmailService _sendMail;
+    private readonly IUserRepository _userRepository;
+    public RegisterEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork,
+        IEmailService sendMail, IUserRepository userRepository)
     {
         _eventRepo = eventRepo;
         _participantRepository = participantRepository;
         _unitOfWork = unitOfWork;
         _sendMail = sendMail;
+        _userRepository = userRepository;
     }
 
     public async Task<APIResponse> Handle(RegisterEventCommand request, CancellationToken cancellationToken)
@@ -68,7 +74,7 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
             RoleEventId = (int)EventRole.Visitor + 1
         };
         var currentEvent = await _eventRepo.GetById(registerEventModel.EventId);
-
+        var Owner = await _userRepository.GetById(currentEvent!.CreatedBy!);
         Participant participant = new()
         {
             UserId = registerEventModel.UserId,
@@ -82,11 +88,31 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
         await _participantRepository.Add(participant);
         if (await _unitOfWork.SaveChangesAsync() > 0)
         {
+            #region sendMail
             if (!currentEvent!.Approval)
             {
-                _sendMail.SendMailTicket(registerEventModel);
+                var user = await _userRepository.GetById(registerEventModel.UserId);
+                await _sendMail.SendEmailTicket(MailConstant.TicketMail.PathTemplate, MailConstant.TicketMail.Title, new TicketModel()
+                {
+                    EventId = registerEventModel.EventId,
+                    UserId = (Guid)currentEvent.CreatedBy!,
+                    Email = user!.Email,
+                    RoleEventId = registerEventModel.RoleEventId,
+                    FullName = user.FullName,
+                    Avatar = Owner!.Avatar,
+                    EventName = currentEvent?.EventName,
+                    Location = currentEvent?.Location,
+                    LocationAddress = currentEvent?.LocationAddress,
+                    LogoEvent = currentEvent?.Image,
+                    OrgainzerName = Owner.FullName,
+                    StartDate = DateTimeOffset.FromUnixTimeMilliseconds(currentEvent!.StartDate).DateTime,
+                    EndDate = DateTimeOffset.FromUnixTimeMilliseconds(currentEvent!.EndDate).DateTime,
+                    Time = DateTimeHelper.GetTimeRange(DateTimeOffset.FromUnixTimeMilliseconds(currentEvent.StartDate).DateTime, DateTimeOffset.FromUnixTimeMilliseconds(currentEvent.EndDate).DateTime),
+                    Message = TicketMailConstant.MessageMail.ElementAt(registerEventModel.RoleEventId - 1),
+                    TypeButton = Utilities.GetTypeButton(registerEventModel.RoleEventId),
+                });
             }
-
+            #endregion
             return new APIResponse()
             {
                 StatusResponse = HttpStatusCode.Created,

@@ -70,9 +70,26 @@ namespace Infrastructure.ExternalServices.Email
             message.To.Add(new MailboxAddress("", ticket.Email));
             message.Subject = "Participant";
             var htmlContent = await File.ReadAllTextAsync(template);
+            var startDate = ticket.StartDate!.Value;
+            var startDateMM = startDate.ToString("MMM");
+            var startDateD = startDate.ToString("dd");
             var bodyBuilder = new BodyBuilder
             {
-                HtmlBody = htmlContent
+                HtmlBody = htmlContent.Replace("@Model.Message", ticket.Message)
+                                      .Replace("@Model.FullName", ticket.FullName)
+                                      .Replace("@Model.EventName", ticket.EventName)
+                                      .Replace("@Model.LogoEvent", ticket.LogoEvent)
+                                      .Replace("@@Model.Avatar", ticket.Avatar)
+                                      .Replace("@Model.OrgainzerName", ticket.OrgainzerName)
+                                      .Replace("@Model.StartDateMM", startDateMM)
+                                      .Replace("@Model.StartDateD", startDateD)
+                                      .Replace("@Model.StartEndDate",ticket.StartDate.ToString() + " - " + ticket.EndDate.ToString())
+                                      .Replace("@Model.Time", ticket.Time!.ToString())
+                                      .Replace("@Model.Button", ticket.TypeButton)
+                                      .Replace("@Model.Location", ticket.Location)
+                                      .Replace("@Model.LocationUrl", ticket.LocationUrl)
+                                      .Replace("@Model.LocationAddress", ticket.LocationAddress)
+                                      .Replace("@Model.EventId", ticket.EventId.ToString())
             };
             message.Body = bodyBuilder.ToMessageBody();
 

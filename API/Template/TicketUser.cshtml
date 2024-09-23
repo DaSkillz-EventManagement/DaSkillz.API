@@ -105,7 +105,7 @@
             <td bgcolor="#ffffff" align="left"
               style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
               <p style="margin: 0; margin-bottom: 1rem">
-                Hi <strong>@Model.FullName</strong>!
+                Hi <strong>@Model.FullName</strong>
               </p>
               <div
                 style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#131517; display: flex; align-items: center;">
@@ -212,14 +212,14 @@
                                                               <tr>
                                                                 <td
                                                                   style="padding:0;margin:0;background-color:#eceded!important;border:1px solid #eceded;font-size:8px!important;line-height:2!important;border-top-right-radius:8px;border-top-left-radius:8px"
-                                                                  valign="middle" align="center"><span style="color:#737577!important;font-size:8px!important;line-height:2!important;font-weight:500">@Model.StartDate.ToString("MMM")</span>
+                                                                  valign="middle" align="center"><span style="color:#737577!important;font-size:8px!important;line-height:2!important;font-weight:500">@Model.StartDateMM</span>
                                                                 </td>
                                                               </tr>
                                                               <tr>
                                                                 <td
                                                                   style="padding:0;margin:0;background-color:#ffffff;border:1px solid #eceded;border-bottom-right-radius:8px;border-bottom-left-radius:8px;font-size:16!important;line-height:1.5!important"
                                                                   valign="top" align="center"><span
-                                                                    style="font-size:16!important;line-height:1.5!important;font-weight:500;color:#737577">@Model.StartDate.ToString("dd")</span>
+                                                                    style="font-size:16!important;line-height:1.5!important;font-weight:500;color:#737577">@Model.StartDateD</span>
                                                                 </td>
                                                               </tr>
                                                             </tbody>
@@ -229,7 +229,7 @@
                                                           <div>
                                                             <div
                                                               style="font-size:16px;color:#131517;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-                                                              @Model.StartDate.ToString("dd/MM/yyyy") @(Model.EndDate is null ? "" : "-" + Model.EndDate.ToString("dd/MM/yyyy"))</div>
+                                                              @Model.StartEndDate</div>
                                                             <div
                                                               style="font-size:14px;color:#737577;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                                                               @Model.Time</div>
@@ -318,8 +318,7 @@
                                                       <tr>
                                                         <td align="center" bgcolor="#c72464" role="presentation"
                                                           style="border:none;border-radius:8px;background:#c72464;text-decoration:none"
-                                                          valign="middle"><a
-                                                            href="https://event-manage-nine.vercel.app/events/@Model.EventId"
+                                                          valign="middle"><a href="https://da-skillz-web-ui-prod.vercel.app/events/@Model.EventId"
                                                             style="display:inline-block;background-color:#c72464;color:white;font-size:16px;line-height:1;margin:0;text-decoration:none;text-transform:none;border-radius:8px;font-weight:700;padding:12px 24px"
                                                             target="_blank"
                                                             data-saferedirecturl="https://www.google.com/url?q=https://lu.ma/olpq7ojr?pk%3Dg-FLqSHZOg9moaAP0&amp;source=gmail&amp;ust=1720140596616000&amp;usg=AOvVaw1csSN5S3EZ9Yi2IBiEEjWq">Event
@@ -336,11 +335,11 @@
                                                         <td align="center" bgcolor="#f4f5f6" role="presentation"
                                                           style="border:none;border-radius:8px;background:#f4f5f6;text-decoration:none"
                                                           valign="middle">
-                                                          <a href="https://event-manage-nine.vercel.app/events/@(Model.EventId)?showCheckinQr=true"
+                                                          <a href="https://da-skillz-web-ui-prod.vercel.app/events/@Model.EventId?showCheckinQr=true"
                                                                     style="display:inline-block;background-color:#f4f5f6;color:#737577;font-size:16px;line-height:1;margin:0;text-decoration:none;text-transform:none;border-radius:8px;font-weight:500;padding:12px 24px"
                                                                     target="_blank"
                                                                     data-saferedirecturl="https://www.google.com/url?q=https://lu.ma/e/ticket/evt-g6Q6b03wyP7mBwB?pk%3Dg-FLqSHZOg9moaAP0&amp;source=gmail&amp;ust=1720140596616000&amp;usg=AOvVaw3VVR5Hr4zkWuJwp6MgNgyf">
-                                                                    @Model.TypeButton
+                                                                    @Model.Button
                                                                 </a>
                                                           
                                                           
@@ -374,7 +373,7 @@
                                                 </td>
                                                 <td style="vertical-align:middle;padding-left:10px">
                                                   <div style="font-size:14px;color:#737577;font-weight:400">
-                                                    FEM Platform.</div>
+                                                    Daskillz Platform.</div>
                                                 </td>
                                               </tr>
                                             </tbody>
