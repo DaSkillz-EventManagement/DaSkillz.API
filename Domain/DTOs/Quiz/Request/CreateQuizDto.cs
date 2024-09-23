@@ -6,7 +6,7 @@ namespace Domain.DTOs.Quiz.Request;
 public class CreateQuizDto
 {
     [Required(ErrorMessage = "eventId is required!")]
-    public Guid eventId { get; set; }
+    public Guid EventId { get; set; }
 
 
     [Required(ErrorMessage = "QuizName is required!")]

@@ -28,7 +28,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
     public async Task<APIResponse> Handle(CreateQuizCommand request, CancellationToken cancellationToken)
     {
         #region Authen/author
-        var isOwner = await _eventRepository.IsOwner(request.UserId, request.QuizDto.eventId);
+        var isOwner = await _eventRepository.IsOwner(request.UserId, request.QuizDto.EventId);
         if(!isOwner)
         {
             return new APIResponse

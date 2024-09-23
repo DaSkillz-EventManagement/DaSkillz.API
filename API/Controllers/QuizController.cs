@@ -35,18 +35,18 @@ namespace API.Controllers
             return BadRequest(result);
         }
         [HttpPost("question")]
-        public async Task<IActionResult> CreateQuestion([FromBody, Required] CreateQuestionDto dto, [FromQuery, Required] Guid quizId,
+        public async Task<IActionResult> CreateQuestion([FromBody, Required] CreateQuestionDto dto, [FromQuery, Required] Guid QuizId,
             CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }
         [Authorize]
         [HttpPost("question/multiple")]
-        public async Task<IActionResult> CreateMultipleQuestion([FromBody, Required] List<CreateQuestionDto> dto, [FromQuery, Required] Guid quizId,
+        public async Task<IActionResult> CreateMultipleQuestion([FromBody, Required] List<CreateQuestionDto> dto, [FromQuery, Required] Guid QuizId,
             CancellationToken token = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
-            var result = await _mediator.Send(new CreateQuestionsCommand(quizId, userId, dto), token);
+            var result = await _mediator.Send(new CreateQuestionsCommand(QuizId, userId, dto), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
@@ -54,32 +54,32 @@ namespace API.Controllers
             return BadRequest(result);
         }
         [HttpDelete]
-        public async Task<IActionResult> DeleteQuiz([FromQuery, Required] Guid id, CancellationToken token = default)
+        public async Task<IActionResult> DeleteQuiz([FromQuery, Required] Guid QuizId, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }
         [HttpDelete("question")]
-        public async Task<IActionResult> DeleteQuestion([FromQuery, Required] Guid id, CancellationToken token = default)
+        public async Task<IActionResult> DeleteQuestion([FromQuery, Required] Guid QuestionId, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateQuiz([FromBody, Required] Guid id, CancellationToken token = default)
+        public async Task<IActionResult> UpdateQuiz([FromBody, Required] Guid QuizId, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }
         [HttpPut("question")]
-        public async Task<IActionResult> UpdateQuestion([FromBody, Required] Guid id, CancellationToken token = default)
+        public async Task<IActionResult> UpdateQuestion([FromBody, Required] Guid QuestionId, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }
         [HttpGet]
-        public async Task<IActionResult> GetQuizByEventId([FromQuery, Required] Guid id, CancellationToken token = default)
+        public async Task<IActionResult> GetQuizByEventId([FromQuery, Required] Guid EventId, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }
         [HttpGet("info")]
-        public async Task<IActionResult> GetQuizQuestions([FromQuery, Required] Guid quizId, CancellationToken token = default)
+        public async Task<IActionResult> GetQuizQuestions([FromQuery, Required] Guid QuizId, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }

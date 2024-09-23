@@ -837,7 +837,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Event");
                     b.Navigation("Question");
-                });
+                }));
 
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {

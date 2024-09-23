@@ -1,7 +1,9 @@
 using API.Configuration;
+using API.Hub;
 using API.Middleware;
 using Application;
 using Application.Helper;
+using Domain.Constants.Hub;
 using Domain.Enum.Price;
 using HealthChecks.UI.Client;
 using Infrastructure;
@@ -84,7 +86,7 @@ app.MapHealthChecks("/h", new HealthCheckOptions
     Predicate = _ => true,
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
-
+app.MapHub<CheckinHub>(DefaultSystem.CheckinHubConnection);
 app.ConfigureExceptionHandler();
 
 app.Run();
