@@ -45,6 +45,7 @@ namespace Application.Configuration
 
                     .ForMember(dest => dest.eventTags, opt => opt.MapFrom(src => src.Tags)) // Mapping Tags to eventTags
                     .ReverseMap()
+                    .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.Name))
                     .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.Location.Id))
                     .ForMember(dest => dest.LocationAddress, opt => opt.MapFrom(src => src.Location.Address))
                     .ForMember(dest => dest.LocationCoord, opt => opt.MapFrom(src => src.Location.Coord))
@@ -63,9 +64,10 @@ namespace Application.Configuration
                 Coord = src.LocationCoord,
                 Url = src.LocationUrl
             }))
-
+            .ForMember(dest => dest.Host, opt => opt.MapFrom(src => src.CreatedByNavigation))
             .ForMember(dest => dest.eventTags, opt => opt.MapFrom(src => src.Tags)) // Mapping Tags to eventTags
             .ReverseMap()
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.Name))
             .ForMember(dest => dest.LocationId, opt => opt.MapFrom(src => src.Location.Id))
             .ForMember(dest => dest.LocationAddress, opt => opt.MapFrom(src => src.Location.Address))
             .ForMember(dest => dest.LocationCoord, opt => opt.MapFrom(src => src.Location.Coord))
@@ -74,8 +76,14 @@ namespace Application.Configuration
 
 
             CreateMap<Event, EventPreviewDto>()
+               .ForMember(dest => dest.Host, opt => opt.MapFrom(src => src.CreatedByNavigation)) // Map CreatedByNavigation to Host
                 .ReverseMap();
-
+            // Mapping from User (or whatever class represents the user) to CreatedByUserDto
+            CreateMap<User, CreatedByUserDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.avatar, opt => opt.MapFrom(src => src.Avatar)); // Assuming User entity has these fields
 
 
             CreateMap<CouponDto, Coupon>().ReverseMap();

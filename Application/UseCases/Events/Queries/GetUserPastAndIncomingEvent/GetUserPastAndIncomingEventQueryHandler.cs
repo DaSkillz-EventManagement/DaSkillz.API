@@ -24,11 +24,14 @@ namespace Application.UseCases.Events.Queries.GetUserPastAndIncomingEvent
 
             List<Event> pastEvent = await _eventRepo.UserPastEvents(request.UserId);
             List<Event> incoming = await _eventRepo.UserIncomingEvents(request.UserId);
+
             Dictionary<string, List<EventPreviewDto>> response = new Dictionary<string, List<EventPreviewDto>>
             {
-                { "IncomingEvent", _mapper.Map<List<EventPreviewDto>>(incoming) },
-                { "PastEvent", _mapper.Map<List<EventPreviewDto>>(pastEvent) }
+                { "IncomingEvent", incoming.Select(_eventRepo.ToEventPreview).ToList() },
+                { "PastEvent", pastEvent.Select(_eventRepo.ToEventPreview).ToList() }
             };
+
+
             return response;
         }
     }

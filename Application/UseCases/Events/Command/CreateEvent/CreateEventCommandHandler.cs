@@ -67,6 +67,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
             eventEntity.CreatedAt = DateTimeHelper.GetCurrentTimeAsLong();
             eventEntity.UpdatedAt = DateTimeHelper.GetCurrentTimeAsLong();
             eventEntity.CreatedBy = request.UserId;
+            eventEntity.Fare = request.EventRequestDto.Ticket;
             if (request.EventRequestDto.Image != null)
             {
                 eventEntity.Image = await _fileService.UploadImage(request.EventRequestDto.Image, Guid.NewGuid());
@@ -105,6 +106,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
                 await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
                 await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
                 var response = _mapper.Map<EventResponseDto>(eventEntity);
+                response.Host = _eventRepo.getHostInfo((Guid)eventEntity.CreatedBy);
                 return new APIResponse
                 {
                     Data = response,

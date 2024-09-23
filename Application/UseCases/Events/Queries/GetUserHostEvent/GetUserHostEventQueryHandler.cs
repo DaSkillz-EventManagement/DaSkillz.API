@@ -38,24 +38,12 @@ namespace Application.UseCases.Events.Queries.GetUserHostEvent
             }
 
             var result = await _eventRepo.GetUserHostEvent(request.UserId);
-            var eventPreview = await Task.WhenAll(result.Select(ToEventPreview));
+            var eventPreview =  result.Select(_eventRepo.ToEventPreview);
 
             await _redisCaching.SetAsync(cacheKey, eventPreview, 10);
             return eventPreview.ToList();
         }
 
-        private async Task<EventPreviewDto> ToEventPreview(Event entity)
-        {
-
-            EventPreviewDto response = new EventPreviewDto();
-            response.EventId = entity.Id;
-            response.EventName = entity.EventName;
-            response.Location = entity.Location;
-            response.Status = entity.Status;
-            response.Image = entity.Image;
-            response.StartDate = entity.StartDate;
-            response.Host = await _eventRepo.GetHostInfo((Guid)entity.CreatedBy!);
-            return response;
-        }
+       
     }
 }

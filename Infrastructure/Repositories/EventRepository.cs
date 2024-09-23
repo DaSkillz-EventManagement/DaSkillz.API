@@ -1,4 +1,5 @@
 ﻿using Application.Helper;
+using AutoMapper;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.ResponseDto;
 using Domain.DTOs.User.Response;
@@ -16,10 +17,12 @@ namespace Infrastructure.Repositories
     public class EventRepository : RepositoryBase<Event>, IEventRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public EventRepository(ApplicationDbContext context) : base(context)
+        public EventRepository(ApplicationDbContext context, IMapper mapper) : base(context)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         private async Task<IQueryable<Event>> GetUserRegisterdEventsQuery(Guid userId)
@@ -267,6 +270,7 @@ namespace Infrastructure.Repositories
         {
 
             var eventResponse = await _context.Events
+                .Include(e => e.CreatedByNavigation)
                 .Where(e => e.CreatedBy == userId && e.EndDate < DateTimeHelper.GetCurrentTimeAsLong())
                 .ToListAsync();
             var events = await GetUserRegisterdEventsQuery(userId);
@@ -278,6 +282,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Event>> UserIncomingEvents(Guid userId)
         {
             var eventResponse = await _context.Events
+                .Include(e => e.CreatedByNavigation)
                 .Where(e => e.CreatedBy == userId && e.StartDate >= DateTimeHelper.GetCurrentTimeAsLong())
                 .ToListAsync();
             var incomingEvents = await GetUserRegisterdEventsQuery(userId);
@@ -406,6 +411,65 @@ namespace Infrastructure.Repositories
             response.avatar = user!.Avatar;
             response.Id = user.UserId;
             response.Name = user.FullName;
+            return response;
+        }
+
+        public  EventPreviewDto ToEventPreview(Event entity)
+        {
+            EventPreviewDto response = new EventPreviewDto();
+            response.EventId = entity.Id;
+            response.EventName = entity.EventName;
+            response.Location = entity.Location;
+            response.Status = entity.Status;
+            response.Image = entity.Image;
+            response.StartDate = entity.StartDate;
+            response.Host = getHostInfo((Guid)entity.CreatedBy!);
+            return response;
+        }
+
+        public CreatedByUserDto getHostInfo(Guid userId)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.UserId == userId); // Use FirstOrDefault for synchronous operation
+
+           
+
+            CreatedByUserDto response = new CreatedByUserDto
+            {
+                avatar = user.Avatar, // Correct mapping from User entity
+                Id = user.UserId,
+                Name = user.FullName,
+                email = user.Email
+            };
+
+            return response;
+        }
+
+        
+
+
+        public EventResponseDto ToResponseDto(Event eventEntity)
+        {
+            EventResponseDto response = new EventResponseDto();
+            response.StartDate = eventEntity.StartDate;
+            response.EndDate = eventEntity.EndDate;
+            response.CreatedAt = (long)eventEntity.CreatedAt;
+            response.Status = eventEntity.Status;
+            response.Approval = eventEntity.Approval;
+            response.Description = eventEntity.Description;
+            response.Location!.Name = eventEntity.Location!;
+            response.Location.Id = eventEntity.LocationId;
+            response.Location.Coord = eventEntity.LocationCoord;
+            response.Location.Address = eventEntity.LocationAddress;
+            response.Location.Url = eventEntity.LocationUrl;
+            response.Id = eventEntity.Id;
+            response.EventName = eventEntity.EventName;
+            response.Host = getHostInfo((Guid)eventEntity.CreatedBy!);
+            response.Image = eventEntity.Image;
+            response.Theme = eventEntity.Theme;
+            response.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
+            response.UpdatedAt = eventEntity.UpdatedAt.HasValue ?eventEntity.UpdatedAt : null;
+            response.Fare = eventEntity.Fare;
+            response.Capacity = eventEntity.Capacity;
             return response;
         }
     }

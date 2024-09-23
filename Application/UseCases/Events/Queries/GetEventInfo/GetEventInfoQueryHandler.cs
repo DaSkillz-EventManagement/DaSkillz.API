@@ -62,7 +62,7 @@ namespace Application.UseCases.Events.Queries.GetEventInfo
                 eventDetailDto.Approval = eventInfo.Approval ? eventInfo.Approval : false;
                 eventDetailDto.Capacity = eventInfo.Capacity.HasValue ? eventInfo.Capacity.Value : 0;
                 eventDetailDto.UpdatedAt = eventInfo.UpdatedAt.HasValue ? eventInfo.UpdatedAt.Value : null;
-
+                eventDetailDto.Location.Name = eventInfo.Location;
                 eventDetailDto.eventTags = _mapper.Map<List<EventTagDto>>(eventInfo.Tags);
 
 
