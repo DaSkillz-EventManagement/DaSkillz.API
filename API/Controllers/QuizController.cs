@@ -98,5 +98,11 @@ namespace API.Controllers
             }
             return BadRequest(result);
         }
+
+        [HttpPost("/attemp")]
+        public async Task<IActionResult> AttempQuiz([FromQuery, Required] Guid quizid, [FromQuery, Required] Guid eventid,  CancellationToken token = default)
+        {
+            return Ok(new NotImplementedException());
+        }
     }
 }
