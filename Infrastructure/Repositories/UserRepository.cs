@@ -83,5 +83,12 @@ namespace Infrastructure.Repositories
             return totalUsers;
         }
 
+
+        public async Task<IEnumerable<User>> UpdateIsPremiumUser()
+        {
+            return await _context.Users
+                    .Where(u => u.Subscription != null)
+                     .ToListAsync();
+        }
     }
 }

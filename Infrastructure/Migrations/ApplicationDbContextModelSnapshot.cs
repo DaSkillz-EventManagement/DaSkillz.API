@@ -480,6 +480,34 @@ namespace Infrastructure.Migrations
                     b.ToTable("SponsorEvent", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Subscription", b =>
+                {
+                    b.Property<int>("SubscriptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionId"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("SubscriptionId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Subscriptions", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Tag", b =>
                 {
                     b.Property<int>("TagId")
@@ -512,13 +540,15 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<Guid?>("EventId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsSubscription")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -563,6 +593,11 @@ namespace Infrastructure.Migrations
                     b.Property<string>("FullName")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsPremiumUser")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Phone")
                         .HasMaxLength(15)
@@ -770,6 +805,18 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Subscription", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithOne("Subscription")
+                        .HasForeignKey("Domain.Entities.Subscription", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Subscription_User");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
                 {
                     b.HasOne("Domain.Entities.Event", "Event")
@@ -863,6 +910,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Subscription");
 
                     b.Navigation("Transactions");
                 });

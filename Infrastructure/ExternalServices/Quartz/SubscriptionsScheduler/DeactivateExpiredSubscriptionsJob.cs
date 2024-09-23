@@ -1,30 +1,43 @@
 ﻿using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
 using Infrastructure.Persistence;
 using Microsoft.Extensions.Logging;
 using Quartz;
 
 public class DeactivateExpiredSubscriptionsJob : IJob
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly ILogger<DeactivateExpiredSubscriptionsJob> _logger;
+    //private readonly ILogger<DeactivateExpiredSubscriptionsJob> _logger;
+    private readonly IUserRepository userRepository;
     private readonly ISubscriptionRepository _subscriptionRepository;
+    private readonly IUnitOfWork unitOfWork;
 
-    public DeactivateExpiredSubscriptionsJob(ApplicationDbContext dbContext, ILogger<DeactivateExpiredSubscriptionsJob> logger, ISubscriptionRepository subscriptionRepository)
+    public DeactivateExpiredSubscriptionsJob(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork)
     {
-        _dbContext = dbContext;
-        _logger = logger;
+        this.userRepository = userRepository;
         _subscriptionRepository = subscriptionRepository;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
-        
-
-            var now = DateTime.UtcNow;
 
         // Use a bulk update to deactivate expired subscriptions
-        int updatedRows = await _subscriptionRepository.UpdateExpiredSubscription();
+        var updatedRows = await userRepository.UpdateIsPremiumUser();
 
-       _logger.LogInformation("Deactivated {count} expired subscriptions", updatedRows);
+        foreach (var user in updatedRows)
+        {
+            var existSubscription = await _subscriptionRepository.GetByUserId(user.UserId);
+            if (existSubscription!.IsActive)
+            {
+                user.IsPremiumUser = true;
+            }
+            else
+            {
+                user.IsPremiumUser = false;
+            }
+           
+        }
+
+        await unitOfWork.SaveChangesAsync();
     }
 }

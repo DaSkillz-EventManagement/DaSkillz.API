@@ -22,6 +22,7 @@
         public string Status { get; set; } = null!;
         public int RoleId { get; set; }
         public string? Avatar { get; set; }
+        public bool IsPremiumUser { get; set; } = false;
 
 
         public virtual Role Role { get; set; } = null!;
