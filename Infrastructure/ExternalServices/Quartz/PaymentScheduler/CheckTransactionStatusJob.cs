@@ -101,8 +101,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                         await _transactionRepository.Update(exist);
                         if (exist.IsSubscription)
                         {
-                            var latestTransaction = await _transactionRepository.getTransactionByUserIdAsync(exist.UserId);
-                            if (latestTransaction == null || !latestTransaction.IsSubscription) return;
+                           
 
                             var subscription = await _subscriptionRepository.GetByUserId(exist.UserId);
                             if (subscription != null)

@@ -22,7 +22,7 @@ public class GetEventFeedbacksHandler : IRequestHandler<GetEventFeedbacksQueries
     }
     public async Task<APIResponse> Handle(GetEventFeedbacksQueries request, CancellationToken cancellationToken)
     {
-        var user = _eventRepository.IsOwner(request.UserId, request.EventId);
+        var user = await _eventRepository.IsOwner(request.UserId, request.EventId);
         if(user == null)
         {
             return new APIResponse

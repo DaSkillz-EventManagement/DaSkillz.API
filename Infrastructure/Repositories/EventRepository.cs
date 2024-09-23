@@ -325,9 +325,9 @@ namespace Infrastructure.Repositories
             return _context.SaveChanges() > 0;
         }
 
-        public async Task<bool> IsOwner(Guid userId, Guid eventId)
+        public async Task<bool> IsOwner(Guid eventId, Guid UserId)
         {
-            return await _context.Events.AnyAsync(e => e.Id.Equals(eventId) && e.CreatedBy.Equals(userId));
+            return await _context.Events.AnyAsync(e => e.Id.Equals(eventId) && e.CreatedBy.Equals(UserId));
         }
 
         public async Task<bool> ChangeEventStatus(Guid eventId, EventStatus status)
