@@ -19,6 +19,11 @@ namespace Infrastructure.Repositories
         public async Task<Transaction?> getTransactionByUserIdAsync(Guid? guid)
         {
             return await _context.Transactions.FirstOrDefaultAsync(x => x.UserId.Equals(guid));
+        }        
+        
+        public async Task<Transaction?> getEventTransactionAsync(Guid? eventId)
+        {
+            return await _context.Transactions.FirstOrDefaultAsync(x => x.EventId.Equals(eventId));
         }
 
         public async Task<Transaction?> GetLatestTransactionIsSubscribe(Guid userId)

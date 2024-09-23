@@ -92,7 +92,7 @@ namespace Application.UseCases.Authenticate.Commands.SignInWithGoogle
                 };
             }
 
-            //check if the refresh token exists, then remove it to create new refresh token ahihi
+            //check if the refresh token exists, then remove it to create new refresh token
             var existingRefreshTokens = await _refreshTokenRepository.GetUserByIdAsync(user.UserId);
             if (existingRefreshTokens != null)
             {
