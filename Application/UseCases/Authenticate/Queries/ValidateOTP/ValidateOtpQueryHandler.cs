@@ -53,7 +53,12 @@ namespace Application.UseCases.Authenticate.Queries.ValidateOTP
             var existOTP = await _redisCaching.GetAsync<UserValidation>($"SignIn_{request.Email}");
             if (existOTP.Otp == request.Otp)
             {
-
+                //check if refresh tokens already exist, and delete them
+                var existingRefreshTokens = await _refreshTokenRepository.GetUserByIdAsync(user.UserId);
+                if (existingRefreshTokens != null)
+                {
+                    await _refreshTokenRepository.RemoveRefreshTokenAsync(existingRefreshTokens.Token);
+                }
                 var tokenResponse = await _jwtProvider.GenerateAccessRefreshTokens(user.UserId, user.Email!);
 
                 if (user.Status == AccountStatus.Pending.ToString())

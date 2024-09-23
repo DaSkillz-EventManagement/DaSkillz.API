@@ -70,6 +70,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
             {
                 Apptransid = app_trans_id,
                 Amount = request.Amount,
+                Description = request.Description,
                 Timestamp = Utils.GetTimeStamp(),
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,

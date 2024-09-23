@@ -24,9 +24,11 @@ namespace Application.Configuration
         public MapperProfile()
         {
             CreateMap<Transaction, TransactionResponseDto>()
+                .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
                 .ReverseMap();
 
-            
+
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)).ReverseMap();
 
@@ -98,7 +100,7 @@ namespace Application.Configuration
             CreateMap<PagedList<TagDto>, PagedList<Tag>>().ReverseMap();
             CreateMap<EventTagDto, Tag>().ReverseMap();
             CreateMap<AdvertisedEvent, AdvertisedEventDto>();
-                //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
+            //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
             CreateMap<CreateQuizDto, Quiz>().ReverseMap();
             CreateMap<Quiz, ResponseQuizDto>();
             CreateMap<ResponseQuestionDto, Question>();

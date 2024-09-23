@@ -1,4 +1,6 @@
-﻿using Application.ResponseMessage;
+﻿using Application.ExternalServices.Images;
+using Application.Helper;
+using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.User.Response;
 using Domain.Models.Response;
@@ -13,12 +15,14 @@ namespace Application.UseCases.User.Commands.UpdateUser
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IImageService _imageService;
         private readonly IMapper _mapper;
 
-        public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IImageService imageService, IMapper mapper)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _imageService = imageService;
             _mapper = mapper;
         }
 
@@ -40,15 +44,15 @@ namespace Application.UseCases.User.Commands.UpdateUser
 
             existUsers.FullName = request.FullName;
 
-            //bool isBase64 = Utilities.IsBase64String(request.Avatar!);
-            //if (!string.IsNullOrWhiteSpace(request.Avatar) && isBase64)
-            //{
-            //    string url = existUsers.Avatar!;
-            //    int startIndex = url.LastIndexOf("/eventcontainer/") + "/eventcontainer/".Length;
-            //    string result = url.Substring(startIndex);
-            //    await _imageService.DeleteBlob(result);
-            //    existUsers.Avatar = await _imageService.UploadImage(updateUser.Avatar, Guid.NewGuid());
-            //}
+            bool isBase64 = Utilities.IsBase64String(request.Avatar!);
+            if (!string.IsNullOrWhiteSpace(request.Avatar) && isBase64)
+            {
+                string url = existUsers.Avatar!;
+                int startIndex = url.LastIndexOf("/eventcontainer/") + "/eventcontainer/".Length;
+                string result = url.Substring(startIndex);
+                await _imageService.DeleteBlob(result);
+                existUsers.Avatar = await _imageService.UploadImage(request.Avatar, Guid.NewGuid());
+            }
 
             await _userRepository.Update(existUsers);
             await _unitOfWork.SaveChangesAsync();
