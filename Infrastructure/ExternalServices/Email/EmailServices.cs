@@ -20,13 +20,13 @@ namespace Infrastructure.ExternalServices.Email
             _emailSetting = emailSetting.Value;
         }
 
-        public async Task SendEmailAsync(string recipientEmail, string username, string otp, string path)
+        public async Task SendEmailAsync(string subject,string recipientEmail, string username, string otp, string path)
         {
             // Create a new email message
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_emailSetting.SenderName, _emailSetting.SenderEmail));
             message.To.Add(new MailboxAddress("", recipientEmail));
-            message.Subject = "test";
+            message.Subject = subject;
 
             // Load HTML content from the file
             var htmlContent = await File.ReadAllTextAsync(path);

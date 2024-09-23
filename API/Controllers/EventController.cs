@@ -190,7 +190,7 @@ namespace API.Controllers
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
 
-            var result = await _mediator.Send(new UpdateEventCommand(eventRequestDto, eventId, userId), cancellationToken);
+            var result = await _mediator.Send(new UpdateEventCommand(eventRequestDto,userId,eventId), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
 

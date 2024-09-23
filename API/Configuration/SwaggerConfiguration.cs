@@ -9,6 +9,7 @@ namespace API.Configuration
             services.AddSwaggerGen(swagger =>
             {
                 swagger.SwaggerDoc("v1", new() { Title = "Event Management", Version = "v1" });
+                swagger.EnableAnnotations();
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

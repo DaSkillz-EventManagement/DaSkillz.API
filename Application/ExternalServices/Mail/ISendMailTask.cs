@@ -7,6 +7,6 @@ namespace Application.ExternalServices.Mail
     {
         void SendMailTicket(RegisterEventModel registerEventModel);
         void SendMailReminder(Guid eventId);
-        void SendMailVerify(UserMailDto userMailDto);
+        //void SendMailVerify(UserMailDto userMailDto);
     }
 }

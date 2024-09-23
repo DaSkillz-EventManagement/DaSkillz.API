@@ -16,6 +16,8 @@ using Domain.DTOs.Coupons;
 using Domain.DTOs.AdvertisedEvents;
 using Domain.DTOs.Quiz.Request;
 using Domain.DTOs.Quiz.Response;
+using Domain.DTOs.Sponsors;
+using Domain.DTOs.ParticipantDto;
 
 namespace Application.Configuration
 {
@@ -24,9 +26,11 @@ namespace Application.Configuration
         public MapperProfile()
         {
             CreateMap<Transaction, TransactionResponseDto>()
+                .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
                 .ReverseMap();
 
-            
+
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)).ReverseMap();
 
@@ -55,7 +59,16 @@ namespace Application.Configuration
                     .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.eventTags)) // Mapping eventTags to Tags
                     .ReverseMap();
             CreateMap<PagedList<Event>, PagedList<EventResponseDto>>().ReverseMap();
-            CreateMap<PagedList<Feedback>, PagedList<FeedbackEvent>>().ReverseMap();
+
+            //Mapper Feedback
+            CreateMap<FeedbackDto, Feedback>().ReverseMap();
+            CreateMap<Feedback, FeedbackEvent>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.Avatar))
+                .ReverseMap();
+            CreateMap<PagedList<Feedback>, PagedList<FeedbackEvent>>();
+
+
             CreateMap<Event, EventResponseDto>()
             //.ForMember(dest => dest.Host,
             //           opt => opt.MapFrom(src => EventHelper.GetHostInfo((Guid)src.CreatedBy!)))
@@ -98,10 +111,33 @@ namespace Application.Configuration
             CreateMap<PagedList<TagDto>, PagedList<Tag>>().ReverseMap();
             CreateMap<EventTagDto, Tag>().ReverseMap();
             CreateMap<AdvertisedEvent, AdvertisedEventDto>();
-                //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
+            //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
             CreateMap<CreateQuizDto, Quiz>().ReverseMap();
             CreateMap<Quiz, ResponseQuizDto>();
             CreateMap<ResponseQuestionDto, Question>();
+
+            CreateMap<PagedList<SponsorEvent>, PagedList<SponsorEventDto>>()
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.ToList()))
+                .ReverseMap();
+
+            //Participant
+
+            
+            //CreateMap<Participant, ParticipantEventModel>()
+            //    .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            //    .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
+            //    .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+            //    .ReverseMap();
+
+            //CreateMap<Participant, ParticipantInfo>().ReverseMap();
+            //CreateMap<PagedList<Participant>, PagedList<ParticipantEventModel>>().ReverseMap();
+
+            CreateMap<Participant, ParticipantDto>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ReverseMap();
+            CreateMap<PagedList<Participant>, PagedList<ParticipantDto>>().ReverseMap();
         }
     }
 }
