@@ -33,7 +33,7 @@ namespace Infrastructure.Repositories
         public async Task<bool> ValidateCouponOnThisEvent(string CouponId, Guid EventId)
         {
            return await _context.Events
-           .AnyAsync(e => e.Id == EventId && e.Coupons.Any(c => c.ExpiredDate > DateTimeHelper.GetCurrentTimeAsLong() && c.NOAttempts > 0) && e.Coupons.Any(c => c.Id.Equals(CouponId)));
+           .AnyAsync(e => e.EventId == EventId && e.Coupons.Any(c => c.ExpiredDate > DateTimeHelper.GetCurrentTimeAsLong() && c.NOAttempts > 0) && e.Coupons.Any(c => c.Id.Equals(CouponId)));
         }
     }
 }

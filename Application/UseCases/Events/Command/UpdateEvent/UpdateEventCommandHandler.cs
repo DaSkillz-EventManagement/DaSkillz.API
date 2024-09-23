@@ -87,9 +87,9 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             if (request.EventRequestDto.StartDate > 0 && request.EventRequestDto.StartDate - eventEntity.CreatedAt! >= minimumUpdateTimeSpan)
             {
                 eventEntity.StartDate = request.EventRequestDto.StartDate;
-                await _quartzService.DeleteJobsByEventId("start-" + eventEntity.Id);
-                await _quartzService.StartEventStatusToOngoingJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate));
-                await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
+                await _quartzService.DeleteJobsByEventId("start-" + eventEntity.EventId);
+                await _quartzService.StartEventStatusToOngoingJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.StartDate));
+                await _quartzService.StartEventStartingEmailNoticeJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.StartDate).AddHours(-1));
             }
             //endDate
             if (request.EventRequestDto.EndDate > 0 && request.EventRequestDto.EndDate - eventEntity.StartDate < 30 * 60 * 1000)
@@ -103,9 +103,9 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             if (request.EventRequestDto.EndDate > 0 && request.EventRequestDto.EndDate - eventEntity.StartDate >= 30 * 60 * 1000)
             {
                 eventEntity.EndDate = request.EventRequestDto.EndDate;
-                await _quartzService.DeleteJobsByEventId("ended-" + eventEntity.Id);
-                await _quartzService.StartEventStatusToEndedJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate));
-                await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.Id, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
+                await _quartzService.DeleteJobsByEventId("ended-" + eventEntity.EventId);
+                await _quartzService.StartEventStatusToEndedJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.EndDate));
+                await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
             }
             //theme
             eventEntity.Theme = request.EventRequestDto.Theme;

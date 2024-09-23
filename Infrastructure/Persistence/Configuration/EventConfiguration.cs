@@ -8,7 +8,7 @@ namespace Infrastructure.Persistence.Configuration
     {
         public void Configure(EntityTypeBuilder<Event> builder)
         {
-            builder.Property(e => e.Id).ValueGeneratedNever();
+            builder.Property(e => e.EventId).ValueGeneratedNever();
 
             // StartDate and EndDate are longs (likely Unix timestamps), so remove HasColumnType("datetime")
             builder.Property(e => e.StartDate).IsRequired();

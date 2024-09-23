@@ -17,7 +17,7 @@ namespace Domain.Entities
            
         }
 
-        public Guid Id { get; set; }
+        public Guid EventId { get; set; }
         public string EventName { get; set; } = null!;
         public string? Description { get; set; }
         public string? Status { get; set; }
