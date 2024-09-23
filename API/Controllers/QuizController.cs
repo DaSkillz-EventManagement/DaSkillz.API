@@ -1,7 +1,7 @@
 ﻿using Application.Helper;
-using Application.UseCases.Quiz.Queries.GetQuizByEventId;
 using Application.UseCases.Quizs.Commands.CreateQuestions;
 using Application.UseCases.Quizs.Commands.CreateQuiz;
+using Application.UseCases.Quizs.Queries.GetQuizByEventId;
 using Domain.DTOs.Quiz.Request;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
