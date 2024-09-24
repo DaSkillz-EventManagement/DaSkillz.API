@@ -53,7 +53,7 @@ namespace Application.UseCases.Authenticate.Commands.SignInWIthOtp
             };
 
             await _redisCaching.SetAsync(RedisDbkey, userValidation, 5);
-            await _emailService.SendEmailAsync("VERIFY ACCOUNT WITH OTP", request.Email, user.FullName, otp, "./template/VerifyWithOTP.cshtml");
+            await _emailService.SendEmailVerifyAsync("VERIFY ACCOUNT WITH OTP", request.Email, user.FullName, otp, "./template/VerifyWithOTP.cshtml", "./template/LOGO 3.png");
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new APIResponse
