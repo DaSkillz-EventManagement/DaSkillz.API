@@ -30,12 +30,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CouponsId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("EventsId")
+                    b.Property<Guid>("EventsEventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("CouponsId", "EventsId");
+                    b.HasKey("CouponsId", "EventsEventId");
 
-                    b.HasIndex("EventsId");
+                    b.HasIndex("EventsEventId");
 
                     b.ToTable("CouponEvent");
                 });
@@ -144,7 +144,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Event", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Approval")
@@ -221,7 +221,7 @@ namespace Infrastructure.Migrations
                     b.Property<long?>("UpdatedAt")
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.HasKey("EventId");
 
                     b.HasIndex("CreatedByNavigationUserId");
 
@@ -801,7 +801,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Entities.Event", null)
                         .WithMany()
-                        .HasForeignKey("EventsId")
+                        .HasForeignKey("EventsEventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
