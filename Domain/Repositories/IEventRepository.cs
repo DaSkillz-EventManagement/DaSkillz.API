@@ -51,5 +51,6 @@ namespace Domain.Repositories
         EventPreviewDto ToEventPreview(Event entity);
         CreatedByUserDto getHostInfo(Guid userId);
         EventResponseDto ToResponseDto(Event eventEntity);
+        Task<List<Event>> GetListEventsByListId(List<Guid> eventsId);
     }
 }

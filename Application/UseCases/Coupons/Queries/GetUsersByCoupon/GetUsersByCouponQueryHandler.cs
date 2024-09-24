@@ -14,6 +14,13 @@ namespace Application.UseCases.Coupons.Queries.GetUsersByCoupon
         private readonly ICouponRepository _couponRepository;
         private readonly IMapper _mapper;
 
+        public GetUsersByCouponQueryHandler(IUserRepository userRepository, ICouponRepository couponRepository, IMapper mapper)
+        {
+            _userRepository = userRepository;
+            _couponRepository = couponRepository;
+            _mapper = mapper;
+        }
+
         public async Task<APIResponse> Handle(GetUsersByCouponQuery request, CancellationToken cancellationToken)
         {
             var response = new APIResponse();

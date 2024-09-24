@@ -2,6 +2,7 @@
 using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -14,6 +15,12 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-
+        public async Task<List<Guid>> GetListAdvertisedEventId()
+        {
+            return await _context.AdvertisedEvents
+                         .OrderBy(ae => ae.CreatedDate)
+                         .Select(ae => ae.EventId)  // Select the EventId column
+                         .ToListAsync();
+        }
     }
 }

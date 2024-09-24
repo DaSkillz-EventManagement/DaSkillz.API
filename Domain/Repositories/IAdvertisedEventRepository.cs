@@ -1,6 +1,10 @@
-﻿namespace Domain.Repositories
+﻿using Domain.Entities;
+using Domain.Repositories.Generic;
+
+namespace Domain.Repositories
 {
-    public interface IAdvertisedEventRepository
+    public interface IAdvertisedEventRepository : IRepository<AdvertisedEvent>
     {
+        Task<List<Guid>> GetListAdvertisedEventId();
     }
 }

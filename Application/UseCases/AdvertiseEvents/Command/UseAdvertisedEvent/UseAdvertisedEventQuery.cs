@@ -6,12 +6,13 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
 {
     public class UseAdvertisedEventQuery : IRequest<APIResponse>
     {
-        public AdvertisedEventDto AdvertisedEventDto { get; set; }
+        public Guid EventId { get; set; }
         public Guid UserId { get; set; }
 
-        public UseAdvertisedEventQuery(AdvertisedEventDto advertisedEventDto)
+        public UseAdvertisedEventQuery(Guid eventId, Guid userId)
         {
-            AdvertisedEventDto = advertisedEventDto;
+            EventId = eventId;
+            UserId = userId;
         }
     }
 
