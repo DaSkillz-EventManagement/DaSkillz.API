@@ -33,6 +33,16 @@ namespace Application.UseCases.Participants.Commands.AddUserToEventCommand
         }
         public async Task<APIResponse> Handle(AddUserToEventCommand request, CancellationToken cancellationToken)
         {
+            var capacityCheck = await _participantRepository.IsReachedCapacity(request.RegisterEventModel.EventId);
+            if (capacityCheck)
+            {
+                return new APIResponse
+                {
+                    StatusResponse = HttpStatusCode.BadRequest,
+                    Message = MessageParticipant.ParticipantCapacityLimitReached,
+                    Data = null
+                };
+            }
             var isOwner = await _eventRepo.IsOwner(request.UserId, request.RegisterEventModel.EventId);
             if (!isOwner)
             {

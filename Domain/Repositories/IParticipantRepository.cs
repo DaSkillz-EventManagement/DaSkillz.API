@@ -13,5 +13,6 @@ public interface IParticipantRepository : IRepository<Participant>
     Task UpSert(Participant participant);
     Task<Participant?> GetDetailParticipant(Guid userId, Guid eventId);
     Task<bool> IsRole(Guid userId, Guid eventId, EventRole role);
+    Task<bool> IsReachedCapacity(Guid eventId);
 
 }

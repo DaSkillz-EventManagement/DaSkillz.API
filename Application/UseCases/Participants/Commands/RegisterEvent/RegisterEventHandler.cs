@@ -45,6 +45,16 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
                 Data = null
             };
         }
+        var capacityCheck = await _participantRepository.IsReachedCapacity(request.EventId);
+        if (capacityCheck)
+        {
+            return new APIResponse
+            {
+                StatusResponse = HttpStatusCode.BadRequest,
+                Message = MessageParticipant.ParticipantCapacityLimitReached,
+                Data = null
+            };
+        }
         var isOwner = await _eventRepo.IsOwner(request.EventId, request.UserId);
 
         if (isOwner)

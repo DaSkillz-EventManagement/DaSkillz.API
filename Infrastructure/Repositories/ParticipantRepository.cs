@@ -125,4 +125,16 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
     {
         return await _context.Participants.AnyAsync(p => p.EventId.Equals(eventId) && p.UserId.Equals(userId) && p.RoleEventId.Equals((int)role));
     }
+
+    public async Task<bool> IsReachedCapacity(Guid eventId)
+    {
+        int epCount = await _context.Participants.Where(p => p.EventId == eventId).CountAsync();
+        Event entity = await _context.Events.FindAsync(eventId);
+        int eventCapacity = entity!.Capacity!.Value;
+        if(eventCapacity < 0)
+        {
+            return false;
+        }
+        return epCount > eventCapacity;
+    }
 }
