@@ -20,7 +20,7 @@ namespace Infrastructure.ExternalServices.Email
             _emailSetting = emailSetting.Value;
         }
 
-        public async Task SendEmailAsync(string subject,string recipientEmail, string username, string otp, string path)
+        public async Task SendEmailVerifyAsync(string subject,string recipientEmail, string username, string otp, string path, string logoPath)
         {
             // Create a new email message
             var message = new MimeMessage();
@@ -40,6 +40,12 @@ namespace Infrastructure.ExternalServices.Email
             {
                 HtmlBody = hrml
             };
+
+            if (File.Exists(logoPath))
+                {
+                    var logo = bodyBuilder.LinkedResources.Add(logoPath);
+                    logo.ContentId = "logo3";  
+                }
             message.Body = bodyBuilder.ToMessageBody();
 
             // Send the email using an SMTP client
