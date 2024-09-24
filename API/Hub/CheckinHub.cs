@@ -1,4 +1,5 @@
 ﻿using Application.ResponseMessage;
+using Azure;
 using Domain.DTOs.Hub;
 using Domain.Models.Response;
 using Domain.Repositories;
@@ -25,7 +26,7 @@ public class CheckinHub : Hub<ICheckinHub>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<APIResponse> CheckinUser(Guid userId, Guid eventId)
+    public async Task<APIResponse> CheckInParticipant(Guid userId, Guid eventId)
     {
         var participant = await _participantRepository.GetParticipant(userId, eventId);
 
@@ -57,6 +58,28 @@ public class CheckinHub : Hub<ICheckinHub>
             Message = MessageCommon.ServerError,
             Data = JsonSerializer.Serialize(new { userId, eventId })
         };
+    }
+
+    public async Task CheckinUser(Guid userId, Guid eventId)
+    {
+        var response = await CheckInParticipant(userId, eventId);
+
+        if (response.StatusResponse != HttpStatusCode.OK)
+        {
+            await Clients.Groups(eventId.ToString()).SendNotification(new SocketResponse()
+            {
+                StatusResponse = false,
+                Message = response.Message,
+                Data = response.Data
+            });
+        }
+
+        await Clients.Groups(eventId.ToString()).SendNotification(new SocketResponse()
+        {
+            StatusResponse = false,
+            Message = response.Message,
+            Data = response.Data
+        });
     }
 }
 
