@@ -35,12 +35,13 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
         public async Task<APIResponse> Handle(CreatePayment request, CancellationToken cancellationToken)
         {
             string app_trans_id = DateTime.UtcNow.ToString("yyMMdd") + "_" + new Random().Next(100000);
-            string cacheKey = $"payment_{app_trans_id}";
+            string cacheKey = $"payment_type_{request.SubscriptionType}_{app_trans_id}";
             var appUser = "user123";
 
             //call api to create transaction
-            var result = await _zaloPayService.CreateOrderAsync(request.Amount, appUser, request.Description!, app_trans_id);
+            var result = await _zaloPayService.CreateOrderAsync(request.Amount, appUser, request.Description!, app_trans_id, request.redirectUrl);
             var returnCode = (long)result["return_code"];
+            var orderUrl = (string)result["order_url"];
 
             var existUser = await _userRepository.GetById(request.UserId);
             if (existUser == null)
@@ -52,7 +53,8 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 };
             }
 
-            if (!request.isSubscription)
+            //check if type is not subscription then check event existed or not
+            if (request.SubscriptionType != (int)PaymentType.SUBSCRIPTION)
             {
                 var existEvent = await _eventRepository.GetById(request.EventId);
                 if (existEvent == null)
@@ -63,9 +65,19 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                         Message = MessageEvent.EventIdNotExist
                     };
                 }
-            }
-            
 
+                var existTransaction = await _transactionRepository.GetExistProcessingTransaction(request.UserId, Guid.Parse(request.EventId!));
+                if (existTransaction != null)
+                {
+                    return new APIResponse
+                    {
+                        StatusResponse = HttpStatusCode.BadRequest,
+                        Message = "You already have a processing order. Please wait until it completes before creating a new one."
+                    };
+                }
+            }
+
+           
             var newTrans = new Transaction
             {
                 Apptransid = app_trans_id,
@@ -74,9 +86,10 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 Timestamp = Utils.GetTimeStamp(),
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,
-                UserId = request.UserId,
-                EventId = (!request.isSubscription) ? request.EventId : null,
-                IsSubscription = request.isSubscription
+                //UserId = request.UserId,
+                //EventId = (request.SubscriptionType != (int)PaymentType.SUBSCRIPTION) ? Guid.Parse(request.EventId) : null,
+                SubscriptionType = request.SubscriptionType,
+                OrderUrl = orderUrl,
             };
 
             //save transaction to db and also save in redis if create transaction successfully in zalopay
@@ -91,7 +104,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                             new HashEntry("transactionId",$"{newTrans.Apptransid}"),
                             new HashEntry("timestamp", $"{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}")
                         };
-                await _caching.HashSetAsync(cacheKey, hashEntries, 16);
+                await _caching.HashSetAsync(cacheKey, hashEntries, 15);
             }
 
             return new APIResponse
