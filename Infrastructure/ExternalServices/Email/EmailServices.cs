@@ -91,6 +91,7 @@ namespace Infrastructure.ExternalServices.Email
                                       .Replace("@Model.EventName", ticket.EventName)
                                       .Replace("@Model.LogoEvent", ticket.LogoEvent)
                                       .Replace("@@Model.Avatar", ticket.Avatar)
+                                      .Replace("@Model.UserId", ticket.UserId.ToString())
                                       .Replace("@Model.OrgainzerName", ticket.OrgainzerName)
                                       .Replace("@Model.StartDateMM", startDateMM)
                                       .Replace("@Model.StartDateD", startDateD)

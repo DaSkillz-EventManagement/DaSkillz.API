@@ -102,6 +102,7 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
                     Avatar = Owner!.Avatar,
                     EventName = currentEvent?.EventName,
                     Location = currentEvent?.Location,
+                    LocationUrl = currentEvent?.LocationUrl,
                     LocationAddress = currentEvent?.LocationAddress,
                     LogoEvent = currentEvent?.Image,
                     OrgainzerName = Owner.FullName,
