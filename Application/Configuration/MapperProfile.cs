@@ -117,9 +117,18 @@ namespace Application.Configuration
             CreateMap<Quiz, ResponseQuizDto>();
             CreateMap<ResponseQuestionDto, Question>();
 
+
+            //sponsor
+            CreateMap<SponsorEvent, SponsorEventDto>()
+                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User!.FullName))
+                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User!.Email));
+
+
             CreateMap<PagedList<SponsorEvent>, PagedList<SponsorEventDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.ToList()))
                 .ReverseMap();
+            CreateMap<SponsorEvent, SponsorEventDto>();
+            CreateMap<SponsorEvent, SponsorEventDetailDto>();
 
             //Participant
             CreateMap<Participant, ParticipantEventDto>()
