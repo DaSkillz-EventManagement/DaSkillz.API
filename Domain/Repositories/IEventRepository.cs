@@ -51,5 +51,7 @@ namespace Domain.Repositories
         EventPreviewDto ToEventPreview(Event entity);
         CreatedByUserDto getHostInfo(Guid userId);
         EventResponseDto ToResponseDto(Event eventEntity);
+        Task<Dictionary<string, int>> CountByStatus();
+        Task<List<EventPerMonth>> EventsPerMonth(DateTime startDate, DateTime endDate);
     }
 }

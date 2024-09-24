@@ -472,5 +472,65 @@ namespace Infrastructure.Repositories
             response.Capacity = eventEntity.Capacity;
             return response;
         }
+
+        public async Task<Dictionary<string, int>> CountByStatus()
+        {
+            Dictionary<string, int> response = new Dictionary<string, int>();
+            int NotYet = await _context.Events.Where(e => e.Status!.Equals(EventStatus.NotYet.ToString()))
+                .CountAsync();
+            response[EventStatus.NotYet.ToString()] = NotYet;
+
+            int Ongoing = await _context.Events.Where(e => e.Status!.Equals(EventStatus.OnGoing.ToString()))
+                .CountAsync();
+            response[EventStatus.OnGoing.ToString()] = Ongoing;
+
+            int Ended = await _context.Events.Where(e => e.Status!.Equals(EventStatus.Ended.ToString()))
+                .CountAsync();
+            response[EventStatus.Ended.ToString()] = Ended;
+
+            int Aborted = await _context.Events.Where(e => e.Status!.Equals(EventStatus.Aborted.ToString()))
+                .CountAsync();
+            response[EventStatus.Aborted.ToString()] = Aborted;
+
+            int Deleted = await _context.Events.Where(e => e.Status!.Equals(EventStatus.Deleted.ToString()))
+                .CountAsync();
+            response[EventStatus.Deleted.ToString()] = Deleted;
+
+            int totalEvent = await _context.Events.CountAsync();
+            response["Total"] = totalEvent;
+            return response;
+        }
+
+        public async Task<List<EventPerMonth>> EventsPerMonth(DateTime startDate, DateTime endDate)
+        {
+            var startDateTemp = DateTimeHelper.ToJsDateType(startDate);
+            var endDateTemp = DateTimeHelper.ToJsDateType(endDate);
+            List<EventPerMonth> eventCounts = new List<EventPerMonth>();
+            var events = await _context.Events
+                .Where(e => e.CreatedAt >= startDateTemp && e.CreatedAt.Value/*.Month*/ <= endDateTemp/*.Month*/)
+                .ToListAsync();
+            // Group events by month
+            foreach (var month in GetMonthsBetween(startDate, endDate))
+            {
+                var monthKey = month.ToString("yyyy-MM");
+                var monthTemp = DateTimeHelper.ToJsDateType(month);
+                var monthTemp2 = DateTimeHelper.ToJsDateType(month.AddMonths(1));
+                var eventCountForMonth = events.Count(e => e.CreatedAt!.Value/*.Year*/ >= monthTemp && e.CreatedAt!.Value < monthTemp2  /*month.Year && e.CreatedAt!.Value.Month == month.Month*/);
+                EventPerMonth temp = new EventPerMonth();
+                temp.month = monthKey;
+                temp.value = eventCountForMonth;
+                eventCounts.Add(temp);
+            }
+            return eventCounts;
+        }
+        private IEnumerable<DateTime> GetMonthsBetween(DateTime startDate, DateTime endDate)
+        {
+            var currentDate = new DateTime(startDate.Year, startDate.Month, 1);
+            while (currentDate.Year < endDate.Year || (currentDate.Year == endDate.Year && currentDate.Month <= endDate.Month))
+            {
+                yield return currentDate;
+                currentDate = currentDate.AddMonths(1);
+            }
+        }
     }
 }

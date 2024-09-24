@@ -14,5 +14,6 @@
         public const string ParticipantStatusNotValid = "Participant status not valid!";
         public const string YouAreNotStaff = "You are not staff of this event!";
         public const string TransactionIsNotValid = "Transaction is not valid! Please, confirm pay out success!";
+        public const string ParticipantCapacityLimitReached = "Participant capacity limit reached! Cannot add new participant!";
     }
 }
