@@ -19,7 +19,13 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedEventByCreat
     {
         private readonly IAdvertisedEventRepository _advertisedEventRepository;
         private readonly IEventRepository _eventRepository;
-        
+
+        public GetAdvertisedEventQueryHandler(IAdvertisedEventRepository advertisedEventRepository, IEventRepository eventRepository)
+        {
+            _advertisedEventRepository = advertisedEventRepository;
+            _eventRepository = eventRepository;
+        }
+
         public async Task<APIResponse> Handle(GetAdvertisedEventQuery request, CancellationToken cancellationToken)
         {
             var response = new APIResponse();
