@@ -46,9 +46,9 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
         //}
 
 
-        public async Task<Dictionary<string, object>> CreateOrderAsync(string amount, string appUser, string description, string app_trans_id)
+        public async Task<Dictionary<string, object>> CreateOrderAsync(string amount, string appUser, string description, string app_trans_id, string redirectUrl)
         {
-            var embed_data = new { };
+            var embed_data = new { redirecturl = redirectUrl };
             var items = new[] { new { } };
             var param = new Dictionary<string, string>();
 

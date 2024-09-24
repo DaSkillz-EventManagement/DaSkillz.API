@@ -13,6 +13,7 @@
         public Guid? UserId { get; set; }
         public string? UserEmail { get; set; }
         public string? EventName { get; set; }
-        public bool isSubscription { get; set; }
+        public int SubscriptionType { get; set; }
+        public string OrderUrl { get; set; } 
     }
 }

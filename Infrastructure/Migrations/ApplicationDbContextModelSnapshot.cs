@@ -648,10 +648,13 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsSubscription")
-                        .HasColumnType("bit");
+                    b.Property<string>("OrderUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubscriptionType")
                         .HasColumnType("int");
 
                     b.Property<long>("Timestamp")

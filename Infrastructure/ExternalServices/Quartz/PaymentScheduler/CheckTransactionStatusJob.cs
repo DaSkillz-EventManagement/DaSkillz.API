@@ -55,16 +55,9 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                 cacheKeys = (List<string>)processingTransaction;
             }
 
-            //if (!cacheKeys.Any())
-            //{
-            //    var processingTransaction = await _transactionRepository.getProcessingTransaction();
-            //    cacheKeys = (List<string>)processingTransaction;
-            //}
-
             var tasks = cacheKeys.Select(async key =>
             {
                 // Get transactionId from cache
-                //var transactionId = await _caching.HashGetSpecificKeyAsync(key, "transactionId");
 
                 string? transactionId = null;
                 try
@@ -99,7 +92,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                         exist.Zptransid = result["zp_trans_id"].ToString();
                         exist.Status = (int)TransactionStatus.SUCCESS;
                         await _transactionRepository.Update(exist);
-                        if (exist.IsSubscription)
+                        if (exist.SubscriptionType == (int)PaymentType.SUBSCRIPTION)
                         {
                            
 

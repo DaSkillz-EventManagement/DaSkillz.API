@@ -8,7 +8,8 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
         public Guid UserId { get; set; }
         public string? Description { get; set; }
         public string Amount { get; set; }
-        public Guid EventId { get; set; }
-        public bool isSubscription { get; set; }
+        public string? EventId { get; set; }
+        public int SubscriptionType { get; set; }
+        public string? redirectUrl { get; set; }
     }
 }
