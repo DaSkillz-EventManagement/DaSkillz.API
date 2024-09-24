@@ -1,10 +1,8 @@
 ﻿using Application.Helper;
 using Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent;
-using Application.UseCases.Events.Command.CreateEvent;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

@@ -1,14 +1,11 @@
 ﻿using Application.ResponseMessage;
 using AutoMapper;
-using Domain.Entities;
+using Domain.DTOs.Tag;
 using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
 using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
 using MediatR;
 using System.Net;
-using Elastic.Clients.Elasticsearch;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Domain.DTOs.Tag;
 
 namespace Application.UseCases.Tags.Queries.GetById
 {

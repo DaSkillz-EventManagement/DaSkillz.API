@@ -1,23 +1,21 @@
 ﻿using Application.UseCases.Events.Command.CreateEvent;
 using AutoMapper;
+using Domain.DTOs.AdvertisedEvents;
 using Domain.DTOs.Coupons;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
 using Domain.DTOs.Events.ResponseDto;
 using Domain.DTOs.Feedbacks;
+using Domain.DTOs.ParticipantDto;
 using Domain.DTOs.Payment.Response;
 using Domain.DTOs.PriceDto;
+using Domain.DTOs.Quiz.Request;
+using Domain.DTOs.Quiz.Response;
+using Domain.DTOs.Sponsors;
 using Domain.DTOs.Tag;
 using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Models.Pagination;
-using Domain.DTOs.PriceDto;
-using Domain.DTOs.Coupons;
-using Domain.DTOs.AdvertisedEvents;
-using Domain.DTOs.Quiz.Request;
-using Domain.DTOs.Quiz.Response;
-using Domain.DTOs.Sponsors;
-using Domain.DTOs.ParticipantDto;
 
 namespace Application.Configuration
 {

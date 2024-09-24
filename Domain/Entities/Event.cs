@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Event
     {
@@ -14,7 +8,7 @@ namespace Domain.Entities
             Tags = new HashSet<Tag>();
             Logos = new HashSet<Logo>();
             Coupons = new HashSet<Coupon>();
-           
+
         }
 
         public Guid EventId { get; set; }
@@ -38,7 +32,7 @@ namespace Domain.Entities
         public string? Theme { get; set; }
 
         public virtual User? CreatedByNavigation { get; set; }
-        public virtual ICollection<AdvertisedEvent?> AdvertisedEvents { get; set; }
+        public virtual ICollection<AdvertisedEvent> AdvertisedEvents { get; set; }
         public virtual ICollection<Logo> Logos { get; set; }
         public virtual ICollection<Coupon> Coupons { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }

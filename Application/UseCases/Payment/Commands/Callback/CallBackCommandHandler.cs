@@ -1,11 +1,8 @@
 ﻿using Application.Abstractions.Payment.ZaloPay;
 using Domain.Enum.Payment;
-using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System.Net;
-using System.Xml.Linq;
 
 namespace Application.UseCases.Payment.Commands.Callback
 {
@@ -43,7 +40,7 @@ namespace Application.UseCases.Payment.Commands.Callback
                         ReturnCode = -1,
                         ReturnMessage = "mac not equal"
                     };
-            }
+                }
 
                 // Deserialize data using the infrastructure service
                 var dataJson = _zaloPayService.DeserializeData(dataStr);

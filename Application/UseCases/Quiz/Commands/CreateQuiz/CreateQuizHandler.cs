@@ -16,7 +16,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
     private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    public CreateQuizHandler( IQuizRepository quizRepository, IEventRepository eventRepository, 
+    public CreateQuizHandler(IQuizRepository quizRepository, IEventRepository eventRepository,
         IUnitOfWork unitOfWork, IMapper mapper)
     {
         _quizRepository = quizRepository;
@@ -29,7 +29,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
     {
         #region Authen/author
         var isOwner = await _eventRepository.IsOwner(request.UserId, request.QuizDto.EventId);
-        if(!isOwner)
+        if (!isOwner)
         {
             return new APIResponse
             {
@@ -49,7 +49,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
         #region Saving entity
         try
         {
-            if(await _unitOfWork.SaveChangesAsync() > 0)
+            if (await _unitOfWork.SaveChangesAsync() > 0)
             {
                 return new APIResponse
                 {
@@ -64,7 +64,8 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
                 Message = MessageCommon.CreateFailed,
                 Data = request.QuizDto
             };
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             return new APIResponse
             {

@@ -8,7 +8,6 @@ using Domain.DTOs.Feedbacks;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -34,7 +33,7 @@ public class FeedbackController : ControllerBase
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new CreateFeedbackCommand(feedbackDto, userId), token);
-        if(result.StatusResponse == HttpStatusCode.OK)
+        if (result.StatusResponse == HttpStatusCode.OK)
         {
             return Ok(result);
         }
@@ -63,11 +62,11 @@ public class FeedbackController : ControllerBase
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new GetEventFeedbacksQueries(eventId, numOfStar, page, eachPage, userId), token);
-        if(result.StatusResponse == HttpStatusCode.OK)
+        if (result.StatusResponse == HttpStatusCode.OK)
         {
             return Ok(result);
         }
-        if(result.StatusResponse == HttpStatusCode.NotFound)
+        if (result.StatusResponse == HttpStatusCode.NotFound)
         {
             return NotFound(result);
         }
@@ -94,7 +93,7 @@ public class FeedbackController : ControllerBase
                                                                    [FromQuery, Range(1, int.MaxValue)] int eachPage = 10, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
-        var result = await _mediator.Send(new GetAllUserFeebacksQueries(userId,page, eachPage), token);
+        var result = await _mediator.Send(new GetAllUserFeebacksQueries(userId, page, eachPage), token);
         return Ok(result);
     }
 

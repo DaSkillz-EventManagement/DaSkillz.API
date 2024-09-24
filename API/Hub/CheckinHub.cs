@@ -3,7 +3,6 @@ using Domain.DTOs.Hub;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch.Nodes;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using System.Text.Json;

@@ -64,7 +64,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                     };
                 }
             }
-            
+
 
             var newTrans = new Transaction
             {

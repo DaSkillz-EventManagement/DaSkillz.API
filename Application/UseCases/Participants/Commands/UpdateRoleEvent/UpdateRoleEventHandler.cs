@@ -1,14 +1,8 @@
-﻿using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
+﻿using Application.ResponseMessage;
+using Domain.Models.Response;
 using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.ResponseMessage;
-using Domain.DTOs.ParticipantDto;
 using System.Net;
 
 namespace Application.UseCases.Participants.Commands.UpdateRoleEventCommand

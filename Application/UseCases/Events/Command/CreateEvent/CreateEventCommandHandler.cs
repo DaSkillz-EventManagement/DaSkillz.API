@@ -9,7 +9,6 @@ using Domain.Enum.Events;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch.Security;
 using MediatR;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -38,7 +37,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
         private readonly long minimumUpdateTimeSpan = 21600000;//time span between event created and new event startDate
 
-       
+
 
         public async Task<APIResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
@@ -72,7 +71,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
             {
                 eventEntity.Image = await _fileService.UploadImage(request.EventRequestDto.Image, Guid.NewGuid());
             }
-           
+
 
             if (!IsValidCoordinateString(request.EventRequestDto.Location.Coord!))
             {

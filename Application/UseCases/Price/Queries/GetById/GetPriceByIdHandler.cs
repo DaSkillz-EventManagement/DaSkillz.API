@@ -1,16 +1,10 @@
 ﻿using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.PriceDto;
-using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Prices.Queries.GetById;
 

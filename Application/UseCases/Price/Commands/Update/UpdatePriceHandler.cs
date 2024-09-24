@@ -1,18 +1,12 @@
-﻿using AutoMapper;
-using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
-using Domain.Repositories;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
-using Application.ResponseMessage;
-using System.Net;
+﻿using Application.ResponseMessage;
+using AutoMapper;
 using Domain.DTOs.PriceDto;
-using Elastic.Clients.Elasticsearch.Security;
+using Domain.Entities;
+using Domain.Models.Response;
+using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
+using MediatR;
+using System.Net;
 
 namespace Application.UseCases.Prices.Commands.Update;
 
@@ -55,7 +49,7 @@ public class UpdatePriceHandler : IRequestHandler<UpdatePriceCommand, APIRespons
         var user = await _userRepo.GetById(entity.CreatedBy);
         response.CreatedBy.email = user!.Email!;
         response.CreatedBy.Name = user.FullName;
-        response.CreatedBy.avatar = user.Avatar; 
+        response.CreatedBy.avatar = user.Avatar;
         response.CreatedBy.Id = user.UserId;
         if (await _unitOfWork.SaveChangesAsync() > 0)
         {

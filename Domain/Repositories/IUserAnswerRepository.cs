@@ -3,6 +3,6 @@ using Domain.Repositories.Generic;
 
 namespace Domain.Repositories;
 
-public interface IUserAnswerRepository: IRepository<UserAnswer>
+public interface IUserAnswerRepository : IRepository<UserAnswer>
 {
 }

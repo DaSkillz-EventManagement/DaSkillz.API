@@ -1,10 +1,10 @@
-﻿using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
-using Domain.Repositories;
-using MediatR;
+﻿using Application.Helper;
 using Application.ResponseMessage;
+using Domain.Models.Response;
+using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
+using MediatR;
 using System.Net;
-using Application.Helper;
 
 namespace Application.UseCases.Feedbacks.Commands.UpdateFeedback;
 
@@ -36,7 +36,7 @@ public class UpdateFeedbackHandler : IRequestHandler<UpdateFeedbackCommand, APIR
         feedbackEntity.Content = request.Feedback.Content;
         feedbackEntity.CreatedAt = DateTimeHelper.GetDateTimeNow();
         await _feedbackRepository.Update(feedbackEntity);
-        if(await _unitOfWork.SaveChangesAsync() > 0)
+        if (await _unitOfWork.SaveChangesAsync() > 0)
         {
             return new APIResponse
             {

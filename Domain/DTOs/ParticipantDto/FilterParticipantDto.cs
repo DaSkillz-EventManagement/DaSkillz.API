@@ -1,5 +1,4 @@
 ﻿using Domain.Enum.Participant;
-using Event_Management.Domain.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.DTOs.ParticipantDto;

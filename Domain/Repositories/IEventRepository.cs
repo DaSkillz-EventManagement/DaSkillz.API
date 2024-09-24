@@ -43,7 +43,7 @@ namespace Domain.Repositories
         public Task<PagedList<Event>> getEventByUserRole(EventRole eventRole, Guid userId, int pageNo, int elementEachPage);
         public Task<PagedList<Event>> GetEventsByTag(int tagId, int pageNo, int elementEachPage);
         public Task<PagedList<Event>> GetEventsByListTags(List<int> tagIds, int pageNo, int elementEachPage);
-        
+
         Task<List<Event>> GetUserHostEvent(Guid userId);
         Task<List<Event>> GetEventsByIdsAsync(List<Guid> eventIds);
         Task<CreatedByUserDto> GetHostInfo(Guid userId);

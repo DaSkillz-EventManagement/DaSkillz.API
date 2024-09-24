@@ -1,16 +1,10 @@
 ﻿using Application.ResponseMessage;
-using Application.UseCases.Coupons.Command.UseCoupon;
 using AutoMapper;
 using Domain.DTOs.User.Response;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Coupons.Queries.GetUsersByCoupon
 {
@@ -24,7 +18,7 @@ namespace Application.UseCases.Coupons.Queries.GetUsersByCoupon
         {
             var response = new APIResponse();
             var couponEntity = _couponRepository.GetById(request.CouponId);
-            if(couponEntity == null)
+            if (couponEntity == null)
             {
                 response.StatusResponse = HttpStatusCode.NotFound;
                 response.Message = MessageCommon.NotFound;

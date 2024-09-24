@@ -11,7 +11,7 @@ namespace Application.Abstractions.Caching
         /// <param name="key"></param>
         /// <returns></returns>
         Task<T> GetAsync<T>(string key);
-        
+
         /// <summary>
         /// set cache value with key
         /// </summary>
@@ -21,7 +21,7 @@ namespace Application.Abstractions.Caching
         /// <param name="TimeToLive"></param>
         /// <returns></returns>
         Task SetAsync<T>(string key, T value, double TimeToLive);
-        
+
         /// <summary>
         /// remove value by key
         /// </summary>

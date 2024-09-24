@@ -6,10 +6,8 @@ using Application.UseCases.Prices.Queries.GetAll;
 using Application.UseCases.Prices.Queries.GetById;
 using Domain.DTOs.PriceDto;
 using Domain.Enum.Price;
-using Event_Management.Domain.Enum;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -34,7 +32,7 @@ namespace API.Controllers
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new CreatePriceCommand(userId, price), token);
-            if(result.StatusResponse == HttpStatusCode.OK)
+            if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
             }
@@ -70,7 +68,7 @@ namespace API.Controllers
             return BadRequest(result);
         }
         [HttpGet("")]
-        public async Task<IActionResult> GetAllPrice([FromQuery]GetAllPriceOrderBy orderBy, bool isAscending = true, CancellationToken token = default)
+        public async Task<IActionResult> GetAllPrice([FromQuery] GetAllPriceOrderBy orderBy, bool isAscending = true, CancellationToken token = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new GetAllPriceQuery(orderBy, isAscending), token);

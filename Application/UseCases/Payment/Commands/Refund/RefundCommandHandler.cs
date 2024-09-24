@@ -56,12 +56,12 @@ namespace Application.UseCases.Payment.Commands.Refund
 
             var refundTransaction = new RefundTransaction
             {
-                refundId = refundId, 
-                returnCode = returnCode, 
-                returnMessage = returnMessage, 
-                refundAmount = long.Parse(refundAmount), 
-                refundAt = DateTime.UtcNow, 
-                Apptransid = existTransaction.Apptransid, 
+                refundId = refundId,
+                returnCode = returnCode,
+                returnMessage = returnMessage,
+                refundAmount = long.Parse(refundAmount),
+                refundAt = DateTime.UtcNow,
+                Apptransid = existTransaction.Apptransid,
                 Transaction = existTransaction
             };
 

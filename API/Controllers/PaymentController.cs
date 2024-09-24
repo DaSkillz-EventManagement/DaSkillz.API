@@ -5,10 +5,8 @@ using Application.UseCases.Payment.Queries.GetAllTransaction;
 using Application.UseCases.Payment.Queries.GetOrderStatus;
 using Application.UseCases.Payment.Queries.GetTransactionByEvent;
 using Application.UseCases.Payment.Queries.GetTransactionByUser;
-using Elastic.Clients.Elasticsearch.Fluent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 

@@ -1,6 +1,4 @@
-﻿using Application.ResponseMessage;
-using Application.UseCases.Payment.Queries.GetTransactionByUser;
-using Application.UseCases.Tags.Commands.AddTag;
+﻿using Application.UseCases.Tags.Commands.AddTag;
 using Application.UseCases.Tags.Commands.DeleteTag;
 using Application.UseCases.Tags.Queries.GetAllTag;
 using Application.UseCases.Tags.Queries.GetById;
@@ -9,10 +7,8 @@ using Application.UseCases.Tags.Queries.SearchTag;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Threading;
 
 namespace API.Controllers
 {

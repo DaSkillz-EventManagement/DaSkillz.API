@@ -5,7 +5,6 @@ using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Net;
 
 namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
@@ -26,10 +25,10 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
         public async Task<APIResponse> Handle(UseAdvertisedEventQuery request, CancellationToken cancellationToken)
         {
             var response = new APIResponse();
-      
+
             var isOwner = await _eventRepository.IsOwner(request.UserId, request.AdvertisedEventDto.EventId);
             if (isOwner)
-            {         
+            {
                 response.StatusResponse = HttpStatusCode.BadRequest;
                 response.Message = MessageEvent.YouAreNotOwnerOfThisEvent;
                 response.Data = null;
