@@ -3,6 +3,9 @@ using Domain.Models.Response;
 using MediatR;
 using Application.ResponseMessage;
 using System.Net;
+using Domain.DTOs.Sponsors;
+using AutoMapper;
+using Domain.DTOs.Events.ResponseDto;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequestDetail;
 
@@ -10,10 +13,15 @@ public class GetSponsorRequestDetailHandler : IRequestHandler<GetSponsorRequestD
 {
     private readonly IUserRepository _userRepository;
     private readonly ISponsorEventRepository _sponsorEventRepository;
-    public GetSponsorRequestDetailHandler(ISponsorEventRepository repository, IUserRepository userRepository)
+    private readonly IEventRepository _eventRepository;
+    private readonly IMapper _mapper;
+    public GetSponsorRequestDetailHandler(ISponsorEventRepository repository, IUserRepository userRepository, IMapper mapper, 
+        IEventRepository eventRepository)
     {
         _sponsorEventRepository = repository;      
         _userRepository = userRepository;
+        _mapper = mapper;
+        _eventRepository = eventRepository;
     }
 
     public async Task<APIResponse> Handle(GetSponsorRequestDetailQueries request, CancellationToken cancellationToken)
@@ -38,11 +46,14 @@ public class GetSponsorRequestDetailHandler : IRequestHandler<GetSponsorRequestD
                 Data = null
             };
         }
+        SponsorEventDetailDto response = _mapper.Map<SponsorEventDetailDto>(result);
+        var eventResponse = await _eventRepository.GetById(response.EventId);
+        response.eventResponseDto = _mapper.Map<EventResponseDto>(eventResponse);
         return new APIResponse
         {
             Message = MessageCommon.Complete,
             StatusResponse = HttpStatusCode.OK,
-            Data = result
-        };
+            Data = response
+    };
     }
 }
