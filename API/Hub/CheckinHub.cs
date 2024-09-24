@@ -76,7 +76,7 @@ public class CheckinHub : Hub<ICheckinHub>
 
         await Clients.Groups(eventId.ToString()).SendNotification(new SocketResponse()
         {
-            StatusResponse = false,
+            StatusResponse = true,
             Message = response.Message,
             Data = response.Data
         });
