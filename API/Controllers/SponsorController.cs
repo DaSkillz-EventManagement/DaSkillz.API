@@ -30,22 +30,30 @@ public class SponsorController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<APIResponse> CreateRequest([FromBody] SponsorDto sponsorEvent, CancellationToken token = default)
+    public async Task<IActionResult> CreateRequest([FromBody] SponsorDto sponsorEvent, CancellationToken token = default)
     {
         string userId = User.GetUserIdFromToken();
         var result = await _mediator.Send(new CreateSponsorRequestCommand(sponsorEvent, Guid.Parse(userId)), token);
-        return result;
+        if(result.StatusResponse == HttpStatusCode.OK)
+        {
+            return Ok(result);
+        }
+        return BadRequest(result);
     }
     [Authorize]
     [HttpPut("request-status")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<APIResponse> UpdateRequest([FromBody] SponsorRequestUpdateDto sponsorRequestUpdate, CancellationToken token = default)
+    public async Task<IActionResult> UpdateRequest([FromBody] SponsorRequestUpdateDto sponsorRequestUpdate, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new UpdateSponsorRequestCommand(sponsorRequestUpdate, userId), token);
-        return result;
+        if (result.StatusResponse == HttpStatusCode.OK)
+        {
+            return Ok(result);
+        }
+        return BadRequest(result);
     }
     [Authorize]
     [HttpGet("requested-sponsor")]
@@ -53,7 +61,7 @@ public class SponsorController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     //Get requested-sponsor of this person
-    public async Task<APIResponse> GetRequestSponsor(string? status, [FromQuery, Range(1, int.MaxValue)] int pageNo = 1,
+    public async Task<IActionResult> GetRequestSponsor(string? status, [FromQuery, Range(1, int.MaxValue)] int pageNo = 1,
                                                         [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10,
                                                         CancellationToken token = default)
     {
@@ -61,19 +69,19 @@ public class SponsorController : ControllerBase
         var result = await _mediator.Send(new GetSponsorRequestsQueries(userId, status, pageNo, elementEachPage), token);
         if (result == null)
         {
-            return new APIResponse
+            return BadRequest(new APIResponse
             {
                 StatusResponse = HttpStatusCode.BadRequest,
                 Message = MessageUser.UserNotFound,
                 Data = null
-            };
+            });
         }
-        return new APIResponse
+        return Ok(new APIResponse
         {
             StatusResponse = HttpStatusCode.OK,
             Message = MessageCommon.Complete,
             Data = result
-        };
+        });
     }
 
     [Authorize]
@@ -82,41 +90,41 @@ public class SponsorController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     //Get requested-sponsor of this event
-    public async Task<APIResponse> GetSponsorEvent([FromQuery] SponsorEventFilterDto sponsorFilter, CancellationToken token = default)
+    public async Task<IActionResult> GetSponsorEvent([FromQuery] SponsorEventFilterDto sponsorFilter, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new GetSponsorRequestsByEventIdQueries(sponsorFilter, userId), token);
         if (result == null)
         {
-            return new APIResponse
+            return BadRequest(new APIResponse
             {
                 StatusResponse = HttpStatusCode.BadRequest,
                 Message = MessageUser.UserNotFound,
                 Data = result
-            };
+            });
         }
-        return new APIResponse
+        return Ok(new APIResponse
         {
             StatusResponse = HttpStatusCode.OK,
             Message = MessageCommon.Complete,
             Data = result
-        };
+        });
     }
     [Authorize]
     [HttpGet("requested-detail")]
     //Get requested-sponsor of this person
-    public async Task<APIResponse> GetRequestDetail(Guid eventId, CancellationToken token = default)
+    public async Task<IActionResult> GetRequestDetail(Guid eventId, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new GetSponsorRequestDetailQueries(eventId, userId), token);
-        return result;
+        return Ok(result);
     }
     [Authorize]
     [HttpDelete("request")]
-    public async Task<APIResponse> DeleteRequest(Guid eventId, CancellationToken token = default)
+    public async Task<IActionResult> DeleteRequest(Guid eventId, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new DeleteSponsorRequestCommand(eventId, userId), token);
-        return result;
-    }
+        return Ok(result);
+    }   
 }
