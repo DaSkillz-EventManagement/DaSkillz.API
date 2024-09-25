@@ -69,8 +69,10 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                 };
             }
 
+            var returncode = Convert.ToInt32(result["return_code"]);
+
             exist.Zptransid = result["zp_trans_id"].ToString();
-            if ((int)result["return_code"] == 1)
+            if (returncode == 1)
             {
                 exist.Status = (int)TransactionStatus.SUCCESS;
                 if (exist.SubscriptionType == (int)PaymentType.TICKET)
@@ -165,7 +167,7 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                     sponsor.IsSponsored = true;
                 }
             }
-            else if ((int)result["return_code"] == 2)
+            else if (returncode == 2)
             {
                 exist.Status = (int)TransactionStatus.FAIL;
             }

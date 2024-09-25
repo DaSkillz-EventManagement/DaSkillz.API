@@ -72,7 +72,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                     return new APIResponse
                     {
                         StatusResponse = HttpStatusCode.BadRequest,
-                        Message = "You already have a processing order. Please wait until it completes before creating a new one."
+                        Message = "ALREADY_HAVE_PROCESSING_TICKET_ORDER"
                     };
                 }
             }
