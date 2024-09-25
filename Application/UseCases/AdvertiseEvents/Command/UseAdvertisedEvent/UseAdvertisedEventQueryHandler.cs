@@ -5,6 +5,7 @@ using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
+using Elastic.Clients.Elasticsearch;
 using MediatR;
 using Microsoft.Extensions.Azure;
 using System.Net;
@@ -32,38 +33,81 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
         {
             var response = new APIResponse();
             var priceAd = await _priceRepository.GetPriceAdvertised();
-            var isOwner = await _eventRepository.IsOwner(request.UserId, request.EventId);
-            if (isOwner)
+            var existAd = await _advertisedEventRepository.GetAdvertisedByEventId(request.EventId);
+
+            if(existAd != null)
             {
-                response.StatusResponse = HttpStatusCode.BadRequest;
-                response.Message = MessageEvent.YouAreNotOwnerOfThisEvent;
-                response.Data = null;
-                return response;
-            }
+                if(existAd.EndDate < DateTimeHelper.GetCurrentTimeAsLong())
+                {
+                    
+                    var isOwner = await _eventRepository.IsOwner(request.UserId, request.EventId);
+                    if (isOwner)
+                    {
+                        response.StatusResponse = HttpStatusCode.BadRequest;
+                        response.Message = MessageEvent.YouAreNotOwnerOfThisEvent;
+                        response.Data = null;
+                        return response;
+                    }
 
-            var advertisedEntity = new AdvertisedEvent();
-            advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
-            advertisedEntity.EventId = request.EventId;
-            advertisedEntity.PurchaserId = request.UserId;
-            advertisedEntity.PurchasedPrice = (decimal)priceAd.amount;
-            advertisedEntity.StartDate = DateTimeHelper.GetCurrentTimeAsLong();
+                    var advertisedEntity = new AdvertisedEvent();
+                    advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
+                    advertisedEntity.EventId = request.EventId;
+                    advertisedEntity.PurchaserId = request.UserId;
+                    advertisedEntity.PurchasedPrice = (decimal)priceAd.amount;
+                    advertisedEntity.StartDate = DateTimeHelper.GetCurrentTimeAsLong();
 
-            // Convert StartDate back to DateTimeOffset
-            DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(advertisedEntity.StartDate);
+                    // Convert StartDate back to DateTimeOffset
+                    DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(advertisedEntity.StartDate);
 
-            // Add 3 days to the StartDate
-            DateTimeOffset endDate = startDate.AddDays(3);
+                    // Add 3 days to the StartDate
+                    DateTimeOffset endDate = startDate.AddDays(3);
 
-            // Convert the new EndDate back to Unix time (milliseconds)
-            advertisedEntity.EndDate = endDate.ToUnixTimeMilliseconds();
+                    // Convert the new EndDate back to Unix time (milliseconds)
+                    advertisedEntity.EndDate = endDate.ToUnixTimeMilliseconds();
 
-            var result =  _advertisedEventRepository.Add(advertisedEntity);
-            if (await _unitOfWork.SaveChangesAsync() > 0)
+                    var result = _advertisedEventRepository.Add(advertisedEntity);
+                    if (await _unitOfWork.SaveChangesAsync() > 0)
+                    {
+                        response.StatusResponse = HttpStatusCode.OK;
+                        response.Message = MessageCommon.CreateSuccesfully;
+                        response.Data = result;
+                    }
+                }
+                else
+                {
+                    response.StatusResponse = HttpStatusCode.OK;
+                    response.Message = MessageEvent.TheTimeOfAdvertisingIsStillRemain;
+                    response.Data = null;
+                }
+            } else
             {
-                response.StatusResponse = HttpStatusCode.OK;
-                response.Message = MessageCommon.CreateSuccesfully;
-                response.Data = result;
+                
+
+                var advertisedEntity = new AdvertisedEvent();
+                advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
+                advertisedEntity.EventId = request.EventId;
+                advertisedEntity.PurchaserId = request.UserId;
+                advertisedEntity.PurchasedPrice = (decimal)priceAd.amount;
+                advertisedEntity.StartDate = DateTimeHelper.GetCurrentTimeAsLong();
+
+                // Convert StartDate back to DateTimeOffset
+                DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(advertisedEntity.StartDate);
+
+                // Add 3 days to the StartDate
+                DateTimeOffset endDate = startDate.AddDays(3);
+
+                // Convert the new EndDate back to Unix time (milliseconds)
+                advertisedEntity.EndDate = endDate.ToUnixTimeMilliseconds();
+
+                var result = _advertisedEventRepository.Add(advertisedEntity);
+                if (await _unitOfWork.SaveChangesAsync() > 0)
+                {
+                    response.StatusResponse = HttpStatusCode.OK;
+                    response.Message = MessageCommon.CreateSuccesfully;
+                    response.Data = result;
+                }
             }
+            
 
             return response;
         }

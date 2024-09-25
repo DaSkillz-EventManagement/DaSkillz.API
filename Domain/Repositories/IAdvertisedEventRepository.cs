@@ -6,5 +6,6 @@ namespace Domain.Repositories
     public interface IAdvertisedEventRepository : IRepository<AdvertisedEvent>
     {
         Task<List<Guid>> GetListAdvertisedEventId();
+        Task<AdvertisedEvent?> GetAdvertisedByEventId(Guid eventId);
     }
 }
