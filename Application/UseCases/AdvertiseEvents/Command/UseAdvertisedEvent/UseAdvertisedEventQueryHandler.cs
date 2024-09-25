@@ -40,8 +40,8 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
                 if(existAd.EndDate < DateTimeHelper.GetCurrentTimeAsLong())
                 {
                     
-                    var isOwner = await _eventRepository.IsOwner(request.UserId, request.EventId);
-                    if (isOwner)
+                    var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
+                    if (!isOwner)
                     {
                         response.StatusResponse = HttpStatusCode.BadRequest;
                         response.Message = MessageEvent.YouAreNotOwnerOfThisEvent;

@@ -25,7 +25,7 @@ namespace Application.UseCases.Coupons.Command.UpdateCoupon
 
         public async Task<APIResponse> Handle(UpdateCouponCommand request, CancellationToken cancellationToken)
         {
-            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.UserId, request.CouponEventDto.EventId);
+            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.EventId, request.CouponEventDto.UserId);
             if (isOwner)
             {
                 var couponEntity = await _couponRepository.GetById(request.Coupon.Id);

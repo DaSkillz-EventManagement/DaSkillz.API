@@ -27,7 +27,7 @@ namespace Application.UseCases.Coupons.Command.CreateCoupon
 
         public async Task<APIResponse> Handle(CreateCouponCommand request, CancellationToken cancellationToken)
         {
-            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.UserId, request.CouponEventDto.EventId);
+            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.EventId, request.CouponEventDto.UserId);
             if (isOwner)
             {
                 var couponEntity = _mapper.Map<Coupon>(request.Coupon);

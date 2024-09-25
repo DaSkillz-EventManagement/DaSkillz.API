@@ -19,7 +19,7 @@ namespace Application.UseCases.Coupons.Command.DeleteCoupon
 
         public async Task<bool> Handle(DeleteCouponCommand request, CancellationToken cancellationToken)
         {
-            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.UserId, request.CouponEventDto.EventId);
+            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.EventId, request.CouponEventDto.UserId);
             if (isOwner)
             {
                 var result = _couponRepository.Delete(request.Id);
