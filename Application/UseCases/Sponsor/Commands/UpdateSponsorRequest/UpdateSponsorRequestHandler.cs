@@ -9,6 +9,12 @@ using Application.Abstractions.Email;
 using Domain.DTOs.ParticipantDto;
 using Domain.Constants.Mail;
 using Domain.DTOs.Sponsors;
+using MediatR;
+using Domain.Models.Response;
+using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
+using System.Net;
+using Domain.Enum.Sponsor;
 
 namespace Application.UseCases.Sponsor.Commands.UpdateSponsorRequest;
 
