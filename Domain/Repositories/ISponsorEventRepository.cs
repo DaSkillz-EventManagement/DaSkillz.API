@@ -8,8 +8,15 @@ namespace Domain.Repositories
     {
         Task<SponsorEvent?> CheckSponsorEvent(Guid eventId, Guid userId);
         Task<SponsorEvent?> CheckSponsoredEvent(Guid eventId, Guid userId);
-        Task<PagedList<SponsorEvent>> GetSponsorEvents(SponsorEventFilterDto sponsorFilter);
-        Task<PagedList<SponsorEvent>> GetRequestSponsor(Guid userId, string? status, int page, int eachPage);
+
+        Task<List<SponsorEvent>> GetSponsorEvents(SponsorEventFilterDto sponsorFilter);
+        Task<int> GetSponsorEventsCount(SponsorEventFilterDto sponsorFilter);
+
+
+        Task<List<SponsorEvent>> GetRequestSponsor(Guid userId, string? status, int page, int eachPage);
+        Task<int> GetRequestSponsorCount(Guid userId, string? status);
+
+
         Task<SponsorEvent?> DeleteSponsorRequest(Guid eventId, Guid userId);
         Task<bool> IsSponsored(Guid eventId);
     }

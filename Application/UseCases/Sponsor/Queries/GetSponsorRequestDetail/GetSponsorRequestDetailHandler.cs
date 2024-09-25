@@ -6,6 +6,9 @@ using System.Net;
 using Domain.DTOs.Sponsors;
 using AutoMapper;
 using Domain.DTOs.Events.ResponseDto;
+using Domain.DTOs.Events;
+using System.Reflection;
+using Domain.DTOs.User.Response;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequestDetail;
 
@@ -47,8 +50,12 @@ public class GetSponsorRequestDetailHandler : IRequestHandler<GetSponsorRequestD
             };
         }
         SponsorEventDetailDto response = _mapper.Map<SponsorEventDetailDto>(result);
-        var eventResponse = await _eventRepository.GetById(response.EventId);
+        var eventResponse = await _eventRepository.GetById(response.EventId!);
         response.eventResponseDto = _mapper.Map<EventResponseDto>(eventResponse);
+        var host = _userRepository.GetUserById((Guid)eventResponse!.CreatedBy!);
+        CreatedByUserDto userResponse = _mapper.Map<CreatedByUserDto>(host);
+        response.eventResponseDto!.Location!.Name = eventResponse!.Location!;
+        response.eventResponseDto.Host = userResponse;
         return new APIResponse
         {
             Message = MessageCommon.Complete,

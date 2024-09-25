@@ -75,7 +75,7 @@ namespace API.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetAllPrice([FromQuery]GetAllPriceOrderBy orderBy, bool isAscending = true, CancellationToken token = default)
         {
-            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            //Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new GetAllPriceQuery(orderBy, isAscending), token);
             return Ok(result);
         }
