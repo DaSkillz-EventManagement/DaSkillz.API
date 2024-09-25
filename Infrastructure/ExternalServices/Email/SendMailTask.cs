@@ -4,8 +4,6 @@ using Application.ExternalServices.Mail;
 using Application.Helper;
 using Domain.Constants.Mail;
 using Domain.DTOs.ParticipantDto;
-using Domain.DTOs.User.Request;
-using Domain.Entities;
 using Domain.Enum.Participant;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
@@ -23,7 +21,7 @@ namespace Infrastructure.ExternalServices.Email
         private readonly IParticipantRepository _participantRepository;
         private readonly string path = "./Views/Template/VerifyWithOTP.cshtml";
 
-        public SendMailTask(IBackgroundTaskQueue taskQueue, IServiceScopeFactory serviceScopeFactory, IEventRepository eventRepository, IUserRepository userRepository, 
+        public SendMailTask(IBackgroundTaskQueue taskQueue, IServiceScopeFactory serviceScopeFactory, IEventRepository eventRepository, IUserRepository userRepository,
             IParticipantRepository participantRepository)
         {
             _taskQueue = taskQueue;

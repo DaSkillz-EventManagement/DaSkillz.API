@@ -1,17 +1,8 @@
-﻿using Application.ResponseMessage;
+﻿using AutoMapper;
 using Domain.DTOs.ParticipantDto;
 using Domain.Models.Pagination;
-using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
 
 namespace Application.UseCases.Participants.Queries.GetParticipantOnEvent
 {
@@ -20,7 +11,7 @@ namespace Application.UseCases.Participants.Queries.GetParticipantOnEvent
         private readonly IEventRepository _eventRepo;
         private readonly IParticipantRepository _participantRepository;
         private readonly IMapper _mapper;
-        
+
         public GetParticipantOnEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IMapper mapper)
         {
             _eventRepo = eventRepo;

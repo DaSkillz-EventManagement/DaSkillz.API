@@ -2,16 +2,12 @@ using API.Configuration;
 using API.Hub;
 using API.Middleware;
 using Application;
-using Application.Helper;
 using Domain.Constants.Hub;
-using Domain.Enum.Price;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.ExternalServices.ElasticSearch.Setting;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

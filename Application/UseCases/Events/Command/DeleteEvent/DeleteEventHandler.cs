@@ -1,16 +1,8 @@
-﻿using Application.UseCases.Events.Command.CreateEvent;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Enum.Events;
-using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using Event_Management.Domain.Enum;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Command.DeleteEvent
 {

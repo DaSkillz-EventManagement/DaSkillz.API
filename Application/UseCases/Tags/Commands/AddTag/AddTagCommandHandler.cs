@@ -27,7 +27,8 @@ namespace Application.UseCases.Tags.Commands.AddTag
             var existTag = await _tagRepository.GetTagByName(request.TagName);
             if (existTag == null)
             {
-                var tagEntity = new Tag {
+                var tagEntity = new Tag
+                {
                     TagName = request.TagName,
                 };
 

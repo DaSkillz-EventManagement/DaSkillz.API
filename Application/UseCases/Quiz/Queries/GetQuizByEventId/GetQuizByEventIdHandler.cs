@@ -1,10 +1,9 @@
-﻿using AutoMapper;
+﻿using Application.ResponseMessage;
+using AutoMapper;
+using Domain.DTOs.Quiz.Response;
 using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
 using Domain.Repositories;
 using MediatR;
-using Application.ResponseMessage;
-using Domain.DTOs.Quiz.Response;
 using System.Net;
 
 
@@ -22,7 +21,7 @@ public class GetQuizByEventIdHandler : IRequestHandler<GetQuizByEventIdQuery, AP
     public async Task<APIResponse> Handle(GetQuizByEventIdQuery request, CancellationToken cancellationToken)
     {
         var quizs = await _quizRepository.GetAllQuizsByEventId(request.EventId);
-        if(quizs.Count > 0)
+        if (quizs.Count > 0)
         {
             return new APIResponse
             {

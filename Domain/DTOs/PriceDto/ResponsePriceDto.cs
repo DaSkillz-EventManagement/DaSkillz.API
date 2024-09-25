@@ -1,11 +1,4 @@
 ﻿using Domain.DTOs.User.Response;
-using Domain.Enum.Price;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DTOs.PriceDto;
 

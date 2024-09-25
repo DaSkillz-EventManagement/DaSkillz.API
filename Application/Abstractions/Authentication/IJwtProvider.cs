@@ -1,5 +1,4 @@
 ﻿using Domain.DTOs.AuthenticationDTO;
-using Domain.Models.Response;
 using System.Security.Claims;
 
 namespace Application.Abstractions.Authentication

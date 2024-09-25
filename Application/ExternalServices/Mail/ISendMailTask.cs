@@ -1,5 +1,4 @@
 ﻿using Domain.DTOs.ParticipantDto;
-using Domain.DTOs.User.Request;
 
 namespace Application.ExternalServices.Mail
 {

@@ -1,17 +1,15 @@
-﻿using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
-using Domain.Repositories;
-using MediatR;
+﻿using Application.Abstractions.Email;
+using Application.Helper;
 using Application.ResponseMessage;
-using System.Net;
+using Domain.Constants.Mail;
+using Domain.DTOs.ParticipantDto;
 using Domain.Entities;
 using Domain.Enum.Participant;
-using Application.ExternalServices.Mail;
-using Domain.DTOs.ParticipantDto;
-using Domain.Enum.Events;
-using Application.Abstractions.Email;
-using Application.Helper;
-using Domain.Constants.Mail;
+using Domain.Models.Response;
+using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
+using MediatR;
+using System.Net;
 
 namespace Application.UseCases.Participants.Commands.AddUserToEventCommand
 {
@@ -22,7 +20,7 @@ namespace Application.UseCases.Participants.Commands.AddUserToEventCommand
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _sendMail;
         private readonly IUserRepository _userRepository;
-        public AddUserToEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork, 
+        public AddUserToEventHandler(IEventRepository eventRepo, IParticipantRepository participantRepository, IUnitOfWork unitOfWork,
             IEmailService sendMail, IUserRepository userRepository)
         {
             _eventRepo = eventRepo;

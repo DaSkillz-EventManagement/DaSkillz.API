@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Email;
-using Application.ExternalServices.Mail;
 using Application.Helper;
 using Application.ResponseMessage;
 using Domain.Constants.Mail;
@@ -12,7 +11,6 @@ using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using MediatR;
 using System.Net;
-using System.Transactions;
 
 
 namespace Application.UseCases.Participants.Commands.RegisterEventCommand;
@@ -66,7 +64,7 @@ public class RegisterEventHandler : IRequestHandler<RegisterEventCommand, APIRes
                 Data = null
             };
         }
-        
+
         var isExistedOnEvent = await _participantRepository.IsExistedOnEvent(request.UserId, request.EventId);
         if (isExistedOnEvent)
         {

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.UseCases.Participants.Commands.RegisterEventCommand;
 
-public class RegisterEventCommand: IRequest<APIResponse>
+public class RegisterEventCommand : IRequest<APIResponse>
 {
     public Guid UserId { get; set; }
     public Guid EventId { get; set; }

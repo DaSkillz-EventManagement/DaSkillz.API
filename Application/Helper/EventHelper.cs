@@ -1,7 +1,5 @@
 ﻿using Application.UseCases.Events.Queries.GetEventByTag;
 using Domain.DTOs.Events;
-using Domain.DTOs.User.Response;
-using Domain.Repositories;
 using System.Text;
 
 namespace Application.Helper

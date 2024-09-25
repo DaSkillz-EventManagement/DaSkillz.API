@@ -1,23 +1,16 @@
 ﻿using Application.ResponseMessage;
-using AutoMapper;
 using Domain.DTOs.Feedbacks;
 using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Models.Pagination;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Feedbacks.Queries.GetAllUserFeebacks;
 
-public class GetAllUserFeebacksHandler: IRequestHandler<GetAllUserFeebacksQueries, APIResponse>
+public class GetAllUserFeebacksHandler : IRequestHandler<GetAllUserFeebacksQueries, APIResponse>
 {
     private readonly IFeedbackRepository _feedbackRepository;
     private readonly IUserRepository _userRepository;
@@ -35,7 +28,7 @@ public class GetAllUserFeebacksHandler: IRequestHandler<GetAllUserFeebacksQuerie
         {
             response.Add(await ToFeebackView(item));
         }
-        PagedList <FeedbackView> temp = new PagedList<FeedbackView>
+        PagedList<FeedbackView> temp = new PagedList<FeedbackView>
         {
             Items = response,
             TotalItems = response.Count,

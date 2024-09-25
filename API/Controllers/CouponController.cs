@@ -6,15 +6,12 @@ using Application.UseCases.Coupons.Command.UpdateCoupon;
 using Application.UseCases.Coupons.Command.UseCoupon;
 using Application.UseCases.Coupons.Queries.GetCoupon;
 using Application.UseCases.Coupons.Queries.GetUsersByCoupon;
-using Application.UseCases.Events.Queries.GetEventInfo;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace API.Controllers
 {
@@ -38,7 +35,7 @@ namespace API.Controllers
         public async Task<ActionResult<APIResponse>> GetAllCoupons([FromQuery, Required] GetCouponQuery query, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(query, cancellationToken);
-           
+
             return new APIResponse()
             {
                 StatusResponse = HttpStatusCode.OK,
@@ -61,7 +58,7 @@ namespace API.Controllers
         }
 
 
-        
+
         [HttpPut("")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -100,7 +97,7 @@ namespace API.Controllers
             }
 
 
-            
+
         }
 
         [HttpPost("use-coupon")]

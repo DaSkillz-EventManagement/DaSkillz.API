@@ -4,8 +4,6 @@ using Domain.Entities;
 using Domain.Enum.Payment;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch.Security;
-using Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 using Quartz;
 
@@ -94,7 +92,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                         await _transactionRepository.Update(exist);
                         if (exist.SubscriptionType == (int)PaymentType.SUBSCRIPTION)
                         {
-                           
+
 
                             var subscription = await _subscriptionRepository.GetByUserId(exist.UserId);
                             if (subscription != null)

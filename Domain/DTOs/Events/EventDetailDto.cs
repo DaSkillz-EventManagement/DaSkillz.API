@@ -1,10 +1,5 @@
 ﻿using Domain.DTOs.Sponsors;
 using Domain.DTOs.User.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DTOs.Events
 {

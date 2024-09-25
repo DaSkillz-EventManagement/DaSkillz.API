@@ -414,7 +414,7 @@ namespace Infrastructure.Repositories
             return response;
         }
 
-        public  EventPreviewDto ToEventPreview(Event entity)
+        public EventPreviewDto ToEventPreview(Event entity)
         {
             EventPreviewDto response = new EventPreviewDto();
             response.EventId = entity.EventId;
@@ -431,7 +431,7 @@ namespace Infrastructure.Repositories
         {
             var user = _context.Users.FirstOrDefault(u => u.UserId == userId); // Use FirstOrDefault for synchronous operation
 
-           
+
 
             CreatedByUserDto response = new CreatedByUserDto
             {
@@ -444,7 +444,7 @@ namespace Infrastructure.Repositories
             return response;
         }
 
-        
+
 
 
         public EventResponseDto ToResponseDto(Event eventEntity)
@@ -467,7 +467,7 @@ namespace Infrastructure.Repositories
             response.Image = eventEntity.Image;
             response.Theme = eventEntity.Theme;
             response.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
-            response.UpdatedAt = eventEntity.UpdatedAt.HasValue ?eventEntity.UpdatedAt : null;
+            response.UpdatedAt = eventEntity.UpdatedAt.HasValue ? eventEntity.UpdatedAt : null;
             response.Fare = eventEntity.Fare;
             response.Capacity = eventEntity.Capacity;
             return response;
@@ -531,6 +531,11 @@ namespace Infrastructure.Repositories
                 yield return currentDate;
                 currentDate = currentDate.AddMonths(1);
             }
+        public async Task<List<Event>> GetListEventsByListId(List<Guid> eventsId)
+        {
+            return await _context.Events
+                         .Where(e => eventsId.Contains(e.EventId))  // Filter based on the list of event IDs
+                         .ToListAsync();
         }
     }
 }

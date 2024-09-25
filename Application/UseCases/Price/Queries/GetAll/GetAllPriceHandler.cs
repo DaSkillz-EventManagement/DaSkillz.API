@@ -1,16 +1,10 @@
-﻿using AutoMapper;
+﻿using Application.ResponseMessage;
+using AutoMapper;
+using Domain.DTOs.PriceDto;
 using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
-using Application.ResponseMessage;
-using Domain.DTOs.PriceDto;
 
 namespace Application.UseCases.Prices.Queries.GetAll;
 
@@ -28,7 +22,7 @@ public class GetAllPriceHandler : IRequestHandler<GetAllPriceQuery, APIResponse>
     public async Task<APIResponse> Handle(GetAllPriceQuery request, CancellationToken cancellationToken)
     {
         var result = await _pricerepo.GetAllPrice(request.OrderBy, request.IsAscending);
-        if(result == null)
+        if (result == null)
         {
             return new APIResponse
             {
@@ -38,7 +32,7 @@ public class GetAllPriceHandler : IRequestHandler<GetAllPriceQuery, APIResponse>
             };
         }
         List<ResponsePriceDto> responses = new List<ResponsePriceDto>();
-        foreach(var item in result)
+        foreach (var item in result)
         {
             ResponsePriceDto response = new ResponsePriceDto();
             response.PriceId = item.PriceId;

@@ -45,7 +45,7 @@ namespace Infrastructure.ExternalServices.Oauth2
                 //        Data = null
                 //    };
                 //}
-                
+
                 if (tokenInfo == null)
                 {
                     return new APIResponse

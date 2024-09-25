@@ -3,13 +3,7 @@ using Domain.DTOs.ParticipantDto;
 using Domain.Enum.Participant;
 using Domain.Models.Pagination;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Participants.Queries.GetParticipantRelatedToCheckInOnEvent
 {
@@ -32,7 +26,7 @@ namespace Application.UseCases.Participants.Queries.GetParticipantRelatedToCheck
             {
                 return null;
             }
-            
+
             var participants = await _participantRepository.GetAll(p => p.EventId.Equals(request.EventId), request.page, request.eachPage, ParticipantSortBy.CheckedIn.ToString());
 
             return _mapper.Map<PagedList<ParticipantDto>>(participants);

@@ -1,11 +1,9 @@
 ﻿using Domain.Entities;
 using Domain.Enum.Payment;
 using Domain.Repositories;
-using Elastic.Clients.Elasticsearch.Security;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories
 {
@@ -26,8 +24,8 @@ namespace Infrastructure.Repositories
             //        .Where(t => t.UserId == guid)
             //        .ToListAsync();
             return await _context.Transactions.Where(x => x.UserId.Equals(guid)).ToListAsync();
-        }        
-        
+        }
+
         public async Task<IEnumerable<Transaction?>> getEventTransactionAsync(Guid? eventId)
         {
             return await _context.Transactions.Where(x => x.EventId.Equals(eventId)).ToListAsync();

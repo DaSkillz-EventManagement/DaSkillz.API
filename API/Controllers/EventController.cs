@@ -5,7 +5,6 @@ using Application.UseCases.Events.Command.DeleteEvent;
 using Application.UseCases.Events.Command.UpdateEvent;
 using Application.UseCases.Events.Command.UploadEventSponsorLogo;
 using Application.UseCases.Events.Queries.GetAllBlobUris;
-using Application.UseCases.Events.Queries.GetAllEventBlobUris;
 using Application.UseCases.Events.Queries.GetBlobUri;
 using Application.UseCases.Events.Queries.GetEventByTag;
 using Application.UseCases.Events.Queries.GetEventByUserRole;
@@ -53,10 +52,10 @@ namespace API.Controllers
         [HttpGet("user-event-role")]
         public async Task<ActionResult<APIResponse>> GetEventByUserRole([FromQuery, Required] EventRole eventRole,
                                                         [FromQuery, Range(1, int.MaxValue)] int pageNo = 1,
-                                                        [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10,CancellationToken cancellationToken = default)
+                                                        [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10, CancellationToken cancellationToken = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
-            
+
             var result = await _mediator.Send(new GetEventByUserRoleQuery(eventRole, userId, pageNo, elementEachPage), cancellationToken);
             Response.Headers.Add("X-Total-Element", result.TotalItems.ToString());
             Response.Headers.Add("X-Total-Page", result.TotalPages.ToString());
@@ -106,7 +105,7 @@ namespace API.Controllers
                                                       [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10, CancellationToken cancellationToken = default)
         {
             var response = await _mediator.Send(new GetFilteredEventQuery(filterObject, pageNo, elementEachPage), cancellationToken);
-           
+
             Response.Headers.Add("X-Total-Element", response.TotalItems.ToString());
             Response.Headers.Add("X-Total-Page", response.TotalPages.ToString());
             Response.Headers.Add("X-Current-Page", response.CurrentPage.ToString());
@@ -116,7 +115,7 @@ namespace API.Controllers
                 Message = MessageEvent.GetAllEvent,
                 Data = response
             });
-           
+
         }
 
         [Authorize]
@@ -128,7 +127,7 @@ namespace API.Controllers
                                                                    [FromQuery, Range(1, int.MaxValue)] int elementEachPage = 10, CancellationToken cancellationToken = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
-            
+
             var response = await _mediator.Send(new GetEventParticipatedByUserQuery(filter, userId, pageNo, elementEachPage), cancellationToken);
             if (response.TotalItems > 0)
             {
@@ -175,7 +174,7 @@ namespace API.Controllers
         public async Task<ActionResult<APIResponse>> AddEvent(EventRequestDto eventRequestDto, CancellationToken cancellationToken = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
-            
+
             var result = await _mediator.Send(new CreateEventCommand(eventRequestDto, userId), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
@@ -186,11 +185,11 @@ namespace API.Controllers
         [HttpPut("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateEvent([FromBody] EventRequestDto eventRequestDto, [FromQuery, Required]  Guid eventId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> UpdateEvent([FromBody] EventRequestDto eventRequestDto, [FromQuery, Required] Guid eventId, CancellationToken cancellationToken = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
 
-            var result = await _mediator.Send(new UpdateEventCommand(eventRequestDto,userId,eventId), cancellationToken);
+            var result = await _mediator.Send(new UpdateEventCommand(eventRequestDto, userId, eventId), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
 

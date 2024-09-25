@@ -6,8 +6,8 @@ using Domain.DTOs.Events.ResponseDto;
 using Domain.Models.Pagination;
 using Domain.Repositories;
 using MediatR;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Application.UseCases.Events.Queries.GetFilteredEvent
 {

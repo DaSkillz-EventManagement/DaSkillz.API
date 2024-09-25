@@ -4,7 +4,6 @@ using Domain.DTOs.Tag;
 using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
 
 namespace Application.UseCases.Tags.Queries.SearchTag

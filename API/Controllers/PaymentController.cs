@@ -10,7 +10,6 @@ using Domain.Enum.Payment;
 using Elastic.Clients.Elasticsearch.Fluent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 
