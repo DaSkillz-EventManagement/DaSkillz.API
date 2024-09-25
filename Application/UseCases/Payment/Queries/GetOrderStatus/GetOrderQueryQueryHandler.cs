@@ -3,6 +3,7 @@ using Application.Abstractions.Email;
 using Application.Abstractions.Payment.ZaloPay;
 using Application.Helper;
 using Application.ResponseMessage;
+using Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent;
 using Domain.Constants.Mail;
 using Domain.DTOs.ParticipantDto;
 using Domain.Entities;
@@ -30,6 +31,7 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
         private readonly IEmailService _emailService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRedisCaching _caching;
+        private readonly IMediator _mediator;
 
         public GetOrderQueryQueryHandler(IZaloPayService zaloPayService,
             ITransactionRepository transactionRepository,
@@ -40,7 +42,8 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
             IEventRepository eventRepository,
             IEmailService emailService,
             IUnitOfWork unitOfWork,
-            IRedisCaching caching)
+            IRedisCaching caching,
+            IMediator mediator)
         {
             _zaloPayService = zaloPayService;
             _transactionRepository = transactionRepository;
@@ -52,6 +55,7 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
             _emailService = emailService;
             _unitOfWork = unitOfWork;
             _caching = caching;
+            _mediator = mediator;
         }
 
         public async Task<APIResponse> Handle(GetOrderStatusQuery request, CancellationToken cancellationToken)
@@ -167,6 +171,10 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                     }
                     sponsor.IsSponsored = true;
                 }
+                else if (exist.SubscriptionType == (int)PaymentType.ADVERTISE)
+                {
+                    await _mediator.Send(new UseAdvertisedEventQuery((Guid)exist.EventId!, (Guid)exist.UserId!), cancellationToken);
+                }
 
                 await _caching.RemoveAsync($"payment_{request.appTransId}");
             }
@@ -174,6 +182,7 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
             {
                 exist.Zptransid = result["zp_trans_id"].ToString();
                 exist.Status = (int)TransactionStatus.FAIL;
+                await _caching.RemoveAsync($"payment_{request.appTransId}");
             }
             await _transactionRepository.Update(exist);
             await _unitOfWork.SaveChangesAsync();
