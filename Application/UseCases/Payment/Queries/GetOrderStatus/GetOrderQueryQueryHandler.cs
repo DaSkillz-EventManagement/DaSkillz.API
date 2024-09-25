@@ -71,9 +71,10 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
 
             var returncode = Convert.ToInt32(result["return_code"]);
 
-            exist.Zptransid = result["zp_trans_id"].ToString();
+            
             if (returncode == 1)
             {
+                exist.Zptransid = result["zp_trans_id"].ToString();
                 exist.Status = (int)TransactionStatus.SUCCESS;
                 if (exist.SubscriptionType == (int)PaymentType.TICKET)
                 {
@@ -166,15 +167,17 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                     }
                     sponsor.IsSponsored = true;
                 }
+
+                await _caching.RemoveAsync($"payment_{request.appTransId}");
             }
             else if (returncode == 2)
             {
+                exist.Zptransid = result["zp_trans_id"].ToString();
                 exist.Status = (int)TransactionStatus.FAIL;
             }
             await _transactionRepository.Update(exist);
             await _unitOfWork.SaveChangesAsync();
 
-            await _caching.RemoveAsync($"payment_{request.appTransId}");
 
 
 

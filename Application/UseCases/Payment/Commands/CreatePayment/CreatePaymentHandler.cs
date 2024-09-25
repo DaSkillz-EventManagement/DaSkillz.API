@@ -34,7 +34,8 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
 
         public async Task<APIResponse> Handle(CreatePayment request, CancellationToken cancellationToken)
         {
-            string app_trans_id = DateTime.UtcNow.ToString("yyMMdd") + "_" + new Random().Next(100000);
+            Random rnd = new Random();
+            string app_trans_id = DateTime.UtcNow.ToString("yyMMdd") + "_" + rnd.Next(1000000);
             string cacheKey = $"payment_{app_trans_id}";
             var appUser = "user123";
 
@@ -110,7 +111,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
-                Message = "test",
+                Message = MessageCommon.CreateSuccesfully,
                 Data = result
             };
         }

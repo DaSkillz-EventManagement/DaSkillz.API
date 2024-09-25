@@ -55,6 +55,7 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
             param.Add("app_id", _zaloPaySettings.Appid!);
             param.Add("app_user", appUser);
             param.Add("app_time", Utils.GetTimeStamp().ToString());
+            param.Add("expire_duration_seconds", "900");
             param.Add("amount", amount);
             param.Add("app_trans_id", app_trans_id);
             param.Add("embed_data", JsonConvert.SerializeObject(embed_data));
