@@ -40,8 +40,10 @@
             entity.Property(t => t.Status)
                 .IsRequired();
 
-            entity.Property(t => t.IsSubscription)
+            entity.Property(t => t.SubscriptionType)
                 .IsRequired();
+
+            entity.Property(t => t.OrderUrl);
 
             entity.HasOne(t => t.RefundTransaction)
                 .WithOne(r => r.Transaction)

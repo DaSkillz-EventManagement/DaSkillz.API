@@ -23,6 +23,12 @@ namespace Application.UseCases.Payment.Queries.GetTransactionByEvent
         public async Task<APIResponse> Handle(GetEventTransactionQuery request, CancellationToken cancellationToken)
         {
             var exist = await _transactionRepository.getEventTransactionAsync(request.eventId);
+
+
+
+
+
+
             var map = mapper.Map<IEnumerable<TransactionResponseDto>>(exist);
             bool checkExist = exist != null;
             return new APIResponse

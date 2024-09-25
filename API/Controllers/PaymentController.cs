@@ -2,9 +2,11 @@
 using Application.UseCases.Payment.Commands.CreatePayment;
 using Application.UseCases.Payment.Commands.Refund;
 using Application.UseCases.Payment.Queries.GetAllTransaction;
+using Application.UseCases.Payment.Queries.GetFilterTransaction;
 using Application.UseCases.Payment.Queries.GetOrderStatus;
 using Application.UseCases.Payment.Queries.GetTransactionByEvent;
 using Application.UseCases.Payment.Queries.GetTransactionByUser;
+using Domain.Enum.Payment;
 using Elastic.Clients.Elasticsearch.Fluent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +67,24 @@ namespace API.Controllers
             var result = await _mediator.Send(new GetEventTransactionQuery(guid), cancellationToken);
             return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
         }
+
+
+        [HttpGet("filter")]
+        [SwaggerOperation(Summary = "Get filtered transactions", Description = "Status: 1=Success, 2=Fail, 3=Processing //// Subscription Type: 1=Ticket, 2=Sponsor, 3=Advertise, 4=Subscription.")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetFilterTransaction(
+                                                [FromQuery] Guid? eventId,
+                                                [FromQuery] Guid? userId,
+                                                [FromQuery] TransactionStatus? status,
+                                                [FromQuery] PaymentType? subscriptionType,
+                                                CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetFilterTransactionQuery(eventId, userId, (int?)status, (int?)subscriptionType), cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
+
+
 
         [HttpPost("")]
         [SwaggerOperation(Summary = "Create a new transaction", Description = "create a new transaction (if isSubscription is true then eventId will be ignored")]

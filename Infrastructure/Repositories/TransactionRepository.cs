@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enum.Payment;
 using Domain.Repositories;
 using Elastic.Clients.Elasticsearch.Security;
 using Infrastructure.Persistence;
@@ -35,7 +36,7 @@ namespace Infrastructure.Repositories
         public async Task<Transaction?> GetLatestTransactionIsSubscribe(Guid userId)
         {
             return await _context.Transactions
-                    .Where(t => t.UserId == userId && t.IsSubscription && t.Status == 1)
+                    .Where(t => t.UserId == userId && t.SubscriptionType == (int)PaymentType.SUBSCRIPTION && t.Status == 1)
                     .OrderByDescending(t => t.CreatedAt) 
                     .FirstOrDefaultAsync();
         }
@@ -43,8 +44,50 @@ namespace Infrastructure.Repositories
         public async Task<IList<Transaction>> getProcessingTransaction()
         {
             return await _context.Transactions
-                    .Where(t => t.Status == 3)
+                    .Where(t => t.Status == 3 && t.SubscriptionType == (int)PaymentType.SUBSCRIPTION)
                     .OrderByDescending(t => t.CreatedAt).ToListAsync();
+        }
+
+        public async Task<Transaction?> GetExistProcessingTransaction(Guid userId, Guid eventId)
+        {
+            return await _context.Transactions.FirstOrDefaultAsync(t => t.UserId.Equals(userId)
+                && t.EventId.Equals(eventId)
+                && t.Status == (int)TransactionStatus.PROCESSING);
+        }
+
+        public async Task<IEnumerable<Transaction>> FilterTransactionsAsync(Guid? eventId, Guid? userId, int? status, int? subscriptionType)
+        {
+            // Tạo query gốc
+            var query = _context.Transactions.AsQueryable();
+
+            // Lọc theo eventId
+            if (eventId.HasValue)
+            {
+                query = query.Where(t => t.EventId == eventId);
+            }
+
+            // Lọc theo userId
+            if (userId.HasValue)
+            {
+                query = query.Where(t => t.UserId == userId);
+            }
+
+            // Lọc theo status
+            if (status.HasValue)
+            {
+                query = query.Where(t => t.Status == status);
+            }
+
+            // Lọc theo subscriptionType
+            if (subscriptionType.HasValue)
+            {
+                query = query.Where(t => t.SubscriptionType == subscriptionType);
+            }
+
+            query = query.OrderByDescending(t => t.CreatedAt);
+
+            // Thực thi query và trả về kết quả
+            return await query.ToListAsync();
         }
 
     }
