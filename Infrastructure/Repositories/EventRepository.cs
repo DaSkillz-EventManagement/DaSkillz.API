@@ -531,6 +531,8 @@ namespace Infrastructure.Repositories
                 yield return currentDate;
                 currentDate = currentDate.AddMonths(1);
             }
+
+        }
         public async Task<List<Event>> GetListEventsByListId(List<Guid> eventsId)
         {
             return await _context.Events
