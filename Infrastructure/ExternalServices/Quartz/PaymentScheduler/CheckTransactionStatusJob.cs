@@ -1,9 +1,11 @@
 ﻿using Application.Abstractions.Caching;
 using Application.Abstractions.Payment.ZaloPay;
+using Application.UseCases.Payment.Queries.GetOrderStatus;
 using Domain.Entities;
 using Domain.Enum.Payment;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Quartz;
 
@@ -18,6 +20,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CheckTransactionStatusJob> _logger;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IMediator _mediator;
 
         public CheckTransactionStatusJob(ISchedulerFactory scheduler,
             ITransactionRepository transactionRepository,
@@ -25,7 +28,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
             IRedisCaching caching,
             IUnitOfWork unitOfWork,
             ILogger<CheckTransactionStatusJob> logger,
-            ISubscriptionRepository subscriptionRepository)
+            ISubscriptionRepository subscriptionRepository, IMediator mediator)
         {
             _scheduler = scheduler;
             _transactionRepository = transactionRepository;
@@ -34,6 +37,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
             _unitOfWork = unitOfWork;
             _logger = logger;
             _subscriptionRepository = subscriptionRepository;
+            _mediator = mediator;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -76,65 +80,16 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                     transactionId = existInDb.Apptransid;
                 }
 
+                //var result = await _zaloPayService.QueryOrderStatus(transactionId);
+
                 // Query ZaloPay API
-                var result = await _zaloPayService.QueryOrderStatus(transactionId);
-                if (result == null || !result.ContainsKey("return_code")) return;
+                var queryOrder = await _mediator.Send(new GetOrderStatusQuery(transactionId));
+                if (queryOrder.Data == null) return;
 
                 var exist = await _transactionRepository.GetById(transactionId);
                 if (exist == null) return;
 
-                var returnCode = int.Parse(result["return_code"].ToString()!);
-                switch (returnCode)
-                {
-                    case 1:
-                        exist.Zptransid = result["zp_trans_id"].ToString();
-                        exist.Status = (int)TransactionStatus.SUCCESS;
-                        await _transactionRepository.Update(exist);
-                        if (exist.SubscriptionType == (int)PaymentType.SUBSCRIPTION)
-                        {
-
-
-                            var subscription = await _subscriptionRepository.GetByUserId(exist.UserId);
-                            if (subscription != null)
-                            {
-                                if (subscription.EndDate >= DateTime.UtcNow)
-                                {
-                                    subscription.EndDate = subscription.EndDate.AddMonths(1);
-                                }
-                                else
-                                {
-                                    subscription.StartDate = DateTime.UtcNow;
-                                    subscription.EndDate = DateTime.UtcNow.AddMonths(1);
-                                }
-                                subscription.IsActive = true;
-                            }
-                            else
-                            {
-                                subscription = new Subscription
-                                {
-                                    UserId = (Guid)exist.UserId!,
-                                    StartDate = DateTime.UtcNow,
-                                    EndDate = DateTime.UtcNow.AddMonths(1),
-                                    IsActive = true
-                                };
-                                await _subscriptionRepository.Add(subscription);
-                            }
-                        }
-
-
-                        await _unitOfWork.SaveChangesAsync();
-                        await _caching.RemoveAsync(key);
-                        break;
-
-                    case 2:
-                        exist.Zptransid = result["zp_trans_id"].ToString();
-                        exist.Status = (int)TransactionStatus.FAIL;
-                        await _transactionRepository.Update(exist);
-                        await _caching.RemoveAsync(key);
-                        break;
-                }
-
-                await _unitOfWork.SaveChangesAsync();
+                
             });
 
 
