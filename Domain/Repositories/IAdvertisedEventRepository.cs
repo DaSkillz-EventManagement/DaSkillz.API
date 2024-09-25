@@ -7,5 +7,6 @@ namespace Domain.Repositories
     {
         Task<List<Guid>> GetListAdvertisedEventId();
         Task<AdvertisedEvent?> GetAdvertisedByEventId(Guid eventId);
+        Task<List<AdvertisedEvent>> GetFilteredAdvertisedByHost(Guid userId, string status);
     }
 }

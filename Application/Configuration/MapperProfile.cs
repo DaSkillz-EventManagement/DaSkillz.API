@@ -109,7 +109,7 @@ namespace Application.Configuration
             CreateMap<TagDto, Tag>().ReverseMap();
             CreateMap<PagedList<TagDto>, PagedList<Tag>>().ReverseMap();
             CreateMap<EventTagDto, Tag>().ReverseMap();
-            CreateMap<AdvertisedEvent, AdvertisedEventDto>();
+            CreateMap<AdvertisedEvent, AdvertisedEventDto>().ReverseMap();
             //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
             CreateMap<CreateQuizDto, Quiz>().ReverseMap();
             CreateMap<Quiz, ResponseQuizDto>();
