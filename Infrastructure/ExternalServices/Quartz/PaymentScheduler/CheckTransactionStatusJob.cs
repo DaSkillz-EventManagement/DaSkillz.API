@@ -1,12 +1,9 @@
 ﻿using Application.Abstractions.Caching;
 using Application.Abstractions.Payment.ZaloPay;
 using Application.UseCases.Payment.Queries.GetOrderStatus;
-using Domain.Entities;
 using Domain.Enum.Payment;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Quartz;
 
 namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
@@ -17,26 +14,14 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
         private readonly ITransactionRepository _transactionRepository;
         private readonly IZaloPayService _zaloPayService;
         private readonly IRedisCaching _caching;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<CheckTransactionStatusJob> _logger;
-        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IMediator _mediator;
 
-        public CheckTransactionStatusJob(ISchedulerFactory scheduler,
-            ITransactionRepository transactionRepository,
-            IZaloPayService zaloPayService,
-            IRedisCaching caching,
-            IUnitOfWork unitOfWork,
-            ILogger<CheckTransactionStatusJob> logger,
-            ISubscriptionRepository subscriptionRepository, IMediator mediator)
+        public CheckTransactionStatusJob(ISchedulerFactory scheduler, ITransactionRepository transactionRepository, IZaloPayService zaloPayService, IRedisCaching caching, IMediator mediator)
         {
             _scheduler = scheduler;
             _transactionRepository = transactionRepository;
             _zaloPayService = zaloPayService;
             _caching = caching;
-            _unitOfWork = unitOfWork;
-            _logger = logger;
-            _subscriptionRepository = subscriptionRepository;
             _mediator = mediator;
         }
 
@@ -46,30 +31,22 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
             IScheduler scheduler = await _scheduler.GetScheduler();
             IJobDetail currentJob = context.JobDetail;
             List<string> cacheKeys = new List<string>();
-            try
+
+            cacheKeys = await _caching.SearchKeysAsync("payment");
+            if (cacheKeys == null)
             {
-                cacheKeys = await _caching.SearchKeysAsync("payment");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get keys from Redis. Fallback to database.");
                 var processingTransaction = await _transactionRepository.getProcessingTransaction();
                 cacheKeys = (List<string>)processingTransaction;
             }
+
 
             var tasks = cacheKeys.Select(async key =>
             {
                 // Get transactionId from cache
 
                 string? transactionId = null;
-                try
-                {
-                    transactionId = await _caching.HashGetSpecificKeyAsync(key, "transactionId");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to get transactionId from Redis for key {key}.", key);
-                }
+
+                transactionId = await _caching.HashGetSpecificKeyAsync(key, "transactionId");
 
                 if (string.IsNullOrEmpty(transactionId))
                 {
@@ -89,7 +66,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                 var exist = await _transactionRepository.GetById(transactionId);
                 if (exist == null) return;
 
-                
+
             });
 
 

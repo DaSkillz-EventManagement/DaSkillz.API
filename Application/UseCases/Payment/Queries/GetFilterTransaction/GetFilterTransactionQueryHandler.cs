@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Payment.Queries.GetTransactionByEvent;
+﻿using Application.ResponseMessage;
+using Application.UseCases.Payment.Queries.GetTransactionByEvent;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
@@ -26,7 +27,7 @@ namespace Application.UseCases.Payment.Queries.GetFilterTransaction
             return new APIResponse
             {
                 StatusResponse = System.Net.HttpStatusCode.OK,
-                Message = "Success",
+                Message = MessageCommon.GetSuccesfully,
                 Data = transactions
             };
         }

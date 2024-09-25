@@ -110,7 +110,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
-                Message = "test",
+                Message = MessageCommon.CreateSuccesfully,
                 Data = result
             };
         }
