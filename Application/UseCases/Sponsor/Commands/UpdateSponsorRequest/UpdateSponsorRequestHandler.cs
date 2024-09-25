@@ -64,18 +64,30 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
         {
             sponsorRequest.Status = request.SponsorRequestUpdateDto.Status;
             sponsorRequest.UpdatedAt = DateTimeHelper.GetDateTimeNow();
+
             if (sponsorRequest.Status!.Equals(SponsorRequest.Confirmed.ToString()))
             {
-                Participant participant = new()
+                var participantExis = await _participantRepository.GetParticipant(request.UserId, request.SponsorRequestUpdateDto.EventId);
+                if(participantExis != null)
                 {
-                    UserId = (Guid)sponsorRequest.UserId!,
-                    EventId = (Guid)sponsorRequest.EventId!,
-                    RoleEventId = (int)EventRole.Sponsor + 1,
-                    CreatedAt = DateTime.Now,
-                    IsCheckedMail = false,
-                    Status = ParticipantStatus.Confirmed.ToString()
-                };
-                await _participantRepository.UpSert(participant);
+                    participantExis.Status = ParticipantStatus.Confirmed.ToString();
+                    participantExis.RoleEventId = (int)EventRole.Sponsor + 1;
+                    await _participantRepository.UpSert(participantExis);
+                }
+                else
+                {
+                    Participant participant = new()
+                    {
+                        UserId = (Guid)sponsorRequest.UserId!,
+                        EventId = (Guid)sponsorRequest.EventId!,
+                        RoleEventId = (int)EventRole.Sponsor + 1,
+                        CreatedAt = DateTime.Now,
+                        IsCheckedMail = false,
+                        Status = ParticipantStatus.Confirmed.ToString()
+                    };
+                    await _participantRepository.UpSert(participant);
+                }
+                
             }
         }
         await _sponsorEventRepository.Update(sponsorRequest!);
@@ -105,8 +117,8 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
                     StartDate = DateTimeOffset.FromUnixTimeMilliseconds(currentEvent!.StartDate).DateTime,
                     EndDate = DateTimeOffset.FromUnixTimeMilliseconds(currentEvent!.EndDate).DateTime,
                     Time = DateTimeHelper.GetTimeRange(DateTimeOffset.FromUnixTimeMilliseconds(currentEvent.StartDate).DateTime, DateTimeOffset.FromUnixTimeMilliseconds(currentEvent.EndDate).DateTime),
-                    Message = TicketMailConstant.MessageMail.ElementAt((int)EventRole.Sponsor),
-                    TypeButton = Utilities.GetTypeButton((int)EventRole.Sponsor),
+                    Message = !sponsorRequest!.Status!.Equals(SponsorRequest.Confirmed.ToString()) ? TicketMailConstant.MessageMail.Last() : TicketMailConstant.MessageMail.ElementAt((int)EventRole.Sponsor),
+                    TypeButton = !sponsorRequest!.Status!.Equals(SponsorRequest.Confirmed.ToString()) ? Utilities.GetTypeButton(6) : Utilities.GetTypeButton((int)EventRole.Sponsor),//type 6 = sponsor rejected
                 });
             #endregion
             return new APIResponse
