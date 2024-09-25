@@ -16,8 +16,8 @@ using System.Net;
 
 namespace API.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Route("api/v1/admin/price")]
+    
+    [Route("api/v1/price")]
     [ApiController]
     public class PriceController : ControllerBase
     {
@@ -29,6 +29,7 @@ namespace API.Controllers
             _mediator = mediator;
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("")]
         public async Task<IActionResult> CreatePrice([FromBody, Required] PriceDto price, CancellationToken token = default)
         {
@@ -40,6 +41,7 @@ namespace API.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPut("")]
         public async Task<IActionResult> UpdatePrice([FromBody, Required] UpdatePriceDto price, CancellationToken token = default)
         {
@@ -55,6 +57,7 @@ namespace API.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("")]
         public async Task<IActionResult> RemovePrice([FromQuery] int id, CancellationToken token = default)
         {
