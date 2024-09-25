@@ -18,13 +18,15 @@ public class CreateSponsorRequestHandler : IRequestHandler<CreateSponsorRequestC
     private readonly ISponsorEventRepository _sponsorEventRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
     public CreateSponsorRequestHandler(IMapper mapper, IUnitOfWork unitOfWork,
-        ISponsorEventRepository repository, IEventRepository eventRepository)
+        ISponsorEventRepository repository, IEventRepository eventRepository, IUserRepository userRepository)
     {
         _sponsorEventRepository = repository;
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _userRepository = userRepository;
     }
     public async Task<APIResponse> Handle(CreateSponsorRequestCommand sponsorEvent,
         CancellationToken cancellationToken)
@@ -56,11 +58,15 @@ public class CreateSponsorRequestHandler : IRequestHandler<CreateSponsorRequestC
         try
         {
             await _unitOfWork.SaveChangesAsync();
+            var user = await _userRepository.GetById(sponsorEvent.UserId);
+            SponsorEventDto response = _mapper.Map<SponsorEventDto>(newSponsorRequest);
+            response.FullName = user!.FullName!;
+            response.Email = user!.Email!;
             return new APIResponse
             {
                 Message = MessageCommon.Complete,
                 StatusResponse = HttpStatusCode.OK,
-                Data = _mapper.Map<SponsorEventDto>(newSponsorRequest)
+                Data = response
             };
         } catch (Exception ex)
         {

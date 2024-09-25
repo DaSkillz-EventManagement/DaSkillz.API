@@ -8,12 +8,13 @@ using Domain.Enum.Participant;
 using Application.Abstractions.Email;
 using Domain.DTOs.ParticipantDto;
 using Domain.Constants.Mail;
-using Domain.Enum.Sponsor;
+using Domain.DTOs.Sponsors;
+using MediatR;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using MediatR;
 using System.Net;
+using Domain.Enum.Sponsor;
 
 namespace Application.UseCases.Sponsor.Commands.UpdateSponsorRequest;
 
@@ -80,6 +81,9 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
         await _sponsorEventRepository.Update(sponsorRequest!);
         var currentEvent = await _eventRepository.GetById(request.SponsorRequestUpdateDto.EventId);
         var Owner = await _userRepository.GetById(currentEvent!.CreatedBy!);
+        SponsorEventDto result = _mapper.Map<SponsorEventDto>(sponsorRequest);
+        result.FullName = userEntity!.FullName!;
+        result.Email = userEntity!.Email!;
         if (await _unitOfWork.SaveChangesAsync() > 0)
         {
             #region sendMail
@@ -109,7 +113,7 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
             {
                 StatusResponse = HttpStatusCode.OK,
                 Message = MessageCommon.UpdateSuccesfully,
-                Data = sponsorRequest
+                Data = result 
             };
         }
         return new APIResponse
