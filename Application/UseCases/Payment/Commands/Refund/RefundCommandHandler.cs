@@ -42,7 +42,7 @@ namespace Application.UseCases.Payment.Commands.Refund
                 return new APIResponse
                 {
                     StatusResponse = HttpStatusCode.NotFound,
-                    Message = "ZpTransId not found",
+                    Message = MessageCommon.NotFound,
                     Data = null,
                 };
             }
@@ -56,12 +56,12 @@ namespace Application.UseCases.Payment.Commands.Refund
 
             var refundTransaction = new RefundTransaction
             {
-                refundId = refundId, 
-                returnCode = returnCode, 
-                returnMessage = returnMessage, 
-                refundAmount = long.Parse(refundAmount), 
-                refundAt = DateTime.UtcNow, 
-                Apptransid = existTransaction.Apptransid, 
+                refundId = refundId,
+                returnCode = returnCode,
+                returnMessage = returnMessage,
+                refundAmount = long.Parse(refundAmount),
+                refundAt = DateTime.UtcNow,
+                Apptransid = existTransaction.Apptransid,
                 Transaction = existTransaction
             };
 
@@ -70,7 +70,7 @@ namespace Application.UseCases.Payment.Commands.Refund
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
-                Message = "Refund successfully",
+                Message = "Create refund transaction successfully",
                 Data = apiResponse,
             };
         }

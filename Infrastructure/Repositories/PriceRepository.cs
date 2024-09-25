@@ -1,17 +1,9 @@
-﻿using Domain.DTOs.PriceDto;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Enum.Price;
-using Domain.Models.Pagination;
 using Domain.Repositories;
-using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -26,7 +18,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Price>> GetAllPrice(GetAllPriceOrderBy orderBy, bool isAsc)
         {
             var result = _context.Prices.AsQueryable();
-            if(orderBy.Equals(GetAllPriceOrderBy.amount))
+            if (orderBy.Equals(GetAllPriceOrderBy.amount))
             {
                 result = isAsc ? result.OrderBy(r => r.amount) : result.OrderByDescending(r => r.amount);
             }
@@ -45,7 +37,7 @@ namespace Infrastructure.Repositories
             return await result.ToListAsync();
         }
 
-        public async Task<Price> GetAllPriceAdvertised()
+        public async Task<Price> GetPriceAdvertised()
         {
             var advertisementPrice = await _context.Prices
             .Where(p => p.PriceType == "advertisement" && p.status == "active")

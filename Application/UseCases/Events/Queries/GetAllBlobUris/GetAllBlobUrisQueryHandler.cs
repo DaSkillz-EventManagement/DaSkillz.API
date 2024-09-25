@@ -1,16 +1,8 @@
 ﻿using Application.Abstractions.Caching;
-using Application.UseCases.Events.Command.CreateEvent;
 using AutoMapper;
 using Domain.DTOs.Sponsors;
-using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Queries.GetAllBlobUris
 {

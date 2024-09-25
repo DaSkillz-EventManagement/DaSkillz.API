@@ -7,9 +7,7 @@ using Domain.Enum.Sponsor;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Event_Management.Domain.Enum.Sponsor;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using System.Net;
 
 namespace Application.UseCases.Sponsor.Commands.CreateSponsorRequest;

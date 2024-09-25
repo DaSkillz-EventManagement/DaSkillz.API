@@ -30,7 +30,7 @@ public class CreatePriceHandler : IRequestHandler<CreatePriceCommand, APIRespons
         price.CreatedAt = DateTime.Now;
         price.CreatedBy = request.UserId;
         _ = _pricerepo.Add(price);
-        if(await _unitOfWork.SaveChangesAsync() > 0)
+        if (await _unitOfWork.SaveChangesAsync() > 0)
         {
             ResponsePriceDto response = new ResponsePriceDto();
             response.PriceId = price.PriceId;

@@ -29,7 +29,7 @@ namespace API.Controllers
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new CreateQuizCommand(userId, dto), token);
-            if(result.StatusResponse == HttpStatusCode.OK)
+            if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
             }
@@ -78,7 +78,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetQuizByEventId([FromQuery, Required] Guid EventId, CancellationToken token = default)
         {
             var result = await _mediator.Send(new GetQuizByEventIdQuery(EventId), token);
-            if(result.StatusResponse == HttpStatusCode.OK)
+            if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
             }
@@ -100,7 +100,7 @@ namespace API.Controllers
         }
 
         [HttpPost("/attemp")]
-        public async Task<IActionResult> AttempQuiz([FromQuery, Required] Guid quizid, [FromQuery, Required] Guid eventid,  CancellationToken token = default)
+        public async Task<IActionResult> AttempQuiz([FromQuery, Required] Guid quizid, [FromQuery, Required] Guid eventid, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Entities;
+using Domain.Repositories.Generic;
 
 namespace Domain.Repositories
 {
-    public interface IAdvertisedEventRepository
+    public interface IAdvertisedEventRepository : IRepository<AdvertisedEvent>
     {
+        Task<List<Guid>> GetListAdvertisedEventId();
+        Task<AdvertisedEvent?> GetAdvertisedByEventId(Guid eventId);
+        Task<List<AdvertisedEvent>> GetFilteredAdvertisedByHost(Guid userId, string status);
     }
 }

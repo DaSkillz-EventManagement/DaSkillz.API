@@ -1,10 +1,10 @@
-﻿using Domain.Models.Response;
+﻿using Application.ResponseMessage;
+using AutoMapper;
+using Domain.DTOs.Feedbacks;
+using Domain.Models.Pagination;
+using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
-using AutoMapper;
-using Domain.Models.Pagination;
-using Domain.DTOs.Feedbacks;
-using Application.ResponseMessage;
 using System.Net;
 
 namespace Application.UseCases.Feedbacks.Queries.GetEventFeedbacks;
@@ -23,6 +23,7 @@ public class GetEventFeedbacksHandler : IRequestHandler<GetEventFeedbacksQueries
     public async Task<APIResponse> Handle(GetEventFeedbacksQueries request, CancellationToken cancellationToken)
     {
         var user = await _eventRepository.IsOwner(request.UserId, request.EventId);
+        if (user == null)
         if(!user)
         {
             return new APIResponse
@@ -34,7 +35,7 @@ public class GetEventFeedbacksHandler : IRequestHandler<GetEventFeedbacksQueries
         }
         var feedbacks = await _feedbackRepository.GetFeedbackByEventIdAndStar(request.EventId, request.NumberOfStar, request.Page, request.EachPage);
         var result = _mapper.Map<PagedList<FeedbackEvent>>(feedbacks);
-        if(result != null)
+        if (result != null)
         {
             return new APIResponse
             {

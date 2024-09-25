@@ -14,7 +14,7 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
             .ValueGeneratedNever();
 
         builder.Property(e => e.QuestionId)
-            .IsRequired(); 
+            .IsRequired();
 
         builder.Property(e => e.AnswerLabel)
             .IsRequired()

@@ -1,11 +1,9 @@
 ﻿using Application.Helper;
 using Application.ResponseMessage;
-using Azure;
 using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch.Security;
 using MediatR;
 using System.Net;
 
@@ -36,11 +34,11 @@ public class CreateFeedbackHandler : IRequestHandler<CreateFeedbackCommand, APIR
                 Data = null
             };
         }
-            Feedback newFeedback = new Feedback(request.UserId, request.Feedback.EventId, request.Feedback.Content, request.Feedback.Rating);
+        Feedback newFeedback = new Feedback(request.UserId, request.Feedback.EventId, request.Feedback.Content, request.Feedback.Rating);
 
         newFeedback.CreatedAt = DateTimeHelper.GetDateTimeNow();
         await _feedbackRepository.Add(newFeedback);
-        if(await _unitOfWork.SaveChangesAsync() > 0)
+        if (await _unitOfWork.SaveChangesAsync() > 0)
         {
             return new APIResponse
             {

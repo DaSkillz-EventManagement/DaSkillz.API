@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.UseCases.Feedbacks.Queries.GetAllUserFeebacks
 {
-    public class GetAllUserFeebacksValidator: AbstractValidator<GetEventFeedbacksQueries>
+    public class GetAllUserFeebacksValidator : AbstractValidator<GetEventFeedbacksQueries>
     {
         public GetAllUserFeebacksValidator()
         {

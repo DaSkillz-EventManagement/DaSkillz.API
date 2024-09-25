@@ -1,16 +1,9 @@
-﻿using AutoMapper;
-using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
-using Domain.Repositories;
-using MediatR;
+﻿using Application.Abstractions.Email;
 using Application.Helper;
-using Domain.Enum.Events;
 using Application.ResponseMessage;
-using System.Net;
-using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.Snapshot;
+using AutoMapper;
 using Domain.Entities;
-using Domain.Enum.Sponsor;
+using Domain.Enum.Events;
 using Domain.Enum.Participant;
 using Application.Abstractions.Email;
 using Domain.DTOs.ParticipantDto;
@@ -28,7 +21,7 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
     private readonly IEventRepository _eventRepository;
     private readonly IParticipantRepository _participantRepository;
     private readonly IEmailService _sendMailTask;
-    public UpdateSponsorRequestHandler(IMapper mapper, IUnitOfWork unitOfWork, ISponsorEventRepository repository, IEmailService emailService, 
+    public UpdateSponsorRequestHandler(IMapper mapper, IUnitOfWork unitOfWork, ISponsorEventRepository repository, IEmailService emailService,
         IEventRepository eventRepository, IUserRepository userRepository, IParticipantRepository participantRepository)
     {
         _sponsorEventRepository = repository;

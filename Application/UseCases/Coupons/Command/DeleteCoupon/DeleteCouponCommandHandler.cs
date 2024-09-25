@@ -1,13 +1,6 @@
-﻿using Application.UseCases.Coupons.Command.UpdateCoupon;
-using Domain.Models.Response;
-using Domain.Repositories;
+﻿using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Coupons.Command.DeleteCoupon
 {
@@ -26,7 +19,7 @@ namespace Application.UseCases.Coupons.Command.DeleteCoupon
 
         public async Task<bool> Handle(DeleteCouponCommand request, CancellationToken cancellationToken)
         {
-            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.UserId, request.CouponEventDto.EventId);
+            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.EventId, request.CouponEventDto.UserId);
             if (isOwner)
             {
                 var result = _couponRepository.Delete(request.Id);
@@ -43,7 +36,7 @@ namespace Application.UseCases.Coupons.Command.DeleteCoupon
             {
                 return false;
             }
-            
+
         }
     }
 }

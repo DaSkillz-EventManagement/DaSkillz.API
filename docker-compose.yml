@@ -6,14 +6,9 @@ services:
     build:
       context: .
       dockerfile: API/Dockerfile
-    environment:
-    - TZ=Asia/Ho_Chi_Minh
-
   redis:
     image: redis:latest
     container_name: redis
     ports:
         - "6379:6379"
-    environment:
-    - TZ=Asia/Ho_Chi_Minh
 

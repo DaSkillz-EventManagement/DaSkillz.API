@@ -4,16 +4,7 @@ using Domain.DTOs.Sponsors;
 using Domain.Entities;
 using Domain.Models.Pagination;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch.MachineLearning;
-using Elastic.Clients.Elasticsearch.Security;
-using Elastic.Clients.Elasticsearch.Snapshot;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Sponsor.Queries.GetSponsorRequests
 {

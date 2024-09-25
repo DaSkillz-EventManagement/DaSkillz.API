@@ -5,7 +5,7 @@ namespace Application.UseCases.Payment.Queries.GetTransactionByEvent
 {
     public class GetEventTransactionQuery : IRequest<APIResponse>
     {
-        public Guid eventId {  get; set; }
+        public Guid eventId { get; set; }
 
         public GetEventTransactionQuery(Guid eventId)
         {

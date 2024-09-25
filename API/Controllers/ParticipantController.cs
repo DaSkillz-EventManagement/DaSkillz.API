@@ -10,15 +10,12 @@ using Application.UseCases.Participants.Commands.UpdateRoleEventCommand;
 using Application.UseCases.Participants.Queries.GetCurrentUser;
 using Application.UseCases.Participants.Queries.GetParticipantOnEvent;
 using Application.UseCases.Participants.Queries.GetParticipantRelatedToCheckInOnEvent;
-using Azure;
 using Domain.DTOs.ParticipantDto;
 using Domain.Enum.Participant;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
@@ -35,11 +32,11 @@ public class ParticipantController : ControllerBase
     }
     [HttpPost("register")]
     [Authorize]
-    public async Task<IActionResult> RegisterEvent([FromQuery, Required]Guid eventId, Guid? transactionId, CancellationToken token = default)
+    public async Task<IActionResult> RegisterEvent([FromQuery, Required] Guid eventId, Guid? transactionId, CancellationToken token = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new RegisterEventCommand(userId, transactionId, eventId), token);
-        if(result.StatusResponse != HttpStatusCode.OK)
+        if (result.StatusResponse != HttpStatusCode.OK)
         {
             return Ok(result);
         }
@@ -51,7 +48,7 @@ public class ParticipantController : ControllerBase
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new AddUserToEventCommand(registerEventModel, userId), token);
-        if(result.StatusResponse == HttpStatusCode.OK)
+        if (result.StatusResponse == HttpStatusCode.OK)
         {
             return Ok(result);
         }
@@ -63,7 +60,7 @@ public class ParticipantController : ControllerBase
     {
         Guid executor = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new DeleteParticipantCommand(userId, eventId, executor), token);
-        if(result.StatusResponse == HttpStatusCode.OK)
+        if (result.StatusResponse == HttpStatusCode.OK)
         { return Ok(result); }
         return BadRequest(result);
 
@@ -74,7 +71,7 @@ public class ParticipantController : ControllerBase
     {
         Guid executor = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new UpdateRoleEventCommand(registerEventModel, executor), token);
-        if(result.StatusResponse == HttpStatusCode.OK)
+        if (result.StatusResponse == HttpStatusCode.OK)
         {
             return Ok(result);
         }
@@ -87,7 +84,7 @@ public class ParticipantController : ControllerBase
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new GetParticipantOnEventQueries(filter, userId), token);
-        if(result != null)
+        if (result != null)
         {
             Response.Headers.Add("X-Total-Element", result.TotalItems.ToString());
             Response.Headers.Add("X-Total-Page", result.TotalPages.ToString());
@@ -108,7 +105,7 @@ public class ParticipantController : ControllerBase
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new GetParticipantRelatedToCheckInOnEventQueries(eventId, page, eachPage, userId), token);
-        if(result != null)
+        if (result != null)
         {
             Response.Headers.Add("X-Total-Element", result.TotalItems.ToString());
             Response.Headers.Add("X-Total-Page", result.TotalPages.ToString());
@@ -128,7 +125,7 @@ public class ParticipantController : ControllerBase
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new ProcessTicketParticipantCommand(participantTicket, userId), token);
-        if(result.StatusResponse == HttpStatusCode.OK)
+        if (result.StatusResponse == HttpStatusCode.OK)
         {
             return Ok(result);
         }
@@ -147,7 +144,7 @@ public class ParticipantController : ControllerBase
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new ApproveInviteCommand(eventId, userId, ParticipantStatus.Confirmed.ToString()), token);
-        if( result.StatusResponse == HttpStatusCode.OK) { return Ok(result); }
+        if (result.StatusResponse == HttpStatusCode.OK) { return Ok(result); }
         return BadRequest(result);
     }
     [Authorize]
@@ -162,8 +159,8 @@ public class ParticipantController : ControllerBase
     [HttpGet("checkin-user")]
     public async Task<IActionResult> CheckinParticipant(Guid eventId, Guid userId, CancellationToken token = default)
     {
-        var result = await _mediator.Send(new CheckinParticipantCommand(userId, eventId), token); 
-        if(result.StatusResponse == HttpStatusCode.OK)
+        var result = await _mediator.Send(new CheckinParticipantCommand(userId, eventId), token);
+        if (result.StatusResponse == HttpStatusCode.OK)
         {
             return Ok(result);
         }

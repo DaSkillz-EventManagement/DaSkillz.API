@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.UseCases.Participants.Commands.UpdateRoleEventCommand
 {
-    public class UpdateRoleEventCommand: IRequest<APIResponse>
+    public class UpdateRoleEventCommand : IRequest<APIResponse>
     {
         public RegisterEventModel RegisterEvent { get; set; }
         public Guid ExecutorId { get; set; }

@@ -1,9 +1,7 @@
 ﻿using Application.Abstractions.Caching;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Infrastructure.ExternalServices.Caching
 {

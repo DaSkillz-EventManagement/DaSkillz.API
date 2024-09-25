@@ -19,5 +19,6 @@ namespace Domain.Repositories
 
         Task<SponsorEvent?> DeleteSponsorRequest(Guid eventId, Guid userId);
         Task<bool> IsSponsored(Guid eventId);
+        
     }
 }

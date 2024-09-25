@@ -1,9 +1,9 @@
-﻿using AutoMapper;
+﻿using Application.ResponseMessage;
+using AutoMapper;
 using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
 using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
 using MediatR;
-using Application.ResponseMessage;
 
 namespace Application.UseCases.Tags.Commands.DeleteTag
 {

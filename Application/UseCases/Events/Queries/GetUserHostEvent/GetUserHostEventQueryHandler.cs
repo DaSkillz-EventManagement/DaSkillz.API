@@ -1,17 +1,8 @@
 ﻿using Application.Abstractions.Caching;
-using Application.UseCases.Events.Queries.GetTopLocationByEventCount;
 using AutoMapper;
 using Domain.DTOs.Events;
-using Domain.DTOs.Events.ResponseDto;
-using Domain.Entities;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Events.Queries.GetUserHostEvent
 {
@@ -38,12 +29,12 @@ namespace Application.UseCases.Events.Queries.GetUserHostEvent
             }
 
             var result = await _eventRepo.GetUserHostEvent(request.UserId);
-            var eventPreview =  result.Select(_eventRepo.ToEventPreview);
+            var eventPreview = result.Select(_eventRepo.ToEventPreview);
 
             await _redisCaching.SetAsync(cacheKey, eventPreview, 10);
             return eventPreview.ToList();
         }
 
-       
+
     }
 }

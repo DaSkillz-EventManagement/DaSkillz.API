@@ -1,15 +1,9 @@
-﻿using Application.UseCases.Coupons.Command.CreateCoupon;
+﻿using Application.ResponseMessage;
 using AutoMapper;
 using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
 using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.ResponseMessage;
 using System.Net;
 
 namespace Application.UseCases.Coupons.Command.UpdateCoupon
@@ -31,7 +25,7 @@ namespace Application.UseCases.Coupons.Command.UpdateCoupon
 
         public async Task<APIResponse> Handle(UpdateCouponCommand request, CancellationToken cancellationToken)
         {
-            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.UserId, request.CouponEventDto.EventId);
+            var isOwner = await _eventRepository.IsOwner(request.CouponEventDto.EventId, request.CouponEventDto.UserId);
             if (isOwner)
             {
                 var couponEntity = await _couponRepository.GetById(request.Coupon.Id);

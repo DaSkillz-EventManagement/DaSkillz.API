@@ -34,8 +34,9 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
 
         public async Task<APIResponse> Handle(CreatePayment request, CancellationToken cancellationToken)
         {
-            string app_trans_id = DateTime.UtcNow.ToString("yyMMdd") + "_" + new Random().Next(100000);
-            string cacheKey = $"payment_type_{request.SubscriptionType}_{app_trans_id}";
+            Random rnd = new Random();
+            string app_trans_id = DateTime.UtcNow.ToString("yyMMdd") + "_" + rnd.Next(1000000);
+            string cacheKey = $"payment_{app_trans_id}";
             var appUser = "user123";
 
             //call api to create transaction
@@ -66,13 +67,13 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                     };
                 }
 
-                var existTransaction = await _transactionRepository.GetExistProcessingTransaction(request.UserId, Guid.Parse(request.EventId!));
+                var existTransaction = await _transactionRepository.GetExistProcessingTransaction(request.UserId, (Guid)request.EventId!);
                 if (existTransaction != null)
                 {
                     return new APIResponse
                     {
                         StatusResponse = HttpStatusCode.BadRequest,
-                        Message = "You already have a processing order. Please wait until it completes before creating a new one."
+                        Message = "ALREADY_HAVE_PROCESSING_TICKET_ORDER"
                     };
                 }
             }
@@ -86,8 +87,8 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                 Timestamp = Utils.GetTimeStamp(),
                 Status = (int)TransactionStatus.PROCESSING,
                 CreatedAt = DateTime.UtcNow,
-                //UserId = request.UserId,
-                //EventId = (request.SubscriptionType != (int)PaymentType.SUBSCRIPTION) ? Guid.Parse(request.EventId) : null,
+                UserId = request.UserId,
+                EventId = (request.SubscriptionType != (int)PaymentType.SUBSCRIPTION) ? request.EventId : null,
                 SubscriptionType = request.SubscriptionType,
                 OrderUrl = orderUrl,
             };
@@ -110,7 +111,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
-                Message = "test",
+                Message = MessageCommon.CreateSuccesfully,
                 Data = result
             };
         }
