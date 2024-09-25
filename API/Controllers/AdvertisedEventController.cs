@@ -2,6 +2,7 @@
 using Application.ResponseMessage;
 using Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent;
 using Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedEventByCreatedDay;
+using Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent;
 using Application.UseCases.Coupons.Queries.GetCoupon;
 using Domain.Models.Response;
 using MediatR;
@@ -39,12 +40,28 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("")]
+        [HttpGet("all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAdvertisedEvents(CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetAdvertisedEventQuery(), cancellationToken);
+
+            return new APIResponse()
+            {
+                StatusResponse = HttpStatusCode.OK,
+                Message = MessageCommon.GetSuccesfully,
+                Data = result
+            };
+        }
+
+        [HttpGet("ad-info")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetAdvertisedInfoByEvent([FromQuery] Guid eventId, CancellationToken cancellationToken = default)
+        {
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            var result = await _mediator.Send(new GetAdvertisedInfoByEventQuery(eventId, userId), cancellationToken);
 
             return new APIResponse()
             {
