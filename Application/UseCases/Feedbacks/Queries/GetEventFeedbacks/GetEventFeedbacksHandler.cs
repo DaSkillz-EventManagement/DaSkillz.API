@@ -24,6 +24,7 @@ public class GetEventFeedbacksHandler : IRequestHandler<GetEventFeedbacksQueries
     {
         var user = await _eventRepository.IsOwner(request.UserId, request.EventId);
         if (user == null)
+        if(!user)
         {
             return new APIResponse
             {

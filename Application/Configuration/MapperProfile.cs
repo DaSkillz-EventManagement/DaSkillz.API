@@ -109,7 +109,7 @@ namespace Application.Configuration
             CreateMap<TagDto, Tag>().ReverseMap();
             CreateMap<PagedList<TagDto>, PagedList<Tag>>().ReverseMap();
             CreateMap<EventTagDto, Tag>().ReverseMap();
-            CreateMap<AdvertisedEvent, AdvertisedEventDto>();
+            CreateMap<AdvertisedEvent, AdvertisedEventDto>().ReverseMap();
             //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
             CreateMap<CreateQuizDto, Quiz>().ReverseMap();
             CreateMap<Quiz, ResponseQuizDto>();
@@ -117,15 +117,8 @@ namespace Application.Configuration
 
 
             //sponsor
-            CreateMap<SponsorEvent, SponsorEventDto>()
-                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User!.FullName))
-                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User!.Email));
-
-
-            CreateMap<PagedList<SponsorEvent>, PagedList<SponsorEventDto>>()
-                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.ToList()))
-                .ReverseMap();
             CreateMap<SponsorEvent, SponsorEventDto>();
+            //CreateMap<List<SponsorEvent>, List<SponsorEventDto>>().ReverseMap();
             CreateMap<SponsorEvent, SponsorEventDetailDto>();
 
             //Participant

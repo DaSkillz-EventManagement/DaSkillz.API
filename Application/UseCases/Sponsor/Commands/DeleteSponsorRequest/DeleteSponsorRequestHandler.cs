@@ -1,4 +1,6 @@
 ﻿using Application.ResponseMessage;
+using AutoMapper;
+using Domain.DTOs.Sponsors;
 using Domain.Enum.Sponsor;
 using Domain.Models.Response;
 using Domain.Repositories;
@@ -12,10 +14,14 @@ public class DeleteSponsorRequestHandler : IRequestHandler<DeleteSponsorRequestC
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ISponsorEventRepository _sponsorEventRepository;
-    public DeleteSponsorRequestHandler(IUnitOfWork unitOfWork, ISponsorEventRepository repository)
+    private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
+    public DeleteSponsorRequestHandler(IUnitOfWork unitOfWork, ISponsorEventRepository repository, IMapper mapper, IUserRepository userRepository)
     {
         _sponsorEventRepository = repository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
+        _userRepository = userRepository;
     }
     public async Task<APIResponse> Handle(DeleteSponsorRequestCommand request, CancellationToken cancellationToken)
     {
@@ -26,9 +32,13 @@ public class DeleteSponsorRequestHandler : IRequestHandler<DeleteSponsorRequestC
             var result = await _sponsorEventRepository.DeleteSponsorRequest(request.EventId, request.UserId);
             if (result != null)
             {
+                var user = await _userRepository.GetById(result!.UserId!);
+                SponsorEventDto dto = _mapper.Map<SponsorEventDto>(result);
+                dto.FullName = user!.FullName!;
+                dto.Email = user!.Email!;
                 response.StatusResponse = HttpStatusCode.OK;
                 response.Message = MessageCommon.DeleteSuccessfully;
-                response.Data = result;
+                response.Data = dto;
             }
             else
             {

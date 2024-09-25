@@ -50,21 +50,31 @@ namespace Infrastructure.Repositories
             return sponsorRequest;
         }
 
-        public async Task<PagedList<SponsorEvent>> GetRequestSponsor(Guid userId, string? status, int page, int eachPage)
+        public async Task<List<SponsorEvent>> GetRequestSponsor(Guid userId, string? status, int page, int eachPage)
         {
-            var list = _context.SponsorEvents.Where(s => s.UserId.Equals(userId));
+            var list = _context.SponsorEvents.Include(se => se.User).Where(s => s.UserId.Equals(userId));
             if (status != null)
             {
                 list = list.Where(p => p.Status!.Equals(status));
             }
-            list = list.Include(p => p.Event);
-            list = list.OrderByDescending(p => p.UpdatedAt);
-            return await list.ToPagedListAsync(page, eachPage);
+            //list = list.Include(p => p.Event);
+            list = list.Skip(page -1).Take(eachPage).OrderByDescending(p => p.UpdatedAt);
+            return await list.ToListAsync();
+        }
+        public async Task<int> GetRequestSponsorCount(Guid userId, string? status)
+        {
+            var list = _context.SponsorEvents.Include(se => se.User).Where(s => s.UserId.Equals(userId));
+            if (status != null)
+            {
+                list = list.Where(p => p.Status!.Equals(status));
+            }
+            //list = list.Include(p => p.Event);
+            return await list.CountAsync();
         }
 
-        public async Task<PagedList<SponsorEvent>> GetSponsorEvents(SponsorEventFilterDto sponsorFilter)
+        public async Task<List<SponsorEvent>> GetSponsorEvents(SponsorEventFilterDto sponsorFilter)
         {
-            var list = _context.SponsorEvents.Where(s => s.EventId.Equals(sponsorFilter.EventId)).OrderByDescending(p => p.CreatedAt).AsNoTracking().AsQueryable();
+            var list = _context.SponsorEvents.Include(sp => sp.User).Where(s => s.EventId.Equals(sponsorFilter.EventId)).OrderByDescending(p => p.CreatedAt).AsNoTracking().AsQueryable();
 
             if (sponsorFilter.Status != null)
             {
@@ -79,8 +89,28 @@ namespace Infrastructure.Repositories
             {
                 list = list.Where(s => s.SponsorType!.Equals(sponsorFilter.SponsorType));
             }
-            list = list.Include(p => p.User);
-            return await list.ToPagedListAsync(sponsorFilter.Page, sponsorFilter.EachPage);
+            //list = list.Include(p => p.User);
+            return await list.Skip(sponsorFilter.Page -1).Take(sponsorFilter.EachPage).ToListAsync();
+        }
+        public async Task<int> GetSponsorEventsCount(SponsorEventFilterDto sponsorFilter)
+        {
+            var list = _context.SponsorEvents.Include(sp => sp.User).Where(s => s.EventId.Equals(sponsorFilter.EventId)).OrderByDescending(p => p.CreatedAt).AsNoTracking().AsQueryable();
+
+            if (sponsorFilter.Status != null)
+            {
+                list = list.Where(s => s.Status!.Equals(sponsorFilter.Status));
+            }
+
+            if (sponsorFilter.IsSponsored.HasValue)
+            {
+                list = list.Where(s => s.IsSponsored == sponsorFilter.IsSponsored);
+            }
+            if (sponsorFilter.SponsorType != null)
+            {
+                list = list.Where(s => s.SponsorType!.Equals(sponsorFilter.SponsorType));
+            }
+            //list = list.Include(p => p.User);
+            return await list.CountAsync();
         }
     }
 }
