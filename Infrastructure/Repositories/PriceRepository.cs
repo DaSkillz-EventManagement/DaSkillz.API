@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories
             return await result.ToListAsync();
         }
 
-        public async Task<Price> GetAllPriceAdvertised()
+        public async Task<Price> GetPriceAdvertised()
         {
             var advertisementPrice = await _context.Prices
             .Where(p => p.PriceType == "advertisement" && p.status == "active")
