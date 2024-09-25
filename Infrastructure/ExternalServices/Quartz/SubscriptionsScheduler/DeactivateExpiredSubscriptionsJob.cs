@@ -1,7 +1,5 @@
 ﻿using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Infrastructure.Persistence;
-using Microsoft.Extensions.Logging;
 using Quartz;
 
 public class DeactivateExpiredSubscriptionsJob : IJob
@@ -35,7 +33,7 @@ public class DeactivateExpiredSubscriptionsJob : IJob
             {
                 user.IsPremiumUser = false;
             }
-           
+
         }
 
         await unitOfWork.SaveChangesAsync();

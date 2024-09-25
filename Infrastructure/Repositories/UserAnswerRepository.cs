@@ -5,7 +5,7 @@ using Infrastructure.Repositories.Common;
 
 namespace Infrastructure.Repositories;
 
-public class UserAnswerRepository: RepositoryBase<UserAnswer>, IUserAnswerRepository
+public class UserAnswerRepository : RepositoryBase<UserAnswer>, IUserAnswerRepository
 {
     private readonly ApplicationDbContext _context;
 

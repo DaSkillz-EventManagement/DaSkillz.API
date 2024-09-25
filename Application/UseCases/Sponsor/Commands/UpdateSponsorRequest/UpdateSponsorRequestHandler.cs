@@ -1,18 +1,19 @@
-﻿using AutoMapper;
-using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
-using Domain.Repositories;
-using MediatR;
+﻿using Application.Abstractions.Email;
 using Application.Helper;
-using Domain.Enum.Events;
 using Application.ResponseMessage;
-using System.Net;
-using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.Snapshot;
+using AutoMapper;
 using Domain.Entities;
-using Domain.Enum.Sponsor;
+using Domain.Enum.Events;
 using Domain.Enum.Participant;
 using Application.Abstractions.Email;
+using Domain.DTOs.ParticipantDto;
+using Domain.Constants.Mail;
+using Domain.Enum.Sponsor;
+using Domain.Models.Response;
+using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
+using MediatR;
+using System.Net;
 
 namespace Application.UseCases.Sponsor.Commands.UpdateSponsorRequest;
 
@@ -25,7 +26,7 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
     private readonly IEventRepository _eventRepository;
     private readonly IParticipantRepository _participantRepository;
     private readonly IEmailService _sendMailTask;
-    public UpdateSponsorRequestHandler(IMapper mapper, IUnitOfWork unitOfWork, ISponsorEventRepository repository, IEmailService emailService, 
+    public UpdateSponsorRequestHandler(IMapper mapper, IUnitOfWork unitOfWork, ISponsorEventRepository repository, IEmailService emailService,
         IEventRepository eventRepository, IUserRepository userRepository, IParticipantRepository participantRepository)
     {
         _sponsorEventRepository = repository;
@@ -68,7 +69,7 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
                 {
                     UserId = (Guid)sponsorRequest.UserId!,
                     EventId = (Guid)sponsorRequest.EventId!,
-                    RoleEventId = (int)EventRole.Sponsor,
+                    RoleEventId = (int)EventRole.Sponsor + 1,
                     CreatedAt = DateTime.Now,
                     IsCheckedMail = false,
                     Status = ParticipantStatus.Confirmed.ToString()
@@ -77,9 +78,33 @@ public class UpdateSponsorRequestHandler : IRequestHandler<UpdateSponsorRequestC
             }
         }
         await _sponsorEventRepository.Update(sponsorRequest!);
-        if(await _unitOfWork.SaveChangesAsync() > 0)
+        var currentEvent = await _eventRepository.GetById(request.SponsorRequestUpdateDto.EventId);
+        var Owner = await _userRepository.GetById(currentEvent!.CreatedBy!);
+        if (await _unitOfWork.SaveChangesAsync() > 0)
         {
-            //_sendMailTask.SendMailTicket(registerEventModel);
+            #region sendMail
+                var user = await _userRepository.GetById(request.SponsorRequestUpdateDto.UserId);
+                await _sendMailTask.SendEmailTicket(MailConstant.TicketMail.PathTemplate, MailConstant.TicketMail.Title, new TicketModel()
+                {
+                    EventId = currentEvent.EventId,
+                    UserId = (Guid)currentEvent.CreatedBy!,
+                    Email = user!.Email,
+                    RoleEventId = (int)EventRole.Sponsor,
+                    FullName = user.FullName,
+                    Avatar = Owner!.Avatar,
+                    EventName = currentEvent?.EventName,
+                    Location = currentEvent?.Location,
+                    LocationUrl = currentEvent?.LocationUrl,
+                    LocationAddress = currentEvent?.LocationAddress,
+                    LogoEvent = currentEvent?.Image,
+                    OrgainzerName = Owner.FullName,
+                    StartDate = DateTimeOffset.FromUnixTimeMilliseconds(currentEvent!.StartDate).DateTime,
+                    EndDate = DateTimeOffset.FromUnixTimeMilliseconds(currentEvent!.EndDate).DateTime,
+                    Time = DateTimeHelper.GetTimeRange(DateTimeOffset.FromUnixTimeMilliseconds(currentEvent.StartDate).DateTime, DateTimeOffset.FromUnixTimeMilliseconds(currentEvent.EndDate).DateTime),
+                    Message = TicketMailConstant.MessageMail.ElementAt((int)EventRole.Sponsor),
+                    TypeButton = Utilities.GetTypeButton((int)EventRole.Sponsor),
+                });
+            #endregion
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,

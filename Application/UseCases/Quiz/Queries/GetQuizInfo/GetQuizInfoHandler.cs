@@ -1,16 +1,10 @@
 ﻿using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.Quiz.Response;
-using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Quizs.Queries.GetQuizInfo;
 
@@ -43,7 +37,8 @@ public class GetQuizInfoHandler : IRequestHandler<GetQuizInfoQuery, APIResponse>
                 Message = MessageCommon.NotFound,
                 Data = null
             };
-        }catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             return new APIResponse
             {

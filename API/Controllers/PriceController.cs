@@ -6,18 +6,16 @@ using Application.UseCases.Prices.Queries.GetAll;
 using Application.UseCases.Prices.Queries.GetById;
 using Domain.DTOs.PriceDto;
 using Domain.Enum.Price;
-using Event_Management.Domain.Enum;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace API.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Route("api/v1/admin/price")]
+    
+    [Route("api/v1/price")]
     [ApiController]
     public class PriceController : ControllerBase
     {
@@ -29,17 +27,19 @@ namespace API.Controllers
             _mediator = mediator;
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("")]
         public async Task<IActionResult> CreatePrice([FromBody, Required] PriceDto price, CancellationToken token = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new CreatePriceCommand(userId, price), token);
-            if(result.StatusResponse == HttpStatusCode.OK)
+            if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPut("")]
         public async Task<IActionResult> UpdatePrice([FromBody, Required] UpdatePriceDto price, CancellationToken token = default)
         {
@@ -55,6 +55,7 @@ namespace API.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("")]
         public async Task<IActionResult> RemovePrice([FromQuery] int id, CancellationToken token = default)
         {
@@ -70,7 +71,7 @@ namespace API.Controllers
             return BadRequest(result);
         }
         [HttpGet("")]
-        public async Task<IActionResult> GetAllPrice([FromQuery]GetAllPriceOrderBy orderBy, bool isAscending = true, CancellationToken token = default)
+        public async Task<IActionResult> GetAllPrice([FromQuery] GetAllPriceOrderBy orderBy, bool isAscending = true, CancellationToken token = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new GetAllPriceQuery(orderBy, isAscending), token);

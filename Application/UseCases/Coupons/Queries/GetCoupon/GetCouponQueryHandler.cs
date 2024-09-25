@@ -1,14 +1,7 @@
-﻿using Application.UseCases.Events.Queries.GetBlobUri;
-using Domain.DTOs.Sponsors;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Models.Pagination;
 using Domain.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Coupons.Queries.GetCoupon
 {
@@ -33,7 +26,7 @@ namespace Application.UseCases.Coupons.Queries.GetCoupon
             };
             return result;
 
-            
+
         }
     }
 }

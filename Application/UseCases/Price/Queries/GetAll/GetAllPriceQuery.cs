@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.UseCases.Prices.Queries.GetAll;
 
-public class GetAllPriceQuery: IRequest<APIResponse>
+public class GetAllPriceQuery : IRequest<APIResponse>
 {
     public GetAllPriceOrderBy OrderBy { get; set; }
     public bool IsAscending { get; set; }

@@ -1,13 +1,6 @@
-﻿using Application.UseCases.Coupons.Command.UpdateCoupon;
-using Domain.Models.Response;
-using Domain.Repositories;
+﻿using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Coupons.Command.DeleteCoupon
 {
@@ -43,7 +36,7 @@ namespace Application.UseCases.Coupons.Command.DeleteCoupon
             {
                 return false;
             }
-            
+
         }
     }
 }

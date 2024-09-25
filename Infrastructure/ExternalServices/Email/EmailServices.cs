@@ -1,12 +1,9 @@
 ﻿using Application.Abstractions.Email;
-using Domain.Constants.Mail;
 using Domain.DTOs.ParticipantDto;
-using Domain.DTOs.User.Request;
 using Infrastructure.ExternalServices.Email.Setting;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using System.IO;
 
 namespace Infrastructure.ExternalServices.Email
 {
@@ -95,7 +92,7 @@ namespace Infrastructure.ExternalServices.Email
                                       .Replace("@Model.OrgainzerName", ticket.OrgainzerName)
                                       .Replace("@Model.StartDateMM", startDateMM)
                                       .Replace("@Model.StartDateD", startDateD)
-                                      .Replace("@Model.StartEndDate",ticket.StartDate.ToString() + " - " + ticket.EndDate.ToString())
+                                      .Replace("@Model.StartEndDate", ticket.StartDate.ToString() + " - " + ticket.EndDate.ToString())
                                       .Replace("@Model.Time", ticket.Time!.ToString())
                                       .Replace("@Model.Button", ticket.TypeButton)
                                       .Replace("@Model.Location", ticket.Location)

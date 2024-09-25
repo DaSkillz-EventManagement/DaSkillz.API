@@ -1,18 +1,10 @@
 ﻿using Application.ResponseMessage;
-using AutoMapper;
 using Domain.DTOs.Feedbacks;
 using Domain.DTOs.User.Response;
-using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Feedbacks.Queries.GetUserFeedBack
 {
@@ -28,7 +20,7 @@ namespace Application.UseCases.Feedbacks.Queries.GetUserFeedBack
         public async Task<APIResponse> Handle(GetUserFeedBackQueries request, CancellationToken cancellationToken)
         {
             var result = await _feedbackRepository.GetUserEventFeedback(request.EventId, request.UserId);
-            if(result != null)
+            if (result != null)
             {
                 FeedbackView temp = new FeedbackView
                 {

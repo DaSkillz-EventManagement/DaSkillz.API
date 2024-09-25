@@ -1,17 +1,10 @@
 ﻿using Application.ResponseMessage;
-using Domain.Entities;
-using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
-using Domain.Repositories;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Domain.Enum.Events;
-using Elastic.Clients.Elasticsearch.Security;
+using Domain.Models.Response;
+using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
+using MediatR;
+using System.Net;
 using System.Text.Json;
 
 namespace Application.UseCases.Participants.Commands.CheckinParticipant

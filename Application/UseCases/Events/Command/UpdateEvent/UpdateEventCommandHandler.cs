@@ -23,7 +23,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
         private readonly IImageService _fileService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        
+
         private readonly long minimumUpdateTimeSpan = 21600000;
 
         public UpdateEventCommandHandler(IEventRepository eventRepo, ITagRepository tagRepository, IQuartzService quartzService, IImageService fileService, IUnitOfWork unitOfWork, IMapper mapper)

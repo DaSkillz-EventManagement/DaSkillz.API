@@ -1,12 +1,12 @@
-﻿using AutoMapper;
-using Domain.Models.Response;
-using Domain.Repositories.UnitOfWork;
-using Domain.Repositories;
-using MediatR;
-using Domain.Entities;
-using Application.ResponseMessage;
+﻿using Application.ResponseMessage;
+using AutoMapper;
 using Domain.DTOs.PriceDto;
+using Domain.Entities;
 using Domain.Enum.Price;
+using Domain.Models.Response;
+using Domain.Repositories;
+using Domain.Repositories.UnitOfWork;
+using MediatR;
 using System.Net;
 
 namespace Application.UseCases.Prices.Commands.Delete;
@@ -27,11 +27,11 @@ public class DeletePriceHandler : IRequestHandler<DeletePriceCommand, APIRespons
     public async Task<APIResponse> Handle(DeletePriceCommand request, CancellationToken cancellationToken)
     {
         Price? price = await _pricerepo.GetById(request.PriceId);
-        if(price != null)
+        if (price != null)
         {
             price.status = PriceStatus.deteleted.ToString();
             await _pricerepo.Update(price);
-            if(await _unitOfWork.SaveChangesAsync() > 0) 
+            if (await _unitOfWork.SaveChangesAsync() > 0)
             {
                 ResponsePriceDto response = new ResponsePriceDto();
                 response.PriceId = price.PriceId;

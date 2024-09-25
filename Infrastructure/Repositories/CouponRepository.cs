@@ -4,12 +4,6 @@ using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -32,8 +26,8 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> ValidateCouponOnThisEvent(string CouponId, Guid EventId)
         {
-           return await _context.Events
-           .AnyAsync(e => e.EventId == EventId && e.Coupons.Any(c => c.ExpiredDate > DateTimeHelper.GetCurrentTimeAsLong() && c.NOAttempts > 0) && e.Coupons.Any(c => c.Id.Equals(CouponId)));
+            return await _context.Events
+            .AnyAsync(e => e.EventId == EventId && e.Coupons.Any(c => c.ExpiredDate > DateTimeHelper.GetCurrentTimeAsLong() && c.NOAttempts > 0) && e.Coupons.Any(c => c.Id.Equals(CouponId)));
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Event_Management.Domain.Enum
 {
@@ -13,9 +8,9 @@ namespace Event_Management.Domain.Enum
         All = 0,
         [Description("Active")]
         Active = 1,
-		[Description("Pending")]
-		Pending = 2,
-		[Description("Blocked")]
-		Blocked = 3
+        [Description("Pending")]
+        Pending = 2,
+        [Description("Blocked")]
+        Blocked = 3
     }
 }

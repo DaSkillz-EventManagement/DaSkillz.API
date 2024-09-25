@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.UseCases.User.Queries.FilterUser
 {
-    public class FilterUserQuery: IRequest<APIResponse>
+    public class FilterUserQuery : IRequest<APIResponse>
     {
         public Guid UserId { get; set; }
         public string? FullName { get; set; }

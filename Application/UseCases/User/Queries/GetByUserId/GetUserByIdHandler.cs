@@ -3,7 +3,6 @@ using AutoMapper;
 using Domain.DTOs.User.Response;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Domain.Repositories.UnitOfWork;
 using MediatR;
 using System.Net;
 

@@ -1,11 +1,13 @@
 ﻿using Application.Helper;
+using Application.ResponseMessage;
 using Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent;
-using Application.UseCases.Events.Command.CreateEvent;
+using Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedEventByCreatedDay;
+using Application.UseCases.Coupons.Queries.GetCoupon;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace API.Controllers
@@ -28,12 +30,28 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> AddAdvertised([FromBody] UseAdvertisedEventQuery query, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> AddAdvertised([FromBody] Guid eventId, CancellationToken cancellationToken = default)
         {
-            string userId = User.GetUserIdFromToken();
-            query.UserId = Guid.Parse(userId);
-            var result = await _mediator.Send(query, cancellationToken);
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            
+            var result = await _mediator.Send(new UseAdvertisedEventQuery(eventId, userId), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
+        }
+
+
+        [HttpGet("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetAdvertisedEvents(CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetAdvertisedEventQuery(), cancellationToken);
+
+            return new APIResponse()
+            {
+                StatusResponse = HttpStatusCode.OK,
+                Message = MessageCommon.GetSuccesfully,
+                Data = result
+            };
         }
     }
 }
