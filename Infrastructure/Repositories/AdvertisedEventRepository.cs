@@ -15,6 +15,11 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<AdvertisedEvent?> GetAdvertisedByEventId(Guid eventId)
+        {
+            return await _context.AdvertisedEvents.Where(ad => ad.EventId.Equals(eventId)).FirstOrDefaultAsync();
+        }
+
         public async Task<List<Guid>> GetListAdvertisedEventId()
         {
             return await _context.AdvertisedEvents
