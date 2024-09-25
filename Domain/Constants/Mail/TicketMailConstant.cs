@@ -8,6 +8,7 @@ public class TicketMailConstant
             "You are an Sponsor for",
             "You are an Event Operator for",
             "You are an Checking Staff for",
-            "You have registered for"
+            "You have registered for",
+            "Your sponsor request has been rejected by the host of event"
         };
 }

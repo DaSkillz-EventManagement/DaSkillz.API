@@ -15,6 +15,7 @@ namespace Application.Helper
                 case 0:
                 case 5:
                     return "My Ticket";
+                case 6: return "Event Detail";
             }
 
             return string.Empty;
