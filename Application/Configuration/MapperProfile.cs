@@ -29,13 +29,16 @@ namespace Application.Configuration
                 .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
                 .ReverseMap();
 
+            CreateMap<User, UserResponseDto>()
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
+                .ReverseMap();
 
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)).ReverseMap();
 
+
             CreateMap<User, UserByKeywordResponseDto>().ReverseMap();
             CreateMap<User, UserUpdatedResponseDto>().ReverseMap();
-            CreateMap<User, UserResponseDto>().ReverseMap();
 
             CreateMap<Event, CreateEventCommand>().ReverseMap();
             CreateMap<Event, EventRequestDto>().ReverseMap();

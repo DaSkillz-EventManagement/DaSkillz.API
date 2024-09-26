@@ -76,7 +76,7 @@ namespace Infrastructure.ExternalServices.Email
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_emailSetting.SenderName, _emailSetting.SenderEmail));
             message.To.Add(new MailboxAddress("", ticket.Email));
-            message.Subject = "Participant";
+            message.Subject = "INVITATION TO PARTICIPATE";
             var htmlContent = await File.ReadAllTextAsync(template);
             var startDate = ticket.StartDate!.Value;
             var startDateMM = startDate.ToString("MMM");
