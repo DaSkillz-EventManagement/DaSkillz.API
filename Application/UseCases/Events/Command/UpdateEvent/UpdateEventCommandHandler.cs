@@ -1,4 +1,5 @@
-﻿using Application.ExternalServices.Images;
+﻿using Application.Abstractions.Caching;
+using Application.ExternalServices.Images;
 using Application.ExternalServices.Quartz;
 using Application.Helper;
 using Application.ResponseMessage;
@@ -23,10 +24,11 @@ namespace Application.UseCases.Events.Command.UpdateEvent
         private readonly IImageService _fileService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IRedisCaching _redisCaching;
 
         private readonly long minimumUpdateTimeSpan = 21600000;
 
-        public UpdateEventCommandHandler(IEventRepository eventRepo, ITagRepository tagRepository, IQuartzService quartzService, IImageService fileService, IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdateEventCommandHandler(IEventRepository eventRepo, ITagRepository tagRepository, IQuartzService quartzService, IImageService fileService, IUnitOfWork unitOfWork, IMapper mapper, IRedisCaching redisCaching)
         {
             _eventRepo = eventRepo;
             _tagRepository = tagRepository;
@@ -34,6 +36,7 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             _fileService = fileService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _redisCaching = redisCaching;
         }
 
         public async Task<APIResponse> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
@@ -136,6 +139,19 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                 var eventResponse = _mapper.Map<EventResponseDto>(eventEntity);
                 eventResponse.UpdatedAt = eventEntity.UpdatedAt.HasValue ? eventEntity.UpdatedAt.Value : null;
                 eventResponse.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
+
+                var eventIdString = request.EventId.ToString();
+                var cacheKeyPrefix = "GetEventInfo_";
+                var cacheKey = cacheKeyPrefix + eventIdString;
+
+                // Search for the specific key in Redis
+                var matchingKeys = await _redisCaching.SearchKeysAsync(cacheKey);
+                if(matchingKeys != null)
+                {
+                    await _redisCaching.DeleteKeyAsync(cacheKey);
+                }
+
+
                 return new APIResponse
                 {
                     Message = MessageCommon.UpdateSuccesfully,
