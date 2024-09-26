@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Payment.ZaloPay;
 using Application.Helper.ZaloPayHelper;
 using Application.Helper.ZaloPayHelper.Crypto;
+using Domain.Constants.Domain;
 using Infrastructure.ExternalServices.Payment.ZaloPay.Setting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -48,7 +49,8 @@ namespace Infrastructure.ExternalServices.Payment.ZaloPay
 
         public async Task<Dictionary<string, object>> CreateOrderAsync(string amount, string appUser, string description, string app_trans_id, string redirectUrl)
         {
-            var embed_data = new { redirecturl = redirectUrl };
+            var redirect = $"{DomainName.PRODUCTION_URL}?url={redirectUrl}&apptransid={app_trans_id}";
+            var embed_data = new { redirecturl = redirect };
             var items = new[] { new { } };
             var param = new Dictionary<string, string>();
 
