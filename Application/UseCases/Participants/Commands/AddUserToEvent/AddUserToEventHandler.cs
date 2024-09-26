@@ -51,7 +51,7 @@ namespace Application.UseCases.Participants.Commands.AddUserToEventCommand
                     Data = null
                 };
             }
-            isOwner = await _eventRepo.IsOwner(request.UserId, request.RegisterEventModel.EventId);
+            isOwner = await _eventRepo.IsOwner(request.RegisterEventModel.UserId, request.RegisterEventModel.EventId);
 
             if (isOwner)
             {
