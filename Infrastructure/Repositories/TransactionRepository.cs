@@ -53,6 +53,13 @@ namespace Infrastructure.Repositories
                 && t.Status == (int)TransactionStatus.PROCESSING);
         }
 
+        public async Task<Transaction?> GetAlreadyPaid(Guid userId, Guid eventId)
+        {
+            return await _context.Transactions.FirstOrDefaultAsync(t => t.UserId.Equals(userId)
+                && t.EventId.Equals(eventId)
+                && t.Status == (int)TransactionStatus.SUCCESS);
+        }
+
         public async Task<IEnumerable<Transaction>> FilterTransactionsAsync(Guid? eventId, Guid? userId, int? status, int? subscriptionType)
         {
             // Tạo query gốc

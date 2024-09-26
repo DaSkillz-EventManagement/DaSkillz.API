@@ -76,6 +76,16 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                         Message = "ALREADY_HAVE_PROCESSING_TICKET_ORDER"
                     };
                 }
+
+                var existPayment = await _transactionRepository.GetAlreadyPaid(request.UserId, (Guid)request.EventId!);
+                if (existPayment != null)
+                {
+                    return new APIResponse
+                    {
+                        StatusResponse = HttpStatusCode.BadRequest,
+                        Message = "Bạn đã thanh toán vé cho sự kiện này"
+                    };
+                }
             }
 
            
