@@ -140,16 +140,16 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                 eventResponse.UpdatedAt = eventEntity.UpdatedAt.HasValue ? eventEntity.UpdatedAt.Value : null;
                 eventResponse.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
 
-                var eventIdString = request.EventId.ToString();
-                var cacheKeyPrefix = "GetEventInfo_";
-                var cacheKey = cacheKeyPrefix + eventIdString;
+                //var eventIdString = request.EventId.ToString();
+                //var cacheKeyPrefix = "GetEventInfo_";
+                //var cacheKey = cacheKeyPrefix + eventIdString;
 
-                // Search for the specific key in Redis
-                var matchingKeys = await _redisCaching.SearchKeysAsync(cacheKey);
-                if(matchingKeys != null)
-                {
-                    await _redisCaching.DeleteKeyAsync(cacheKey);
-                }
+                
+                //var matchingKeys = await _redisCaching.SearchKeysAsync(cacheKey);
+                //if(matchingKeys != null)
+                //{
+                //    await _redisCaching.DeleteKeyAsync(cacheKey);
+                //}
 
 
                 return new APIResponse
