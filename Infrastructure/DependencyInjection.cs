@@ -176,7 +176,7 @@ namespace Infrastructure
                     .WithIdentity("CheckTransactionStatusTrigger")
                     .StartNow()
                     .WithSimpleSchedule(x => x
-                        .WithIntervalInMinutes(1)
+                        .WithIntervalInMinutes(2)
                         .RepeatForever()
                         .Build()));
 
