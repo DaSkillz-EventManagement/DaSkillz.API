@@ -10,5 +10,6 @@ namespace Domain.Repositories
         Task<IList<Transaction>> getProcessingTransaction();
         Task<Transaction?> GetExistProcessingTransaction(Guid userId, Guid eventId);
         Task<IEnumerable<Transaction>> FilterTransactionsAsync(Guid? eventId, Guid? userId, int? status, int? subscriptionType);
+        Task<Transaction?> GetAlreadyPaid(Guid userId, Guid eventId);
     }
 }

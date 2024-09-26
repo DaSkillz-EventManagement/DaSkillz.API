@@ -19,7 +19,7 @@ public class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
 
         builder.Property(e => e.EventId).HasColumnName("EventID");
 
-        builder.Property(e => e.Content).HasColumnType("text");
+        builder.Property(e => e.Content).HasColumnType("nvarchar(250)");
 
         builder.Property(e => e.CreatedAt).HasColumnType("datetime");
 
