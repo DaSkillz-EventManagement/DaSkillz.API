@@ -77,15 +77,19 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                     };
                 }
 
-                var existPayment = await _transactionRepository.GetAlreadyPaid(request.UserId, (Guid)request.EventId!);
-                if (existPayment != null)
+                if (request.SubscriptionType != (int)PaymentType.SPONSOR)
                 {
-                    return new APIResponse
+                    var existPayment = await _transactionRepository.GetAlreadyPaid(request.UserId, (Guid)request.EventId!);
+                    if (existPayment != null)
                     {
-                        StatusResponse = HttpStatusCode.BadRequest,
-                        Message = "Bạn đã thanh toán vé cho sự kiện này"
-                    };
+                        return new APIResponse
+                        {
+                            StatusResponse = HttpStatusCode.BadRequest,
+                            Message = "Bạn đã thanh toán vé cho sự kiện này"
+                        };
+                    }
                 }
+                    
             }
 
            

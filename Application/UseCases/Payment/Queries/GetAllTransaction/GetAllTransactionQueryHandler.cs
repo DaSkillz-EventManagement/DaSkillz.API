@@ -1,4 +1,5 @@
-﻿using Application.ResponseMessage;
+﻿using Application.Abstractions.Caching;
+using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.Payment.Response;
 using Domain.Models.Response;
@@ -12,11 +13,13 @@ namespace Application.UseCases.Payment.Queries.GetAllTransaction
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly IMapper _mapper;
+        private readonly IRedisCaching _caching;
 
-        public GetAllTransactionQueryHandler(ITransactionRepository transactionRepository, IMapper mapper)
+        public GetAllTransactionQueryHandler(ITransactionRepository transactionRepository, IMapper mapper, IRedisCaching caching)
         {
             _transactionRepository = transactionRepository;
             _mapper = mapper;
+            _caching = caching;
         }
 
         public async Task<APIResponse> Handle(GetAllTransactionQuery request, CancellationToken cancellationToken)
