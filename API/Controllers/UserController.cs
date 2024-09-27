@@ -41,7 +41,7 @@ public class UserController : Controller
         return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
     }
 
-    [Authorize("Admin")]
+    //[Authorize("Admin")]
     [HttpDelete("delete")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
