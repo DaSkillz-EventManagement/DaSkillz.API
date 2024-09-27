@@ -13,4 +13,9 @@ public class UserAnswerRepository : RepositoryBase<UserAnswer>, IUserAnswerRepos
     {
         _context = context;
     }
+
+    public Task<UserAnswer> GetbyQuestionId(Guid questionId)
+    {
+        throw new NotImplementedException();
+    }
 }

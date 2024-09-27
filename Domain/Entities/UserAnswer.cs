@@ -8,7 +8,9 @@ public class UserAnswer
     public Guid UserId { get; set; }
     public Guid QuizId { get; set; }
     public Guid QuestionId { get; set; }
-    public string AnswerLabel { get; set; } = null!;
+    public string? AnswerContent { get; set; }
+    public DateTime StartAt { get; set; }
+    public DateTime EndAt { get; set; }
 
 
     public virtual Quiz Quiz { get; set; } = null!;

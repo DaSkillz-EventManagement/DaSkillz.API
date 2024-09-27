@@ -41,7 +41,7 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
                 Data = null
             };
         }
-        var isOwner = await _eventRepository.IsOwner(request.UserId, quiz!.QuizId);
+        /*var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
         if (!isOwner)
         {
             return new APIResponse
@@ -50,7 +50,7 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
                 Message = MessageEvent.OnlyHostCanCreateQuiz,
                 Data = null
             };
-        }
+        }*/
         #endregion
 
         if (request.Dtos == null || !request.Dtos.Any())
@@ -63,7 +63,7 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
             };
         }
 
-        List<ResponseQuestionDto> response = new List<ResponseQuestionDto>();
+        
         var tasks = new List<Task>();
 
         foreach (var question in request.Dtos)
@@ -72,9 +72,9 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
             {
                 QuestionId = Guid.NewGuid(),
                 QuestionName = question.QuestionName,
+                QuizId = request.QuizId,
                 CorrectAnswerLabel = question.CorrectAnswerLabel,
                 IsMultipleAnswers = question.IsMultipleAnswers,
-                IsQuestionAnswered = question.IsQuestionAnswered,
                 ShowAnswerAfterChoosing = question.ShowAnswerAfterChoosing
             };
             tasks.Add(_questionRepository.Add(temp));
@@ -85,39 +85,24 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
                 {
                     AnswerId = Guid.NewGuid(),
                     QuestionId = temp.QuestionId,
-                    AnswerLabel = answer.AnswerLabel,
-                    Content = answer.Content,
+                    AnswerContent = answer.Content,
                     IsCorrectAnswer = answer.IsCorrectAnswer
                 };
                 tasks.Add(_answerRepository.Add(entity));
                 temp.Answers.Add(entity);
             }
-
-            ResponseQuestionDto dto = _mapper.Map<ResponseQuestionDto>(temp);
-            response.Add(dto);
         }
 
         #region Saving entity
         try
         {
-            await Task.WhenAll(tasks); // wait all tasks to complete
-
-            if (await _unitOfWork.SaveChangesAsync() > 0)
-            {
-                return new APIResponse
-                {
-                    StatusResponse = HttpStatusCode.OK,
-                    Message = MessageCommon.CreateSuccesfully,
-                    Data = response
-                };
-            }
-
+            await Task.WhenAll(tasks); // wait all tasks to complete           
             return new APIResponse
             {
-                StatusResponse = HttpStatusCode.BadRequest,
-                Message = MessageCommon.CreateFailed,
+                StatusResponse = (await _unitOfWork.SaveChangesAsync() > 0) ? HttpStatusCode.OK : HttpStatusCode.BadRequest,
+                Message = (await _unitOfWork.SaveChangesAsync() > 0) ? MessageCommon.CreateSuccesfully : MessageCommon.CreateFailed,
                 Data = null
-            };
+            };          
         }
         catch (Exception ex)
         {

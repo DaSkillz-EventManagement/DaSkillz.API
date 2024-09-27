@@ -16,11 +16,7 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
         builder.Property(e => e.QuestionId)
             .IsRequired();
 
-        builder.Property(e => e.AnswerLabel)
-            .IsRequired()
-            .HasMaxLength(150);
-
-        builder.Property(e => e.Content)
+        builder.Property(e => e.AnswerContent)
             .IsRequired()
             .HasMaxLength(1000);
 

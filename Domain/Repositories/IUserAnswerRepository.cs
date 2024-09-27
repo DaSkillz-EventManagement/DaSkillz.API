@@ -5,4 +5,5 @@ namespace Domain.Repositories;
 
 public interface IUserAnswerRepository : IRepository<UserAnswer>
 {
+    Task<UserAnswer> GetbyQuestionId(Guid questionId);
 }

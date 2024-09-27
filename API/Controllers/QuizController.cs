@@ -1,8 +1,14 @@
 ﻿using Application.Helper;
 using Application.UseCases.Quizs.Commands.CreateQuestions;
 using Application.UseCases.Quizs.Commands.CreateQuiz;
+using Application.UseCases.Quizs.Commands.DeleteQuestions;
+using Application.UseCases.Quizs.Commands.DeleteQuiz;
+using Application.UseCases.Quizs.Commands.UpdateQuestion;
+using Application.UseCases.Quizs.Commands.UpdateQuiz;
 using Application.UseCases.Quizs.Queries.GetQuizByEventId;
+using Application.UseCases.Quizs.Queries.GetQuizInfo;
 using Domain.DTOs.Quiz.Request;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,14 +41,8 @@ namespace API.Controllers
             }
             return BadRequest(result);
         }
-        [HttpPost("question")]
-        public async Task<IActionResult> CreateQuestion([FromBody, Required] CreateQuestionDto dto, [FromQuery, Required] Guid QuizId,
-            CancellationToken token = default)
-        {
-            return Ok(new NotImplementedException());
-        }
         [Authorize]
-        [HttpPost("question/multiple")]
+        [HttpPost("question")]
         public async Task<IActionResult> CreateMultipleQuestion([FromBody, Required] List<CreateQuestionDto> dto, [FromQuery, Required] Guid QuizId,
             CancellationToken token = default)
         {
@@ -55,24 +55,45 @@ namespace API.Controllers
             return BadRequest(result);
         }
         [HttpDelete]
-        public async Task<IActionResult> DeleteQuiz([FromQuery, Required] Guid QuizId, CancellationToken token = default)
+        public async Task<IActionResult> DeleteQuiz([FromQuery, Required] Guid QuizId, [FromQuery, Required] Guid EventId, CancellationToken token = default)
         {
-            return Ok(new NotImplementedException());
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            var result = await _mediator.Send(new DeleteQuizCommand(QuizId, userId, EventId), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpDelete("question")]
-        public async Task<IActionResult> DeleteQuestion([FromQuery, Required] Guid QuestionId, CancellationToken token = default)
+        public async Task<IActionResult> DeleteQuestion([FromQuery, Required] List<Guid> QuestionId, CancellationToken token = default)
         {
-            return Ok(new NotImplementedException());
+            var result = await _mediator.Send(new DeleteQuestionCommand(QuestionId), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateQuiz([FromBody, Required] Guid QuizId, CancellationToken token = default)
+        public async Task<IActionResult> UpdateQuiz([FromQuery, Required] Guid QuizId, [FromBody, Required] UpdateQuizDto dto, CancellationToken token = default)
         {
-            return Ok(new NotImplementedException());
+            var result = await _mediator.Send(new UpdateQuizCommand(dto, QuizId), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpPut("question")]
-        public async Task<IActionResult> UpdateQuestion([FromBody, Required] Guid QuestionId, CancellationToken token = default)
+        public async Task<IActionResult> UpdateQuestion([FromBody, Required] List<UpdateQuestionDto> dto, CancellationToken token = default)
         {
-            return Ok(new NotImplementedException());
+            var result = await _mediator.Send(new UpdateQuestionCommand(dto), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetQuizByEventId([FromQuery, Required] Guid EventId, CancellationToken token = default)
@@ -87,7 +108,7 @@ namespace API.Controllers
         [HttpGet("info")]
         public async Task<IActionResult> GetQuizQuestions([FromQuery, Required] Guid QuizId, CancellationToken token = default)
         {
-            var result = await _mediator.Send(new GetQuizByEventIdQuery(QuizId), token);
+            var result = await _mediator.Send(new GetQuizInfoQuery(QuizId), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
@@ -100,7 +121,7 @@ namespace API.Controllers
         }
 
         [HttpPost("/attemp")]
-        public async Task<IActionResult> AttempQuiz([FromQuery, Required] Guid quizid, [FromQuery, Required] Guid eventid, CancellationToken token = default)
+        public async Task<IActionResult> AttempQuiz([FromBody, Required] Guid quizid, [FromQuery, Required] Guid eventid, CancellationToken token = default)
         {
             return Ok(new NotImplementedException());
         }

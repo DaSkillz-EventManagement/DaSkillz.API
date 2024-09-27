@@ -1,9 +1,8 @@
-﻿namespace Domain.DTOs.Quiz.Response;
+﻿
+namespace Domain.DTOs.Quiz.Request;
 
-public class ResponseQuizDto
+public class UpdateQuizDto
 {
-    public Guid QuizId { get; set; }
-    public Guid eventId { get; set; }
     public string QuizName { get; set; } = null!;
     public string QuizDescription { get; set; } = null!;
     public string TotalTime { get; set; } = null!;
