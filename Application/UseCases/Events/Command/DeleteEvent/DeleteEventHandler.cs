@@ -30,9 +30,10 @@ namespace Application.UseCases.Events.Command.DeleteEvent
                 {
                     return false;
                 }
+                DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(existEvent.StartDate);
                 if (isOwner)
                 {
-                    if (existEvent.StartDate.CompareTo(DateTime.Now.AddHours(6)) < 0)
+                    if (startDate.CompareTo(DateTime.Now.AddHours(6)) < 0)
                     {
                         return await _eventRepository.ChangeEventStatus(request.EventId, EventStatus.Cancel);
                     }

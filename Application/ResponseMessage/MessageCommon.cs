@@ -7,7 +7,7 @@
         public const string SavingSuccesfully = "Saving Succesfully!";
         public const string SavingFailed = "Saving Failed";
         public const string DeleteSuccessfully = "Delete Successfully";
-        public const string DeleteFailed = "Delete Failed";
+        public const string DeleteFailed = "DELETE_EVENT_FAIL";
         public const string UpdateSuccesfully = "Update Successfully";
         public const string UpdateFailed = "Update Failed";
         public const string CreateSuccesfully = "Create Successfully";
