@@ -59,10 +59,10 @@ namespace API.Controllers
 
         [Authorize]
         [HttpDelete]
-        public async Task<IActionResult> DeleteQuiz([FromQuery, Required] Guid QuizId, [FromQuery, Required] Guid EventId, CancellationToken token = default)
+        public async Task<IActionResult> DeleteQuiz([FromQuery, Required] Guid QuizId, CancellationToken token = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
-            var result = await _mediator.Send(new DeleteQuizCommand(QuizId, userId, EventId), token);
+            var result = await _mediator.Send(new DeleteQuizCommand(QuizId, userId), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);

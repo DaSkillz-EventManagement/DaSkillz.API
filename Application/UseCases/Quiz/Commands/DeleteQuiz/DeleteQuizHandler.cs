@@ -33,16 +33,6 @@ public class DeleteQuizHandler : IRequestHandler<DeleteQuizCommand, APIResponse>
 
     public async Task<APIResponse> Handle(DeleteQuizCommand request, CancellationToken cancellationToken)
     {
-        bool isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
-        if (!isOwner)
-        {
-            return new APIResponse
-            {
-                StatusResponse = HttpStatusCode.BadRequest,
-                Message = MessageEvent.OnlyHostCanCreateQuiz,
-                Data = null
-            };
-        }
         var quiz = await _quizRepository.GetById(request.QuizId);
         if(quiz == null)
         {
