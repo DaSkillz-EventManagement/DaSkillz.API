@@ -45,7 +45,10 @@ namespace Application.UseCases.Events.Command.CreateEvent
             var isPremium = await _userRepository.IsPremiumAccount(request.UserId);
 
 
-
+            if(!isPremium)
+            {
+                var listEvent = await _eventRepo.GetUserHostEvent(request.UserId);
+            }
 
             var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EventRequestDto.StartDate).DateTime;
             if (tempStartDate > DateTime.Now.AddMonths(4))
