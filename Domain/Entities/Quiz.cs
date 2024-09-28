@@ -12,6 +12,7 @@ public class Quiz
     public DateTime CreateAt { get; set; }
     public int status { get; set; }
     public int AttemptAllow {  get; set; }
+    public long? DueDate { get; set; }
 
     public virtual Event Event { get; set; } = null!;
     public virtual User? User { get; set; }

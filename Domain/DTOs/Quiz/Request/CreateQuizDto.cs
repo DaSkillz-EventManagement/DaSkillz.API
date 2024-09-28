@@ -25,4 +25,6 @@ public class CreateQuizDto
     public string TotalTime { get; set; }
     [Required(ErrorMessage = "AttemptAllow is required!")]
     public int AttemptAllow { get; set; } = 1;
+
+    public long? DueDate { get; set; }
 }
