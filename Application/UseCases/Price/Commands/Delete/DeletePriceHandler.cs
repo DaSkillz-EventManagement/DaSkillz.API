@@ -38,6 +38,7 @@ public class DeletePriceHandler : IRequestHandler<DeletePriceCommand, APIRespons
                 response.PriceType = price.PriceType;
                 response.note = price.note;
                 response.amount = price.amount;
+                response.unit = price.unit;
                 response.UpdatedAt = price.UpdatedAt;
                 response.CreatedAt = price.CreatedAt;
                 var user = await _userRepo.GetById(price.CreatedBy);

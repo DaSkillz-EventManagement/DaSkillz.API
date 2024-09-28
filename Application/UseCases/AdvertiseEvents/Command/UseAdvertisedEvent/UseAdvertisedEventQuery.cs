@@ -8,11 +8,13 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
     {
         public Guid EventId { get; set; }
         public Guid UserId { get; set; }
+        public int numOfDate {  get; set; }
 
-        public UseAdvertisedEventQuery(Guid eventId, Guid userId)
+        public UseAdvertisedEventQuery(Guid eventId, Guid userId, int numOfDate)
         {
             EventId = eventId;
             UserId = userId;
+            this.numOfDate = numOfDate;
         }
     }
 

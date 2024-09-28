@@ -36,11 +36,12 @@ public class CreatePriceHandler : IRequestHandler<CreatePriceCommand, APIRespons
             response.PriceId = price.PriceId;
             response.PriceType = price.PriceType;
             response.note = price.note;
+            response.unit = price.unit;
             response.amount = price.amount;
             response.UpdatedAt = price.UpdatedAt;
             response.CreatedAt = price.CreatedAt;
             var user = await _userRepo.GetById(price.CreatedBy);
-            response.CreatedBy.email = user!.Email!;
+            response.CreatedBy!.email = user!.Email!;
             response.CreatedBy.Name = user.FullName;
             response.CreatedBy.avatar = user.Avatar;
             response.CreatedBy.Id = user.UserId;

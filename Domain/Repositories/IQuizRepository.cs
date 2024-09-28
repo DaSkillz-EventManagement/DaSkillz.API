@@ -6,4 +6,5 @@ namespace Domain.Repositories;
 public interface IQuizRepository : IRepository<Quiz>
 {
     Task<List<Quiz>> GetAllQuizsByEventId(Guid eventId);
+    Task<int> GetQuizAttemptAllow(Guid quizId);
 }

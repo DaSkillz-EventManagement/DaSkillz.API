@@ -5,4 +5,6 @@ namespace Domain.Repositories;
 
 public interface IUserAnswerRepository : IRepository<UserAnswer>
 {
+    Task<bool> IsAttempted(Guid quizId, Guid userId);
+    Task<int> GetAttemptNo(Guid quizId, Guid userId);
 }
