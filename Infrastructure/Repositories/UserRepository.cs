@@ -96,6 +96,10 @@ namespace Infrastructure.Repositories
                      .ToListAsync();
         }
 
+        public async Task<bool> IsPremiumAccount(Guid userId)
+        {
+            return await _context.Users.AnyAsync(e => e.UserId.Equals(userId) && e.IsPremiumUser);
+        }
 
         public async Task<IEnumerable<User>> FilterUsersAsync(Guid? userId = null, string? fullName = null, string? email = null, string? phone = null, string? status = null)
         {

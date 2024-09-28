@@ -24,6 +24,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITagRepository _tagRepository;
         private readonly IQuartzService _quartzService;
+        private readonly IUserRepository _userRepository;
 
         public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper, IUnitOfWork unitOfWork, ITagRepository tagRepository, IQuartzService quartzService)
         {
@@ -41,6 +42,14 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
         public async Task<APIResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
+            var isPremium = await _userRepository.IsPremiumAccount(request.UserId);
+            
+
+            if(!isPremium)
+            {
+                var listEvent = await _eventRepo.GetUserHostEvent(request.UserId);
+            }
+
             var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EventRequestDto.StartDate).DateTime;
             if (tempStartDate > DateTime.Now.AddMonths(4))
             {

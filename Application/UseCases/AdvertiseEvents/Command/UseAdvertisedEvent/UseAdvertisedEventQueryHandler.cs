@@ -60,7 +60,7 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
                     DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(advertisedEntity.StartDate);
 
                     // Add 3 days to the StartDate
-                    DateTimeOffset endDate = startDate.AddDays(3);
+                    DateTimeOffset endDate = startDate.AddDays(request.numOfDate);
 
                     // Convert the new EndDate back to Unix time (milliseconds)
                     advertisedEntity.EndDate = endDate.ToUnixTimeMilliseconds();

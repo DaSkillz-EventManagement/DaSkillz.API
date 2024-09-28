@@ -171,10 +171,10 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                     }
                     sponsor.IsSponsored = true;
                 }
-                else if (exist.SubscriptionType == (int)PaymentType.ADVERTISE)
-                {
-                    await _mediator.Send(new UseAdvertisedEventQuery((Guid)exist.EventId!, (Guid)exist.UserId!), cancellationToken);
-                }
+                //else if (exist.SubscriptionType == (int)PaymentType.ADVERTISE)
+                //{
+                //    await _mediator.Send(new UseAdvertisedEventQuery((Guid)exist.EventId!, (Guid)exist.UserId!), cancellationToken);
+                //}
 
                 await _caching.RemoveAsync($"payment_{request.appTransId}");
             }
