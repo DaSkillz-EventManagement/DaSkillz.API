@@ -33,16 +33,6 @@ public class DeleteQuizHandler : IRequestHandler<DeleteQuizCommand, APIResponse>
 
     public async Task<APIResponse> Handle(DeleteQuizCommand request, CancellationToken cancellationToken)
     {
-        bool isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
-        if (!isOwner)
-        {
-            return new APIResponse
-            {
-                StatusResponse = HttpStatusCode.BadRequest,
-                Message = MessageEvent.OnlyHostCanCreateQuiz,
-                Data = null
-            };
-        }
         var quiz = await _quizRepository.GetById(request.QuizId);
         if(quiz == null)
         {
@@ -53,7 +43,7 @@ public class DeleteQuizHandler : IRequestHandler<DeleteQuizCommand, APIResponse>
                 Data = request.QuizId.ToString()
             };
         }
-        quiz.status = QuizEnum.Deleted.ToString();
+        quiz.status = (int)QuizEnum.Deleted;
         await _quizRepository.Update(quiz);
         try
         {

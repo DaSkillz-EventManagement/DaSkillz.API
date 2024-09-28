@@ -86,11 +86,20 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
         #region Saving entity
         try
         {
-            await Task.WhenAll(tasks); // wait all tasks to complete           
+            await Task.WhenAll(tasks); // wait all tasks to complete
+            if(await _unitOfWork.SaveChangesAsync() > 0)
+            {
+                return new APIResponse
+                {
+                    StatusResponse = HttpStatusCode.OK,
+                    Message = MessageCommon.CreateSuccesfully,
+                    Data = null
+                };
+            }
             return new APIResponse
             {
-                StatusResponse = (await _unitOfWork.SaveChangesAsync() > 0) ? HttpStatusCode.OK : HttpStatusCode.BadRequest,
-                Message = (await _unitOfWork.SaveChangesAsync() > 0) ? MessageCommon.CreateSuccesfully : MessageCommon.CreateFailed,
+                StatusResponse = HttpStatusCode.BadRequest,
+                Message = MessageCommon.CreateFailed,
                 Data = null
             };          
         }

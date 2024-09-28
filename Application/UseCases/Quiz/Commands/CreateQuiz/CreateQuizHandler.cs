@@ -34,7 +34,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
         entity.CreateAt = DateTime.Now;
         entity.CreatedBy = request.UserId;
         entity.TotalTime = request.QuizDto.TotalTime;
-        entity.status = request.QuizDto.QuizStatus.ToString();
+        entity.status = (int)request.QuizDto.QuizStatus;
         await _quizRepository.Add(entity);
 
         #region Saving entity
@@ -42,17 +42,18 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
         {
             if (await _unitOfWork.SaveChangesAsync() > 0)
             {
+                ResponseQuizDto response = _mapper.Map<ResponseQuizDto>(entity);
                 return new APIResponse
                 {
                     StatusResponse = HttpStatusCode.OK,
                     Message = MessageCommon.CreateSuccesfully,
-                    Data = _mapper.Map<ResponseQuizDto>(entity)
+                    Data = response
                 };
             }
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.BadRequest,
-                Message = MessageCommon.CreateFailed,
+                Message = MessageEvent.CreateQuizFailed,
                 Data = request.QuizDto
             };
         }
@@ -61,7 +62,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.BadRequest,
-                Message = MessageCommon.CreateFailed,
+                Message = MessageEvent.CreateQuizFailed,
                 Data = ex.Message
             };
         }

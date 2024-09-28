@@ -6,6 +6,6 @@ public class UpdateQuizDto
     public string QuizName { get; set; } = null!;
     public string QuizDescription { get; set; } = null!;
     public string TotalTime { get; set; } = null!;
-    public string status { get; set; } = null!;
+    public int status { get; set; }
     public int AttemptAllow { get; set; } = 1;
 }

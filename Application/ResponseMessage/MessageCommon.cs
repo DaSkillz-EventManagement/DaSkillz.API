@@ -23,7 +23,7 @@
 
         public const string Unauthorized = "UNAUTHORIZED";
         public const string Blocked = "USER_BLOCKED";
-
+        public const string InvalidToken = "INVALID_TOKEN";
 
 
     }
