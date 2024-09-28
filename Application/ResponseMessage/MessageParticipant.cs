@@ -1,19 +1,25 @@
 ﻿namespace Application.ResponseMessage
 {
-    public class MessageParticipant
+
+    public static class MessageEvent
     {
-        public const string CheckInUserSuccess = "Check in success!";
-        public const string CheckInUserFailed = "QR Code not valid!";
-        public const string NotOwner = "You are not owner of this event";
-        public const string ProcessParticipant = "Process participant success!";
-        public const string ProcessParticipantFailed = "Process participant failed!";
-        public const string ExistedOnEvent = "You already registered on event!";
-        public const string AcceptInvite = "Accept invite success!";
-        public const string AcceptInviteFailed = "Accept invite failed!";
-        public const string HostCannotRegister = "Host cannot register on event!";
-        public const string ParticipantStatusNotValid = "Participant status not valid!";
-        public const string YouAreNotStaff = "You are not staff of this event!";
-        public const string TransactionIsNotValid = "Transaction is not valid! Please, confirm pay out success!";
-        public const string ParticipantCapacityLimitReached = "Participant capacity limit reached! Cannot add new participant!";
+        // Event Message response
+        public const string CheckInUserSuccess = "CHECK_IN_SUCCESS";
+        public const string CheckInUserFailed = "INVALID_QR_CODE";
+        public const string NotOwner = "NOT_EVENT_OWNER";
+        public const string ProcessParticipant = "PROCESS_PARTICIPANT_SUCCESS";
+        public const string ProcessParticipantFailed = "PROCESS_PARTICIPANT_FAILED";
+        public const string ExistedOnEvent = "ALREADY_REGISTERED_ON_EVENT";
+        public const string AcceptInvite = "ACCEPT_INVITE_SUCCESS";
+        public const string AcceptInviteFailed = "ACCEPT_INVITE_FAILED";
+        public const string HostCannotRegister = "HOST_CANNOT_REGISTER";
+        public const string ParticipantStatusNotValid = "INVALID_PARTICIPANT_STATUS";
+        public const string YouAreNotStaff = "NOT_EVENT_STAFF";
+
+        //"Transaction is not valid! Please, confirm pay out success!";
+        public const string TransactionIsNotValid = "INVALID_TRANSACTION_CONFIRM_PAYMENT";
+        public const string ParticipantCapacityLimitReached = "PARTICIPANT_CAPACITY_LIMIT_REACHED";
     }
+
+
 }
