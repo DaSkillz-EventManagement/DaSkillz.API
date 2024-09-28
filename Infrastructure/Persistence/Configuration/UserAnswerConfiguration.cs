@@ -25,11 +25,8 @@ public class UserAnswerConfiguration : IEntityTypeConfiguration<UserAnswer>
         builder.Property(ua => ua.AnswerContent)
             .HasMaxLength(1000);
 
-        builder.Property(ua => ua.StartAt)
-            .IsRequired().HasColumnType("datetime");
-
-        builder.Property(ua => ua.EndAt)
-            .IsRequired().HasColumnType("datetime");
+        builder.Property(ua => ua.TotalTime)
+            .HasMaxLength(50);
 
         builder.HasOne(ua => ua.Quiz)
             .WithMany()

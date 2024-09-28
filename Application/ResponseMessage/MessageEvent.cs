@@ -20,5 +20,6 @@
         public const string OnlyHostCanCreateQuiz = "Only host can create and delete quiz";
         public const string QuizNotFound = "Quiz not found";
         public const string TheTimeOfAdvertisingIsStillRemain = "The time of advertising is still remain";
+        public const string YouAlreadyAttemptedThisQuiz = "You already attempted this quiz";
     }
 }

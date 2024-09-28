@@ -40,7 +40,10 @@ public class UpdateQuizHandler : IRequestHandler<UpdateQuizCommand, APIResponse>
                 Data = null
             };
         }
-        quiz = _mapper.Map<Quiz>(request.QuizDto);
+        quiz.QuizName = request.QuizDto.QuizName;
+        quiz.QuizDescription = request.QuizDto.QuizDescription;
+        quiz.status = request.QuizDto.status;
+        quiz.TotalTime = request.QuizDto.TotalTime;
         try
         {
             return new APIResponse

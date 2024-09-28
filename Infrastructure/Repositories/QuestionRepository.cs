@@ -15,6 +15,11 @@ public class QuestionRepository : RepositoryBase<Question>, IQuestionRepository
         _context = context;
     }
 
+    public async Task<int> CountQuestion(Guid quizId)
+    {
+        return await _context.Questions.Where(q => q.QuizId == quizId).CountAsync();
+    }
+
     public async Task<List<Question>> DeleteQuestions(List<Guid> questionIds)
     {
         List <Question> result = new List<Question> ();

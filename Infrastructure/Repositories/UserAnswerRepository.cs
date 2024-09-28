@@ -2,6 +2,7 @@
 using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -14,8 +15,8 @@ public class UserAnswerRepository : RepositoryBase<UserAnswer>, IUserAnswerRepos
         _context = context;
     }
 
-    public Task<UserAnswer> GetbyQuestionId(Guid questionId)
+    public async Task<bool> IsAttempted(Guid quizId)
     {
-        throw new NotImplementedException();
+        return await _context.UserAnswers.AnyAsync(u => u.QuizId == quizId);  
     }
 }

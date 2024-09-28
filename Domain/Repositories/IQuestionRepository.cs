@@ -7,6 +7,6 @@ public interface IQuestionRepository : IRepository<Question>
 {
     Task<List<Question>> GetQuestionsByQuizId(Guid quizId);
     Task<List<Question>> DeleteQuestions(List<Guid> quetionIds);
-
+    Task<int> CountQuestion(Guid eventId);
     Task<Question?> GetQuestionById(Guid questionId);
 }
