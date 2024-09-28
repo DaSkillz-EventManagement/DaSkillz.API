@@ -114,11 +114,15 @@ namespace Application.Configuration
             CreateMap<EventTagDto, Tag>().ReverseMap();
             CreateMap<AdvertisedEvent, AdvertisedEventDto>().ReverseMap();
             //.ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => EventHelper.GetHostInfo(src.CreatedBy)));
+
+
+            //Mapper Quiz
             CreateMap<CreateQuizDto, Quiz>().ReverseMap();
             CreateMap<Quiz, ResponseQuizDto>();
-            CreateMap<ResponseQuestionDto, Question>();
-
-
+            CreateMap<Answer, ResponseAnswerDto>();
+            CreateMap<Question, ResponseQuestionDto>()
+                .ForMember(dest => dest.Answers, opt => opt.MapFrom(dest => dest.Answers)).ReverseMap();
+            CreateMap<UpdateQuizDto, Quiz>().ReverseMap();
             //sponsor
             CreateMap<SponsorEvent, SponsorEventDto>();
             //CreateMap<List<SponsorEvent>, List<SponsorEventDto>>().ReverseMap();

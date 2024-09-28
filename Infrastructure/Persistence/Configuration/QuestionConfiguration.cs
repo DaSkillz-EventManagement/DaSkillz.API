@@ -23,9 +23,6 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
         builder.Property(e => e.IsMultipleAnswers)
             .IsRequired();
 
-        builder.Property(e => e.IsQuestionAnswered)
-            .IsRequired();
-
         builder.Property(e => e.ShowAnswerAfterChoosing)
             .IsRequired();
 

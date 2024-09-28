@@ -36,6 +36,7 @@ public class UpdatePriceHandler : IRequestHandler<UpdatePriceCommand, APIRespons
             };
         }
         entity.amount = request.PriceDto.amount;
+        entity.unit = request.PriceDto.unit;
         entity.note = request.PriceDto.note!;
         entity.PriceType = request.PriceDto.PriceType.ToString();
         entity.UpdatedAt = DateTime.Now;
@@ -43,11 +44,12 @@ public class UpdatePriceHandler : IRequestHandler<UpdatePriceCommand, APIRespons
         response.PriceId = entity.PriceId;
         response.PriceType = entity.PriceType;
         response.note = entity.note;
+        response.unit = entity.unit;
         response.amount = entity.amount;
         response.UpdatedAt = entity.UpdatedAt;
         response.CreatedAt = entity.CreatedAt;
         var user = await _userRepo.GetById(entity.CreatedBy);
-        response.CreatedBy.email = user!.Email!;
+        response.CreatedBy!.email = user!.Email!;
         response.CreatedBy.Name = user.FullName;
         response.CreatedBy.avatar = user.Avatar;
         response.CreatedBy.Id = user.UserId;

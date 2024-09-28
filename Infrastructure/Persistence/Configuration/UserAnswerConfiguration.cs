@@ -22,9 +22,11 @@ public class UserAnswerConfiguration : IEntityTypeConfiguration<UserAnswer>
         builder.Property(ua => ua.QuestionId)
             .IsRequired();
 
-        builder.Property(ua => ua.AnswerLabel)
-            .IsRequired()
-            .HasMaxLength(150);
+        builder.Property(ua => ua.AnswerContent)
+            .HasMaxLength(1000);
+
+        builder.Property(ua => ua.TotalTime)
+            .HasMaxLength(50);
 
         builder.HasOne(ua => ua.Quiz)
             .WithMany()

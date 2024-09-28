@@ -36,10 +36,11 @@ public class GetPriceByIdHandler : IRequestHandler<GetPriceByIdQuery, APIRespons
         response.PriceType = result.PriceType;
         response.note = result.note;
         response.amount = result.amount;
+        response.unit = result.unit;
         response.UpdatedAt = result.UpdatedAt;
         response.CreatedAt = result.CreatedAt;
         var user = await _userRepo.GetById(result.CreatedBy);
-        response.CreatedBy.email = user!.Email!;
+        response.CreatedBy!.email = user!.Email!;
         response.CreatedBy.Name = user.FullName;
         response.CreatedBy.avatar = user.Avatar;
         response.CreatedBy.Id = user.UserId;
