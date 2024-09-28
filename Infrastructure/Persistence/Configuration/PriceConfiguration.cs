@@ -25,6 +25,9 @@ public class PriceConfiguration : IEntityTypeConfiguration<Price>
         builder.Property(p => p.status).IsRequired()
             .HasMaxLength(20);
 
+        builder.Property(p => p.unit)
+            .HasMaxLength(200);
+
         builder.Property(p => p.note)
             .HasMaxLength(2000);
 

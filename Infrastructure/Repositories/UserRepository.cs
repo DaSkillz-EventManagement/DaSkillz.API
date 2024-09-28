@@ -21,6 +21,11 @@ namespace Infrastructure.Repositories
             return _context.Users.Find(userId);
         }
 
+        public async Task<bool> CheckUserIsPremium(Guid? userId)
+        {
+            return await _context.Users.AnyAsync(a => a.UserId == userId && a.IsPremiumUser);
+        }
+
         public async Task<IEnumerable<User>> GetUsersByKeywordAsync(string keyword)
         {
             return await _context.Users.Include(a => a.Subscription).Where(a => a.Email!.StartsWith(keyword) || a.Email.Contains(keyword)).ToListAsync();
@@ -95,5 +100,43 @@ namespace Infrastructure.Repositories
         {
             return await _context.Users.AnyAsync(e => e.UserId.Equals(userId) && e.IsPremiumUser);
         }
+
+        public async Task<IEnumerable<User>> FilterUsersAsync(Guid? userId = null, string? fullName = null, string? email = null, string? phone = null, string? status = null)
+        {
+            // Bắt đầu truy vấn từ bảng Users
+            var query = _context.Users.AsQueryable();
+
+            // Kiểm tra và áp dụng các điều kiện lọc
+            if (userId.HasValue)
+            {
+                query = query.Where(u => u.UserId == userId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                query = query.Where(u => u.FullName != null && u.FullName.Contains(fullName));
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                query = query.Where(u => u.Email != null && u.Email.ToLower().Contains(email.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(phone))
+            {
+                query = query.Where(u => u.Phone != null && u.Phone.Contains(phone));
+            }
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(u => u.Status.Equals(status));
+            }
+
+            // Thực hiện truy vấn và trả về danh sách người dùng đã lọc
+            return await query.Include(a => a.Role)
+                               .Include(a => a.Subscription)
+                               .ToListAsync();
+        }
+
     }
 }

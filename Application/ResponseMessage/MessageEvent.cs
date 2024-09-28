@@ -17,8 +17,9 @@
         public const string UpdateEventWithStatus = "Can only update Event with status NotYet";
         public const string OnlyHostCanUpdateEvent = "Only host can update this event";
         public const string YouAreNotOwnerOfThisEvent = "You are not owner of this event";
-        public const string OnlyHostCanCreateQuiz = "Only host can create quiz";
+        public const string OnlyHostCanCreateQuiz = "Only host can create and delete quiz";
         public const string QuizNotFound = "Quiz not found";
         public const string TheTimeOfAdvertisingIsStillRemain = "The time of advertising is still remain";
+        public const string YouAlreadyAttemptedThisQuiz = "You already attempted this quiz";
     }
 }

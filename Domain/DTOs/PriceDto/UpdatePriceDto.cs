@@ -13,4 +13,7 @@ public class UpdatePriceDto
     public double amount { get; set; } = 100000;
     [MaxLength(5000, ErrorMessage = "note max length is 5000 characters!")]
     public string? note { get; set; }
+    [Required(ErrorMessage = "unit is required!")]
+    [MaxLength(200, ErrorMessage = "unit max length is 200 characters!")]
+    public string unit { get; set; } = string.Empty;
 }

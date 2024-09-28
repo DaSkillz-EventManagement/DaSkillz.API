@@ -6,6 +6,6 @@ public class ResponseQuizDto
     public Guid eventId { get; set; }
     public string QuizName { get; set; } = null!;
     public string QuizDescription { get; set; } = null!;
-    public Guid CreatedBy { get; set; }
-    public DateTime CreateAt { get; set; }
+    public string TotalTime { get; set; } = null!;
+    public string status { get; set; } = null!;
 }

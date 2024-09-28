@@ -5,6 +5,7 @@ namespace Domain.Repositories
 {
     public interface IUserRepository : IRepository<User>
     {
+        Task<bool> CheckUserIsPremium(Guid? userId);
         Task<IEnumerable<User>> GetUsersByKeywordAsync(string keyword);
         Task<User?> GetUserByIdAsync(Guid userId);
         Task<User?> GetUserByEmailAsync(string email);
@@ -16,5 +17,6 @@ namespace Domain.Repositories
         Task<int> GetTotalUsersAsync();
         Task<IEnumerable<User>> UpdateIsPremiumUser();
         Task<bool> IsPremiumAccount(Guid userId);
+        Task<IEnumerable<User>> FilterUsersAsync(Guid? userId = null, string? fullName = null, string? email = null, string? phone = null, string? status = null);
     }
 }

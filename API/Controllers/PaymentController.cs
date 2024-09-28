@@ -4,6 +4,7 @@ using Application.UseCases.Payment.Commands.Refund;
 using Application.UseCases.Payment.Queries.GetAllTransaction;
 using Application.UseCases.Payment.Queries.GetFilterTransaction;
 using Application.UseCases.Payment.Queries.GetOrderStatus;
+using Application.UseCases.Payment.Queries.GetTotalTransaction;
 using Application.UseCases.Payment.Queries.GetTransactionByEvent;
 using Application.UseCases.Payment.Queries.GetTransactionByUser;
 using Domain.Enum.Payment;
@@ -11,6 +12,7 @@ using Elastic.Clients.Elasticsearch.Fluent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace API.Controllers
@@ -80,6 +82,19 @@ namespace API.Controllers
                                                 CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetFilterTransactionQuery(eventId, userId, (int?)status, (int?)subscriptionType), cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
+
+        [HttpGet("total")]
+        [SwaggerOperation(Summary = "Get total transactions by userId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTotalTransaction(
+                                                [FromQuery] Guid? eventId,
+                                                [FromQuery, Required] Guid? userId,
+                                                CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetTotalTransactionQuery(eventId, userId), cancellationToken);
             return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
         }
 

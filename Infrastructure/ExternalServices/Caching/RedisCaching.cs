@@ -96,15 +96,11 @@ namespace Infrastructure.ExternalServices.Caching
         /// <returns></returns>
         public async Task<List<string>> SearchKeysAsync(string keyword)
         {
-            // Get the Redis server (works for a single server setup)
             var server = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
-
-            // Search for keys that match the pattern (e.g., "user*")
-            //var keys = server.Keys(pattern: $"{keyword}*").Select(key => (string)key!).ToList();
 
             var data = new List<string>();
 
-            var scanResult = server.KeysAsync(pattern: $"{keyword}*");
+            var scanResult = server.KeysAsync(pattern: $"*{keyword}*");
 
             await foreach (var key in scanResult)
             {
