@@ -2,34 +2,27 @@
 {
     public static class MessageCommon
     {
-        public const string GetSuccesfully = "Get Succesfully!";
-        public const string GetFailed = "Get Failed";
-        public const string SavingSuccesfully = "Saving Succesfully!";
-        public const string SavingFailed = "Saving Failed";
-        public const string DeleteSuccessfully = "Delete Successfully";
+        public const string GetSuccesfully = "GET_SUCCESSFULLY";
+        public const string GetFailed = "GET_FAILED";
+        public const string SavingSuccesfully = "SAVING_SUCCESSFULLY";
+        public const string SavingFailed = "SAVING_FAILED";
+        public const string DeleteSuccessfully = "DELETE_SUCCESFULLY";
         public const string DeleteFailed = "DELETE_EVENT_FAIL";
-        public const string UpdateSuccesfully = "Update Successfully";
-        public const string UpdateFailed = "Update Failed";
-        public const string CreateSuccesfully = "Create Successfully";
-        public const string CreateFailed = "Create Failed";
+        public const string UpdateSuccesfully = "UPDATE_SUCCESSFULLY";
+        public const string UpdateFailed = "UPDATE_FAILED";
+        public const string CreateSuccesfully = "CREATED_SUCCESSFULLY";
+        public const string CreateFailed = "CREATED_FAILED";
 
-        public const string ValidateSuccessfully = "Validate Successfully!";
-        public const string NationNotFound = "Nation not found!";
-        public const string FeatureFilmNotFound = "Feature Film not found!";
+        public const string NotFound = "NOT_FOUND";
+        public const string Complete = "COMPLETE";
 
-        public const string NotFound = "Not Found!";
-        public const string Complete = "Complete!";
-        public const string NotComplete = "Not Complete";
+        public const string ServerError = "SOMETHINGS WENT WRONG";
+        public const string SessionTimeout = "SESSION_TIMEOUT";
 
-        public const string ServerError = "Somethings have wrong!";
-        public const string SessionTimeout = "Session Timeout!";
+        public const string ReturnListHasValue = "LIST_HAS_VALUE";
 
-        public const string ReturnListHasValue = "List has value";
-        public const string ReturnNullList = "List is null";
-
-        public const string Unauthorized = "Unauthorized";
-        public const string Blocked = "User blocked";
-        public const string InvalidToken = "Invalid Token";
+        public const string Unauthorized = "UNAUTHORIZED";
+        public const string Blocked = "USER_BLOCKED";
 
 
 

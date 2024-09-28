@@ -73,7 +73,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                     return new APIResponse
                     {
                         StatusResponse = HttpStatusCode.BadRequest,
-                        Message = "ALREADY_HAVE_PROCESSING_TICKET_ORDER"
+                        Message = MessagePayment.ALREADY_HAVE_PROCESSING_TICKET_ORDER
                     };
                 }
 
@@ -85,7 +85,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                         return new APIResponse
                         {
                             StatusResponse = HttpStatusCode.BadRequest,
-                            Message = "Bạn đã thanh toán vé cho sự kiện này"
+                            Message = MessagePayment.ALREADY_PAID_THIS_TICKET
                         };
                     }
                 }
