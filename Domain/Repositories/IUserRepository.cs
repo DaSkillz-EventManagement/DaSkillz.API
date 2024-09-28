@@ -15,5 +15,6 @@ namespace Domain.Repositories
         Task<IEnumerable<IGrouping<int, User>>> GetUsersCreatedInMonthAsync(int year);
         Task<int> GetTotalUsersAsync();
         Task<IEnumerable<User>> UpdateIsPremiumUser();
+        Task<bool> IsPremiumAccount(Guid userId);
     }
 }

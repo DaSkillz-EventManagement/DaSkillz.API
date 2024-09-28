@@ -90,5 +90,10 @@ namespace Infrastructure.Repositories
                     .Where(u => u.Subscription != null)
                      .ToListAsync();
         }
+
+        public async Task<bool> IsPremiumAccount(Guid userId)
+        {
+            return await _context.Users.AnyAsync(e => e.UserId.Equals(userId) && e.IsPremiumUser);
+        }
     }
 }

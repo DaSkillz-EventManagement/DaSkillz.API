@@ -32,11 +32,11 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> AddAdvertised([FromBody] Guid eventId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<APIResponse>> AddAdvertised([FromBody] Guid eventId, int numOfDate, CancellationToken cancellationToken = default)
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             
-            var result = await _mediator.Send(new UseAdvertisedEventQuery(eventId, userId), cancellationToken);
+            var result = await _mediator.Send(new UseAdvertisedEventQuery(eventId, userId, numOfDate), cancellationToken);
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
 
