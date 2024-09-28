@@ -41,16 +41,6 @@ public class CreateQuestionsHandler : IRequestHandler<CreateQuestionsCommand, AP
                 Data = null
             };
         }
-        /*var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
-        if (!isOwner)
-        {
-            return new APIResponse
-            {
-                StatusResponse = HttpStatusCode.BadRequest,
-                Message = MessageEvent.OnlyHostCanCreateQuiz,
-                Data = null
-            };
-        }*/
         #endregion
 
         if (request.Dtos == null || !request.Dtos.Any())

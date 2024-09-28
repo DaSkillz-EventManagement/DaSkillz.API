@@ -10,7 +10,8 @@ public class UserAnswer
     public Guid QuestionId { get; set; }
     public string? AnswerContent { get; set; }
     public string? TotalTime { get; set; }
-
+    public bool IsCorrect { get; set; }
+    public int AttemptNo { get; set; }
 
     public virtual Quiz Quiz { get; set; } = null!;
     public virtual Question Question { get; set; } = null!;

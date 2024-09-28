@@ -15,8 +15,17 @@ public class UserAnswerRepository : RepositoryBase<UserAnswer>, IUserAnswerRepos
         _context = context;
     }
 
-    public async Task<bool> IsAttempted(Guid quizId)
+    public async Task<bool> IsAttempted(Guid quizId, Guid userId)
     {
-        return await _context.UserAnswers.AnyAsync(u => u.QuizId == quizId);  
+        return await _context.UserAnswers.AnyAsync(u => u.QuizId == quizId && u.UserId == userId);  
+    }
+    public async Task<int> GetAttemptNo(Guid quizId, Guid userId)
+    {
+        var userAttempt = await _context.UserAnswers
+        .Where(u => u.QuizId == quizId && u.UserId == userId)
+        .OrderByDescending(u => u.AttemptNo)
+        .FirstAsync();
+
+        return userAttempt?.AttemptNo ?? 0;    
     }
 }

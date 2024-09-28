@@ -11,7 +11,7 @@ public class Quiz
     public Guid CreatedBy { get; set; }
     public DateTime CreateAt { get; set; }
     public string status { get; set; } = null!;
-
+    public int AttemptAllow {  get; set; }
 
     public virtual Event Event { get; set; } = null!;
     public virtual User? User { get; set; }

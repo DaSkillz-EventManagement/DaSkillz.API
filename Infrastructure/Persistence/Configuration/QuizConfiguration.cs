@@ -27,6 +27,9 @@ public class QuizConfiguration : IEntityTypeConfiguration<Quiz>
         builder.Property(e => e.CreatedBy)
             .IsRequired();
 
+        builder.Property(e => e.AttemptAllow)
+            .HasColumnType("int");
+
         builder.Property(e => e.CreateAt)
             .IsRequired().HasColumnType("datetime");
 

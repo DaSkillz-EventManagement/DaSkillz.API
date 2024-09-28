@@ -8,7 +8,7 @@ namespace Domain.DTOs.Quiz.Request;
 
 public class UpdateQuestionDto
 {
-    public Guid QuestionId { get; set; }
+    public Guid? QuestionId { get; set; }
     public string QuestionName { get; set; } = null!;
     public bool IsMultipleAnswers { get; set; } = false;
     public string CorrectAnswerLabel { get; set; } = null!;

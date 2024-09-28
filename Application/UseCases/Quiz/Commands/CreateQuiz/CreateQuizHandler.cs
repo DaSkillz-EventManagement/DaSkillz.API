@@ -28,16 +28,6 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
     public async Task<APIResponse> Handle(CreateQuizCommand request, CancellationToken cancellationToken)
     {
         #region Authen/author
-        var isOwner = await _eventRepository.IsOwner(request.QuizDto.EventId, request.UserId);
-        if (!isOwner)
-        {
-            return new APIResponse
-            {
-                StatusResponse = HttpStatusCode.BadRequest,
-                Message = MessageEvent.OnlyHostCanCreateQuiz,
-                Data = null
-            };
-        }
         #endregion
         Quiz entity = _mapper.Map<Quiz>(request.QuizDto);
         entity.QuizId = Guid.NewGuid();

@@ -20,20 +20,22 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
     private readonly IUserAnswerRepository _userAnswerRepository;
     private readonly IQuestionRepository _questionRepository;
     private readonly IAnswerRepository _answerRepository;
+    private readonly IQuizRepository _quizRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public AttemptQuizHandler(IUserAnswerRepository userAnswerRepository, IQuestionRepository questionRepository, 
-        IAnswerRepository answerRepository, IUnitOfWork unitOfWork)
+        IAnswerRepository answerRepository, IUnitOfWork unitOfWork, IQuizRepository quizRepository)
     {
         _userAnswerRepository = userAnswerRepository;
         _questionRepository = questionRepository;
         _answerRepository = answerRepository;
+        _quizRepository = quizRepository;
         _unitOfWork = unitOfWork;
     }
     #endregion
     public async Task<APIResponse> Handle(AttemptQuizCommand request, CancellationToken cancellationToken)
     {
-        bool isAttempted = await _userAnswerRepository.IsAttempted(request.QuizId);
+        /*bool isAttempted = await _userAnswerRepository.IsAttempted(request.QuizId, request.UserId);
         if (isAttempted)
         {
             return new APIResponse
@@ -41,6 +43,18 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
                 StatusResponse = HttpStatusCode.BadRequest,
                 Message = MessageEvent.YouAlreadyAttemptedThisQuiz,
                 Data = MessageEvent.YouAlreadyAttemptedThisQuiz
+            };
+        }*/
+
+        int attempNo = await _userAnswerRepository.GetAttemptNo(request.QuizId, request.UserId);
+        int quizAttemptAllow = await _quizRepository.GetQuizAttemptAllow(request.QuizId);
+        if(quizAttemptAllow > 0 && attempNo >= quizAttemptAllow)
+        {
+            return new APIResponse
+            {
+                StatusResponse = HttpStatusCode.BadRequest,
+                Message = MessageEvent.QuizAttemptReachedLimit,
+                Data = null
             };
         }
         int maxPoint = await _questionRepository.CountQuestion(request.QuizId);
@@ -57,11 +71,13 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
             if(attempQuizDto.AnswerId != null)
             {
                 entity.AnswerContent = attempQuizDto.AnswerId.ToString();
+                entity.IsCorrect = false;
                 Answer userAnswer = await _answerRepository.GetById(attempQuizDto.AnswerId);
                 if (userAnswer!.IsCorrectAnswer)
                 {
                     userPoint++;
                     entity.AnswerContent = userAnswer.AnswerContent;
+                    entity.IsCorrect = true;
                 }
             }
             if(attempQuizDto.AnswerContent != null) {
@@ -70,8 +86,10 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
                 if (question.CorrectAnswerLabel.Equals(attempQuizDto.AnswerContent, StringComparison.OrdinalIgnoreCase))
                 {
                     userPoint++;
+                    entity.IsCorrect = true;
                 }
             }
+            entity.AttemptNo = attempNo + 1;
             await _userAnswerRepository.Add(entity);
         }
         try
