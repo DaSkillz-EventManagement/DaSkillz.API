@@ -23,4 +23,6 @@ public class CreateQuizDto
     public QuizEnum QuizStatus { get; set; }
     [Required(ErrorMessage = "TotalTime is required!")]
     public string TotalTime { get; set; }
+    [Required(ErrorMessage = "AttemptAllow is required!")]
+    public int AttemptAllow { get; set; } = 1;
 }

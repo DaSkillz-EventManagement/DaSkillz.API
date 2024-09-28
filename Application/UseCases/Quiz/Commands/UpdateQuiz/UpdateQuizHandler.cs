@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.UseCases.Quizs.Commands.UpdateQuiz;
 
@@ -44,14 +45,21 @@ public class UpdateQuizHandler : IRequestHandler<UpdateQuizCommand, APIResponse>
         quiz.QuizDescription = request.QuizDto.QuizDescription;
         quiz.status = request.QuizDto.status;
         quiz.TotalTime = request.QuizDto.TotalTime;
+        quiz.AttemptAllow = request.QuizDto.AttemptAllow;
         try
         {
-            return new APIResponse
+            APIResponse response = new APIResponse();
+            if (await _unitOfWork.SaveChangesAsync() > 0)
             {
-                StatusResponse = (await _unitOfWork.SaveChangesAsync() > 0) ? HttpStatusCode.OK : HttpStatusCode.BadRequest,
-                Message = (await _unitOfWork.SaveChangesAsync() > 0) ? MessageCommon.UpdateSuccesfully : MessageCommon.UpdateFailed,
-                Data = _mapper.Map<ResponseQuizDto>(quiz)
-            };
+                response.StatusResponse = HttpStatusCode.OK;
+                response.Message = MessageCommon.UpdateSuccesfully;
+                response.Data = _mapper.Map<ResponseQuizDto>(quiz);
+                return response;
+            }
+            response.StatusResponse = HttpStatusCode.BadRequest;
+            response.Message = MessageCommon.UpdateFailed;
+            response.Data = _mapper.Map<ResponseQuizDto>(quiz);
+            return response;
         } catch (Exception ex)
         {
             return new APIResponse
