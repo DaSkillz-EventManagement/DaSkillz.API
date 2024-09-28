@@ -1,7 +1,7 @@
 ﻿namespace Application.ResponseMessage
 {
 
-    public static class MessageEvent
+    public static class MessageParticipant
     {
         // Event Message response
         public const string CheckInUserSuccess = "CHECK_IN_SUCCESS";
@@ -20,6 +20,5 @@
         public const string TransactionIsNotValid = "INVALID_TRANSACTION_CONFIRM_PAYMENT";
         public const string ParticipantCapacityLimitReached = "PARTICIPANT_CAPACITY_LIMIT_REACHED";
     }
-
-
 }
+

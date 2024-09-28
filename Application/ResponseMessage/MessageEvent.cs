@@ -1,8 +1,5 @@
 ﻿namespace Application.ResponseMessage
-{
-    namespace Application.ResponseMessage
-    {
-        public static class MessageEvent
+{        public static class MessageEvent
         {
             // Start date must be at least 12 hours after the current time, and the end date must be at least 30 minutes after the start date
             public const string StartEndTimeValidation = "START_END_TIME_VALIDATION";
@@ -54,7 +51,8 @@
 
             // There is still remaining time for the current advertising period
             public const string TheTimeOfAdvertisingIsStillRemain = "ADVERTISING_TIME_REMAINING";
-        }
-    }
+            public const string CreateQuizFailed = "CREATE_QUIZ_FAILED";
+        public const string QuizAttemptReachedLimit = "NO_MORE_QUIZ_ATTEMPT_LEFT";
 
+    }
 }
