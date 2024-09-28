@@ -7,7 +7,7 @@ public class ResponseQuizDto
     public string QuizName { get; set; } = null!;
     public string QuizDescription { get; set; } = null!;
     public string TotalTime { get; set; } = null!;
-    public int status { get; set; }
+    public int QuizStatus { get; set; }
     public int AttemptAllow { get; set; } = 0;
     public long? DueDate { get; set; }
 }
