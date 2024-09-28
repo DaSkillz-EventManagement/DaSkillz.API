@@ -5,7 +5,6 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Enum.Participant;
-using Application.Abstractions.Email;
 using Domain.DTOs.ParticipantDto;
 using Domain.Constants.Mail;
 using Domain.DTOs.Sponsors;
