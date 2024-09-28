@@ -43,7 +43,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
         public async Task<APIResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
             var isPremium = await _userRepository.IsPremiumAccount(request.UserId);
-
+            
 
             if(!isPremium)
             {
