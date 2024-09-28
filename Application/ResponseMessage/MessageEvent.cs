@@ -22,5 +22,6 @@
         public const string TheTimeOfAdvertisingIsStillRemain = "The time of advertising is still remain";
         public const string YouAlreadyAttemptedThisQuiz = "You already attempted this quiz";
         public const string QuizAttemptReachedLimit = "You have no more attempt for this quiz";
+        public const string CreateQuizFailed = "FAILED_TO_CREATE_QUIZ";
     }
 }

@@ -53,7 +53,7 @@ public class DeleteQuizHandler : IRequestHandler<DeleteQuizCommand, APIResponse>
                 Data = request.QuizId.ToString()
             };
         }
-        quiz.status = QuizEnum.Deleted.ToString();
+        quiz.status = (int)QuizEnum.Deleted;
         await _quizRepository.Update(quiz);
         try
         {
