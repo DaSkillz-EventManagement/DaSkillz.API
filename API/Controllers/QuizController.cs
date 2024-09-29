@@ -84,9 +84,9 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> UpdateQuiz([FromQuery, Required] Guid QuizId, [FromBody, Required] UpdateQuizDto dto, CancellationToken token = default)
+        public async Task<IActionResult> UpdateQuiz([FromBody, Required] UpdateQuizDto dto, CancellationToken token = default)
         {
-            var result = await _mediator.Send(new UpdateQuizCommand(dto, QuizId), token);
+            var result = await _mediator.Send(new UpdateQuizCommand(dto), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
