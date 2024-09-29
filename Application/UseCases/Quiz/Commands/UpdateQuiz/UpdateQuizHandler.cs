@@ -46,7 +46,7 @@ public class UpdateQuizHandler : IRequestHandler<UpdateQuizCommand, APIResponse>
         quiz.QuizStatus = (int)request.QuizDto.QuizStatus;
         quiz.TotalTime = request.QuizDto.TotalTime;
         quiz.AttemptAllow = request.QuizDto.AttemptAllow;
-        quiz.DueDate = request.QuizDto.DueDate;
+        quiz.DueDate = request.QuizDto.DueDate == null ? null : request.QuizDto.DueDate;
         await _quizRepository.Update(quiz);
         try
         {
