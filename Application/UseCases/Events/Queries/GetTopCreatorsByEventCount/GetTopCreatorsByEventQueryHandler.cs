@@ -18,14 +18,14 @@ namespace Application.UseCases.Events.Queries.GetTopCreatorsByEventCount
 
         public async Task<List<EventCreatorLeaderBoardDto>> Handle(GetTopCreatorsByEventQuery request, CancellationToken cancellationToken)
         {
-            //string cacheKey = $"GetTopCreatorsByEvent";
-            //var cachedDataString = await _redisCaching.GetAsync<List<EventCreatorLeaderBoardDto>>(cacheKey);
-            //if (cachedDataString != null)
-            //{
-            //    return cachedDataString;
-            //}
+            string cacheKey = $"getEv_TopCreators";
+            var cachedDataString = await _redisCaching.GetAsync<List<EventCreatorLeaderBoardDto>>(cacheKey);
+            if (cachedDataString != null)
+            {
+                return cachedDataString;
+            }
             var result = await _eventRepo.GetTop10CreatorsByEventCount();
-            //await _redisCaching.SetAsync(cacheKey, result, 10);
+            await _redisCaching.SetAsync(cacheKey, result, 10);
             return result;
         }
     }

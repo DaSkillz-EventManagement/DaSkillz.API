@@ -18,12 +18,12 @@ namespace Application.UseCases.Events.Queries.GetAllEventBlobUris
 
         public async Task<Dictionary<string, List<string>>> Handle(GetAllEventBlobUrisQuery request, CancellationToken cancellationToken)
         {
-            //string cacheKey = $"GetAllEventBlob";
-            //var cachedDataString = await _redisCaching.GetAsync<Dictionary<string, List<string>>>(cacheKey);
-            //if (cachedDataString != null)
-            //{
-            //    return cachedDataString;
-            //}
+            string cacheKey = $"GetAllEventBlob";
+            var cachedDataString = await _redisCaching.GetAsync<Dictionary<string, List<string>>>(cacheKey);
+            if (cachedDataString != null)
+            {
+                return cachedDataString;
+            }
 
             Event eventData = await _eventRepo.GetById(request.EventId);
             List<string> blobUris = new List<string>();
@@ -42,7 +42,7 @@ namespace Application.UseCases.Events.Queries.GetAllEventBlobUris
                 { "event sponsor logos", blobUris }
             };
 
-            //await _redisCaching.SetAsync(cacheKey, result, 10);
+            await _redisCaching.SetAsync(cacheKey, result, 10);
 
 
             return result;
