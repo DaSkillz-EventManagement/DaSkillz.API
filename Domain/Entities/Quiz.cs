@@ -10,7 +10,7 @@ public class Quiz
     public string TotalTime { get; set; } = null!;
     public Guid CreatedBy { get; set; }
     public DateTime CreateAt { get; set; }
-    public int status { get; set; }
+    public int QuizStatus { get; set; }
     public int AttemptAllow {  get; set; }
     public long? DueDate { get; set; }
 

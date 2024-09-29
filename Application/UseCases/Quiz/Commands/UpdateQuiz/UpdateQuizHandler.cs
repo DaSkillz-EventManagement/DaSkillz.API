@@ -43,7 +43,7 @@ public class UpdateQuizHandler : IRequestHandler<UpdateQuizCommand, APIResponse>
         }
         quiz.QuizName = request.QuizDto.QuizName;
         quiz.QuizDescription = request.QuizDto.QuizDescription;
-        quiz.status = (int)request.QuizDto.QuizStatus;
+        quiz.QuizStatus = (int)request.QuizDto.QuizStatus;
         quiz.TotalTime = request.QuizDto.TotalTime;
         quiz.AttemptAllow = request.QuizDto.AttemptAllow;
         try
