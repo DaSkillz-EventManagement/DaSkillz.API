@@ -21,17 +21,17 @@ namespace Application.UseCases.Events.Queries.GetUserHostEvent
 
         public async Task<List<EventPreviewDto>> Handle(GetUserHostEventQuery request, CancellationToken cancellationToken)
         {
-            //string cacheKey = $"GetUserHostEvent_{request.UserId}";
-            //var cachedDataString = await _redisCaching.GetAsync<List<EventPreviewDto>>(cacheKey);
-            //if (cachedDataString != null)
-            //{
-            //    return cachedDataString;
-            //}
+            string cacheKey = $"getEv_UserHostEvent_{request.UserId}";
+            var cachedDataString = await _redisCaching.GetAsync<List<EventPreviewDto>>(cacheKey);
+            if (cachedDataString != null)
+            {
+                return cachedDataString;
+            }
 
             var result = await _eventRepo.GetUserHostEvent(request.UserId);
             var eventPreview = result.Select(_eventRepo.ToEventPreview);
 
-            //await _redisCaching.SetAsync(cacheKey, eventPreview, 10);
+            await _redisCaching.SetAsync(cacheKey, eventPreview, 10);
             return eventPreview.ToList();
         }
 

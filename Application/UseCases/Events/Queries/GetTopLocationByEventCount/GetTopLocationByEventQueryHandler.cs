@@ -18,7 +18,16 @@ namespace Application.UseCases.Events.Queries.GetTopLocationByEventCount
 
         public async Task<List<EventLocationLeaderBoardDto>> Handle(GetTopLocationByEventQuery request, CancellationToken cancellationToken)
         {
-            return await _eventRepo.GetTop10LocationByEventCount();
+            string cacheKey = $"getEv_TopLocations";
+            var cachedDataString = await _redisCaching.GetAsync<List<EventLocationLeaderBoardDto>>(cacheKey);
+            if (cachedDataString != null)
+            {
+                return cachedDataString;
+            }
+
+            var result =  await _eventRepo.GetTop10LocationByEventCount();
+            await _redisCaching.SetAsync(cacheKey, result, 10);
+            return result;
         }
     }
 }

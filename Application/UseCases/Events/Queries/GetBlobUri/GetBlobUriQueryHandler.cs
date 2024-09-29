@@ -21,17 +21,17 @@ namespace Application.UseCases.Events.Queries.GetBlobUri
 
         public async Task<SponsorLogoDto> Handle(GetBlobUriQuery request, CancellationToken cancellationToken)
         {
-            //string cacheKey = $"GetBlobUri_{request.BlobName}";
-            //var cachedDataString = await _redisCaching.GetAsync<SponsorLogoDto>(cacheKey);
-            //if (cachedDataString != null)
-            //{
-            //    return cachedDataString;
-            //}
+            string cacheKey = $"GetBlobUri_{request.BlobName}";
+            var cachedDataString = await _redisCaching.GetAsync<SponsorLogoDto>(cacheKey);
+            if (cachedDataString != null)
+            {
+                return cachedDataString;
+            }
 
             var result = await _logoRepository.GetByName(request.BlobName);
             SponsorLogoDto response = _mapper.Map<SponsorLogoDto>(result);
 
-            //await _redisCaching.SetAsync(cacheKey, response, 10);
+            await _redisCaching.SetAsync(cacheKey, response, 10);
 
 
             return response;

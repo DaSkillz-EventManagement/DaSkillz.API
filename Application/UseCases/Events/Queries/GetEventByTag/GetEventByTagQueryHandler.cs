@@ -28,30 +28,30 @@ namespace Application.UseCases.Events.Queries.GetEventByTag
 
         public async Task<PagedList<EventResponseDto>> Handle(GetEventByTagQuery request, CancellationToken cancellationToken)
         {
-            
-            //var cacheKey = EventHelper.GenerateCacheKeyByTag(request);
 
-            
-            //var cachedDataString = await _redisCaching.GetAsync<string>(cacheKey);
-            //if (cachedDataString != null)
-            //{
-                
-            //    var jsonObject = JsonConvert.DeserializeObject<JObject>(cachedDataString);
+            var cacheKey = EventHelper.GenerateCacheKeyByTag(request);
 
-                
-            //    var items = jsonObject["Items"].ToObject<List<EventResponseDto>>();
-            //    var totalItems = jsonObject["TotalItems"].Value<int>();
-            //    var currentPage = jsonObject["CurrentPage"].Value<int>();
-            //    var eachPage = jsonObject["EachPage"].Value<int>();
 
-                
-            //    return new PagedList<EventResponseDto>(
-            //        items: items,
-            //        totalItems: totalItems,
-            //        currentPage: currentPage,
-            //        eachPage: eachPage
-            //    );
-            //}
+            var cachedDataString = await _redisCaching.GetAsync<string>(cacheKey);
+            if (cachedDataString != null)
+            {
+
+                var jsonObject = JsonConvert.DeserializeObject<JObject>(cachedDataString);
+
+
+                var items = jsonObject["Items"].ToObject<List<EventResponseDto>>();
+                var totalItems = jsonObject["TotalItems"].Value<int>();
+                var currentPage = jsonObject["CurrentPage"].Value<int>();
+                var eachPage = jsonObject["EachPage"].Value<int>();
+
+
+                return new PagedList<EventResponseDto>(
+                    items: items,
+                    totalItems: totalItems,
+                    currentPage: currentPage,
+                    eachPage: eachPage
+                );
+            }
 
 
             var result = await _eventRepo.GetEventsByListTags(request.TagIds, request.PageNo, request.ElementEachPage);
@@ -59,16 +59,16 @@ namespace Application.UseCases.Events.Queries.GetEventByTag
             var pages = new PagedList<EventResponseDto>
                 (response, response.TotalItems, request.PageNo, request.ElementEachPage);
 
-            
-            //var serializedPagedList = JsonConvert.SerializeObject(new
-            //{
-            //    Items = pages.Items,
-            //    TotalItems = pages.TotalItems,
-            //    CurrentPage = pages.CurrentPage,
-            //    EachPage = pages.EachPage
-            //});
 
-            //await _redisCaching.SetAsync(cacheKey, serializedPagedList, 10);
+            var serializedPagedList = JsonConvert.SerializeObject(new
+            {
+                Items = pages.Items,
+                TotalItems = pages.TotalItems,
+                CurrentPage = pages.CurrentPage,
+                EachPage = pages.EachPage
+            });
+
+            await _redisCaching.SetAsync(cacheKey, serializedPagedList, 10);
 
             return pages;
         }
