@@ -12,10 +12,8 @@ namespace Application.UseCases.Quizs.Commands.UpdateQuiz;
 public class UpdateQuizCommand : IRequest<APIResponse>
 {
     public UpdateQuizDto QuizDto { get; set; }
-    public Guid QuizId { get; set; }
-    public UpdateQuizCommand(UpdateQuizDto quizDto, Guid quizId)
+    public UpdateQuizCommand(UpdateQuizDto quizDto)
     {
         QuizDto = quizDto;
-        QuizId = quizId;
     }
 }
