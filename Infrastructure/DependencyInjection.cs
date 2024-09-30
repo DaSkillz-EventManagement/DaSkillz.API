@@ -33,6 +33,8 @@ using Infrastructure.ExternalServices.Quartz;
 using Infrastructure.ExternalServices.Quartz.PaymentScheduler;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Medallion.Threading.Redis;
+using Medallion.Threading;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -76,9 +78,10 @@ namespace Infrastructure
 
             //Add redis
             var redisConnection = configuration["Redis:HostName"];
+            var redisDatabase = ConnectionMultiplexer.Connect(redisConnection);
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
-                return ConnectionMultiplexer.Connect(redisConnection);
+                return redisDatabase;
             });
 
             services.AddStackExchangeRedisCache(options =>
@@ -132,6 +135,11 @@ namespace Infrastructure
                 });
 
             //add life time for the services
+
+            //add distributed lock with redis in DI container
+            services.AddSingleton<IDistributedLockProvider>(_ =>
+            new RedisDistributedSynchronizationProvider(redisDatabase!.GetDatabase()));
+
             services.AddSingleton(client);
             services.AddSingleton<IRedisCaching, RedisCaching>();
             services.AddScoped(typeof(IElasticService<>), typeof(ElasticService<>));
@@ -169,16 +177,16 @@ namespace Infrastructure
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddQuartz(q =>
             {
-                var checkJobKey = new JobKey("CheckTransactionStatusJob");
-                q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
-                q.AddTrigger(opts => opts
-                    .ForJob(checkJobKey)
-                    .WithIdentity("CheckTransactionStatusTrigger")
-                    .StartNow()
-                    .WithSimpleSchedule(x => x
-                        .WithIntervalInMinutes(2)
-                        .RepeatForever()
-                        .Build()));
+                //var checkJobKey = new JobKey("CheckTransactionStatusJob");
+                //q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
+                //q.AddTrigger(opts => opts
+                //    .ForJob(checkJobKey)
+                //    .WithIdentity("CheckTransactionStatusTrigger")
+                //    .StartNow()
+                //    .WithSimpleSchedule(x => x
+                //        .WithIntervalInMinutes(2)
+                //        .RepeatForever()
+                //        .Build()));
 
                 var deactivateJobKey = new JobKey("DeactivateExpiredSubscriptionsJob");
                 q.AddJob<DeactivateExpiredSubscriptionsJob>(opts => opts.WithIdentity(deactivateJobKey));

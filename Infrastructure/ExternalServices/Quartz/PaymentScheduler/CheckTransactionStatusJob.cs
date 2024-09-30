@@ -57,7 +57,7 @@ namespace Infrastructure.ExternalServices.Quartz.PaymentScheduler
                     transactionId = existInDb.Apptransid;
                 }
 
-                //var result = await _zaloPayService.QueryOrderStatus(transactionId);
+                var result = await _zaloPayService.QueryOrderStatus(transactionId);
 
                 // Query ZaloPay API
                 var queryOrder = await _mediator.Send(new GetOrderStatusQuery(transactionId));
