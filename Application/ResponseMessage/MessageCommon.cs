@@ -20,6 +20,7 @@
         public const string SessionTimeout = "SESSION_TIMEOUT";
 
         public const string ReturnListHasValue = "LIST_HAS_VALUE";
+        public const string lockAcquired = "LOCK_ACQUIRED";
 
         public const string Unauthorized = "UNAUTHORIZED";
         public const string Blocked = "USER_BLOCKED";
