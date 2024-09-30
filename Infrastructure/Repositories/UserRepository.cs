@@ -61,7 +61,6 @@ namespace Infrastructure.Repositories
         {
             //var cacheKey = $"GetAllUser_{page}_{pagesize}_{sortBy}_{isAscending}";
             var entities = await _context.Users.
-                Include(a => a.Role).
                 Include(a => a.Subscription).
                 AsSplitQuery().
                 PaginateAndSort(page, pagesize, sortBy, isAscending).ToListAsync();
