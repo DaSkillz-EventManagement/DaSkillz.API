@@ -54,5 +54,7 @@ namespace Domain.Repositories
         Task<Dictionary<string, int>> CountByStatus();
         Task<List<EventPerMonth>> EventsPerMonth(DateTime startDate, DateTime endDate);
         Task<List<Event>> GetListEventsByListId(List<Guid> eventsId);
+
+        Task<List<Event>> GetListEventThisMonthByUser(Guid userId);
     }
 }

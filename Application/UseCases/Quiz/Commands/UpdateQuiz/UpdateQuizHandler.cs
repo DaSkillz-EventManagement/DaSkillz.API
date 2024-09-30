@@ -31,7 +31,7 @@ public class UpdateQuizHandler : IRequestHandler<UpdateQuizCommand, APIResponse>
 
     public async Task<APIResponse> Handle(UpdateQuizCommand request, CancellationToken cancellationToken)
     {
-        var quiz = await _quizRepository.GetById(request.QuizId);
+        var quiz = await _quizRepository.GetById(request.QuizDto.QuizId);
         if(quiz == null)
         {
             return new APIResponse
@@ -43,9 +43,11 @@ public class UpdateQuizHandler : IRequestHandler<UpdateQuizCommand, APIResponse>
         }
         quiz.QuizName = request.QuizDto.QuizName;
         quiz.QuizDescription = request.QuizDto.QuizDescription;
-        quiz.status = (int)request.QuizDto.QuizStatus;
+        quiz.QuizStatus = (int)request.QuizDto.QuizStatus;
         quiz.TotalTime = request.QuizDto.TotalTime;
         quiz.AttemptAllow = request.QuizDto.AttemptAllow;
+        quiz.DueDate = request.QuizDto.DueDate == null ? null : request.QuizDto.DueDate;
+        await _quizRepository.Update(quiz);
         try
         {
             APIResponse response = new APIResponse();

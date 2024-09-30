@@ -539,5 +539,21 @@ namespace Infrastructure.Repositories
                          .Where(e => eventsId.Contains(e.EventId))  // Filter based on the list of event IDs
                          .ToListAsync();
         }
+
+        public async Task<List<Event>> GetListEventThisMonthByUser(Guid userId)
+        {
+           
+            var now = DateTime.UtcNow;
+
+            
+            var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1); 
+
+            
+            var startOfMonthUnix = new DateTimeOffset(startOfMonth).ToUnixTimeSeconds();
+            var endOfMonthUnix = new DateTimeOffset(endOfMonth).ToUnixTimeSeconds();
+
+            return await _context.Events.Where(e => e.CreatedBy.Equals(userId) && e.EndDate <= endOfMonthUnix && e.EndDate >= startOfMonthUnix).ToListAsync();
+        }
     }
 }

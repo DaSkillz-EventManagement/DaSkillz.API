@@ -1,4 +1,6 @@
-﻿namespace Domain.DTOs.Quiz.Response;
+﻿using Domain.Enum.Quiz;
+
+namespace Domain.DTOs.Quiz.Response;
 
 public class ResponseQuizDto
 {
@@ -7,7 +9,7 @@ public class ResponseQuizDto
     public string QuizName { get; set; } = null!;
     public string QuizDescription { get; set; } = null!;
     public string TotalTime { get; set; } = null!;
-    public int QuizStatus { get; set; }
+    public QuizEnum QuizStatus { get; set; }
     public int AttemptAllow { get; set; } = 0;
     public long? DueDate { get; set; }
 }

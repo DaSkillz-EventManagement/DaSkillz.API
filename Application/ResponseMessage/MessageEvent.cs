@@ -52,7 +52,10 @@
             // There is still remaining time for the current advertising period
             public const string TheTimeOfAdvertisingIsStillRemain = "ADVERTISING_TIME_REMAINING";
             public const string CreateQuizFailed = "CREATE_QUIZ_FAILED";
-        public const string QuizAttemptReachedLimit = "NO_MORE_QUIZ_ATTEMPT_LEFT";
+            public const string QuizAttemptReachedLimit = "NO_MORE_QUIZ_ATTEMPT_LEFT";
+            
+            
+            public const string NumberEventsExceed = "THE_NUMBER_OF_CREATED_EVENTS_THIS_MONTH_REACH_PEAK";
 
     }
 }

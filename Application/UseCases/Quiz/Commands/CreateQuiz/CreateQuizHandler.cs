@@ -34,7 +34,7 @@ public class CreateQuizHandler : IRequestHandler<CreateQuizCommand, APIResponse>
         entity.CreateAt = DateTime.Now;
         entity.CreatedBy = request.UserId;
         entity.TotalTime = request.QuizDto.TotalTime;
-        entity.status = (int)request.QuizDto.QuizStatus;
+        entity.QuizStatus = (int)request.QuizDto.QuizStatus;
         await _quizRepository.Add(entity);
 
         #region Saving entity

@@ -31,7 +31,7 @@ namespace Application.UseCases.User.Queries.GetByUserId
             //solution: sẽ dụng bloom filter, clock, request coalescing (đang nghiên cứu, sẽ áp dụng sau)
             var cacheKey = $"user_{request.userId}";
             var cachingData = await _caching.GetAsync<Domain.Entities.User>(cacheKey);
-            if (cachingData != null )
+            if (cachingData != null)
             {
                 return new APIResponse
                 {

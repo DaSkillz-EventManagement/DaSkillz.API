@@ -43,15 +43,33 @@ namespace Application.UseCases.Events.Command.CreateEvent
         public async Task<APIResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
             var isPremium = await _userRepository.IsPremiumAccount(request.UserId);
-            
+            var listEvent = await _eventRepo.GetListEventThisMonthByUser(request.UserId);
 
-            if(!isPremium)
+            if (!isPremium)
             {
-                var listEvent = await _eventRepo.GetUserHostEvent(request.UserId);
+                if(listEvent.Count() == 2)
+                {
+                    return new APIResponse
+                    {
+                        Message = MessageEvent.NumberEventsExceed,
+                        StatusResponse = HttpStatusCode.BadRequest
+                    };
+                }
+            } else
+            {
+                if (listEvent.Count() == 15)
+                {
+                    return new APIResponse
+                    {
+                        Message = MessageEvent.NumberEventsExceed,
+                        StatusResponse = HttpStatusCode.BadRequest
+                    };
+                }
             }
 
+
             var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EventRequestDto.StartDate).DateTime;
-            if (tempStartDate > DateTime.Now.AddMonths(4))
+            if (tempStartDate > DateTime.Now.AddDays(15))
             {
                 return new APIResponse
                 {

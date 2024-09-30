@@ -140,16 +140,13 @@ namespace Application.UseCases.Events.Command.UpdateEvent
                 eventResponse.UpdatedAt = eventEntity.UpdatedAt.HasValue ? eventEntity.UpdatedAt.Value : null;
                 eventResponse.eventTags = _mapper.Map<List<EventTagDto>>(eventEntity.Tags);
 
-                //var eventIdString = request.EventId.ToString();
-                //var cacheKeyPrefix = "GetEventInfo_";
-                //var cacheKey = cacheKeyPrefix + eventIdString;
-
-                
-                //var matchingKeys = await _redisCaching.SearchKeysAsync(cacheKey);
-                //if(matchingKeys != null)
-                //{
-                //    await _redisCaching.DeleteKeyAsync(cacheKey);
-                //}
+                //Xóa tất cả cache mà có từ khóa nằm trong cacheKey
+                var invalidateCache = await _redisCaching.SearchKeysAsync("getEv");
+                if (invalidateCache != null)
+                {
+                    foreach (var key in invalidateCache)
+                        await _redisCaching.DeleteKeyAsync(key);
+                }
 
 
                 return new APIResponse
