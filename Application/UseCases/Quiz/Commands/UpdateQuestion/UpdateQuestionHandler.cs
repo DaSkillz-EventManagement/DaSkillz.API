@@ -31,14 +31,12 @@ public class UpdateQuestionHandler : IRequestHandler<UpdateQuestionCommand, APIR
     public async Task<APIResponse> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
     {
         foreach(var item in request.Question)
-        {
-            if(item.QuestionId != null)
-            {
-                Question temp = await _questionRepository.GetQuestionById(item.QuestionId.Value);
+        {   
+                Question temp = await _questionRepository.GetQuestionById(item.QuestionId);
                 if (temp != null)
                 {
                     temp.QuestionName = item.QuestionName;
-                    temp.CorrectAnswerLabel = item.CorrectAnswerLabel;
+                    temp.CorrectAnswerLabel = string.Empty;
                     temp.IsMultipleAnswers = item.IsMultipleAnswers;
                     await _questionRepository.Update(temp);
                     foreach (var answer in item.Answers)
@@ -52,13 +50,12 @@ public class UpdateQuestionHandler : IRequestHandler<UpdateQuestionCommand, APIR
                         }
                     }
                 }
-            }
             else
             {
                 Question newQuestion = new Question();
-                newQuestion.QuestionId = Guid.NewGuid();
+                newQuestion.QuestionId = item.QuestionId;
                 newQuestion.QuestionName = item.QuestionName;
-                newQuestion.CorrectAnswerLabel = item.CorrectAnswerLabel;
+                newQuestion.CorrectAnswerLabel = string.Empty;
                 newQuestion.IsMultipleAnswers= item.IsMultipleAnswers;
                 newQuestion.ShowAnswerAfterChoosing = false;
                 newQuestion.QuizId = request.QuizId;
@@ -66,7 +63,7 @@ public class UpdateQuestionHandler : IRequestHandler<UpdateQuestionCommand, APIR
                 foreach (var answer in item.Answers)
                 {                  
                     Answer entity = new Answer();
-                    entity.AnswerId = Guid.NewGuid();
+                    entity.AnswerId = answer.AnswerId;
                     entity.QuestionId = newQuestion.QuestionId;
                     entity.AnswerContent = answer.AnswerContent;
                     entity.IsCorrectAnswer = answer.IsCorrectAnswer;

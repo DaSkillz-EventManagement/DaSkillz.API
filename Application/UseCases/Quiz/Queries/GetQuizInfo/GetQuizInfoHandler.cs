@@ -33,9 +33,9 @@ public class GetQuizInfoHandler : IRequestHandler<GetQuizInfoQuery, APIResponse>
             }
             return new APIResponse
             {
-                StatusResponse = HttpStatusCode.NotFound,
-                Message = MessageCommon.NotFound,
-                Data = null
+                StatusResponse = HttpStatusCode.OK,
+                Message = MessageCommon.Complete,
+                Data = new List<ResponseQuestionDto>()
             };
         }
         catch (Exception ex)

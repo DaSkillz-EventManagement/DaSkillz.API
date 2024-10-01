@@ -98,9 +98,9 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut("question")]
-        public async Task<IActionResult> UpdateQuestion([FromBody, Required] List<UpdateQuestionDto> dto,[FromQuery] Guid questionId, CancellationToken token = default)
+        public async Task<IActionResult> UpdateQuestion([FromBody, Required] List<UpdateQuestionDto> dto,[FromQuery] Guid quizId, CancellationToken token = default)
         {
-            var result = await _mediator.Send(new UpdateQuestionCommand(dto, questionId), token);
+            var result = await _mediator.Send(new UpdateQuestionCommand(dto, quizId), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
