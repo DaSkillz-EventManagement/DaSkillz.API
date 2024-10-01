@@ -35,3 +35,12 @@ jobs:
 
       - name: Logout from Docker Hub
         run: docker logout
+        
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  # Set Azure credentials in GitHub Secrets
+
+      - name: Restart Azure App Service
+        run: |
+          az webapp restart --name daskillz --resource-group daskillz_production
