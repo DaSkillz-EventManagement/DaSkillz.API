@@ -108,7 +108,7 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                     var currentEvent = await _eventRepository.GetById(exist.EventId);
                     var Owner = await _userRepository.GetById(currentEvent!.CreatedBy!);
                     var user = await _userRepository.GetById(exist.UserId);
-                    await _emailService.SendEmailTicket(MailConstant.TicketMail.PathTemplate, MailConstant.TicketMail.Title, new TicketModel()
+                    var background = _emailService.SendEmailTicket(MailConstant.TicketMail.PathTemplate, MailConstant.TicketMail.Title, new TicketModel()
                     {
                         EventId = (Guid)exist.EventId,
                         UserId = (Guid)currentEvent.CreatedBy!,

@@ -32,8 +32,8 @@ namespace Application.UseCases.User.Queries.GetAllUsers
             //invalidate sẽ xóa cache key liên quan đến từ khóa
             //problem: nếu lượng user truy cập cao có thể dẫn đến cache stampede và cache penetration
             //solution: sẽ dụng bloom filter, clock, request coalescing (đang nghiên cứu, sẽ áp dụng sau)
-            var cacheKey = "all_user";
-            var cachingData = await _caching.GetAsync<IEnumerable<Domain.Entities.User>>(cacheKey);
+            var cacheKey = $"all_user_{request.Page}_{request.Pagesize}";
+            var cachingData = await _caching.GetAsync<IEnumerable<UserResponseDto>>(cacheKey);
             if (cachingData != null)
             {
                 return new APIResponse

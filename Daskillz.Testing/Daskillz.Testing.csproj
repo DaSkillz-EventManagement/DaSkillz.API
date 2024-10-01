@@ -25,10 +25,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\DaSkill\API\API.csproj" />
-		<ProjectReference Include="..\DaSkill\Application\Application.csproj" />
-		<ProjectReference Include="..\DaSkill\Domain\Domain.csproj" />
-		<ProjectReference Include="..\DaSkill\Infrastructure\Infrastructure.csproj" />
+		<ProjectReference Include="..\API\API.csproj" />
+		<ProjectReference Include="..\Application\Application.csproj" />
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

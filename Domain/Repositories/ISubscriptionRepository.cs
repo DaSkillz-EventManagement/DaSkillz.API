@@ -7,5 +7,6 @@ namespace Domain.Repositories
     {
         Task<Subscription?> GetByUserId(Guid? userId);
         Task<int> UpdateExpiredSubscription();
+        Task<IEnumerable<Subscription>> FilterSubscriptionAsync(Guid? userId, bool? isActive);
     }
 }

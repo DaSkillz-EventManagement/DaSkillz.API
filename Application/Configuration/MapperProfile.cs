@@ -12,6 +12,7 @@ using Domain.DTOs.PriceDto;
 using Domain.DTOs.Quiz.Request;
 using Domain.DTOs.Quiz.Response;
 using Domain.DTOs.Sponsors;
+using Domain.DTOs.Subscription;
 using Domain.DTOs.Tag;
 using Domain.DTOs.User.Response;
 using Domain.Entities;
@@ -32,6 +33,7 @@ namespace Application.Configuration
             CreateMap<User, UserResponseDto>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
                 .ReverseMap();
+
 
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)).ReverseMap();
@@ -144,6 +146,9 @@ namespace Application.Configuration
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
                 .ReverseMap();
             CreateMap<PagedList<Participant>, PagedList<ParticipantDto>>().ReverseMap();
+
+            CreateMap<Subscription, SubscriptionResponseDto>().ReverseMap();
+            
         }
     }
 }
