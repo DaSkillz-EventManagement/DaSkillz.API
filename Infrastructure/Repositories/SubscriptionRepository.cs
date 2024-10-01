@@ -26,5 +26,27 @@ namespace Infrastructure.Repositories
                 .Where(s => s.IsActive && s.EndDate <= DateTime.UtcNow)
                 .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsActive, false));
         }
+
+        public async Task<IEnumerable<Subscription>> FilterSubscriptionAsync(Guid? userId, bool? isActive)
+        {
+            // Tạo query gốc
+            var query = _context.Subscription.AsQueryable();
+
+            // Lọc theo userId
+            if (userId.HasValue)
+            {
+                query = query.Where(t => t.UserId == userId.Value);
+            }
+
+            // Lọc theo isActive
+            if (isActive.HasValue)
+            {
+                query = query.Where(t => t.IsActive == isActive.Value);
+            }
+
+            // Thực thi query và trả về kết quả
+            return await query.ToListAsync();
+        }
+
     }
 }
