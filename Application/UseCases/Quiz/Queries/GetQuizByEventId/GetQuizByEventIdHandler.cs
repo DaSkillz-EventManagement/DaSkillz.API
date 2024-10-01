@@ -32,9 +32,9 @@ public class GetQuizByEventIdHandler : IRequestHandler<GetQuizByEventIdQuery, AP
         }
         return new APIResponse
         {
-            StatusResponse = HttpStatusCode.NotFound,
-            Message = MessageCommon.NotFound,
-            Data = null
+            StatusResponse = HttpStatusCode.OK,
+            Message = MessageCommon.Complete,
+            Data = new List<ResponseQuizDto>();
         };
     }
 }
