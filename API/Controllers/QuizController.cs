@@ -139,7 +139,7 @@ namespace API.Controllers
 
 
         [Authorize]
-        [HttpPost("/attempt")]
+        [HttpPost("attempt")]
         public async Task<IActionResult> AttemptQuiz([FromBody, Required] List<AttempQuizDto> dtos, [FromQuery, Required] Guid quizId, [FromQuery] string totalTime,
             CancellationToken token = default)
         {

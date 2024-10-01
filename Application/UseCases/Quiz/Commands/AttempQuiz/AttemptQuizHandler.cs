@@ -83,10 +83,14 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
             if(attempQuizDto.AnswerContent != null) {
                 entity.AnswerContent = attempQuizDto.AnswerContent;
                 Question question = await _questionRepository.GetById(attempQuizDto?.QuestionId);
-                if (question.CorrectAnswerLabel.Equals(attempQuizDto.AnswerContent, StringComparison.OrdinalIgnoreCase))
+                /*if (question.CorrectAnswerLabel.Equals(attempQuizDto.AnswerContent, StringComparison.OrdinalIgnoreCase))
                 {
                     userPoint++;
                     entity.IsCorrect = true;
+                }*/
+                if (!question.IsMultipleAnswers)
+                {
+                    entity.IsCorrect = null;
                 }
             }
             entity.AttemptNo = attempNo + 1;

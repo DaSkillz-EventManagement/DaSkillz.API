@@ -47,7 +47,7 @@ public class CreatePriceHandler : IRequestHandler<CreatePriceCommand, APIRespons
             response.CreatedBy.Id = user.UserId;
             return new APIResponse
             {
-                StatusResponse = HttpStatusCode.Created,
+                StatusResponse = HttpStatusCode.OK,
                 Message = MessageCommon.Complete,
                 Data = response
             };
