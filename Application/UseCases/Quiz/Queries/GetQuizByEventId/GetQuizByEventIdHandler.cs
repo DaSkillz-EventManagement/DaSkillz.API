@@ -34,7 +34,7 @@ public class GetQuizByEventIdHandler : IRequestHandler<GetQuizByEventIdQuery, AP
         {
             StatusResponse = HttpStatusCode.OK,
             Message = MessageCommon.Complete,
-            Data = new List<ResponseQuizDto>();
+            Data = new List<ResponseQuizDto>()
         };
     }
 }
