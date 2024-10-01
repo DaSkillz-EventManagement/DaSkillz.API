@@ -32,21 +32,22 @@ namespace Infrastructure.Repositories
             // Tạo query gốc
             var query = _context.Subscription.AsQueryable();
 
-            // Lọc theo userId
+            // Lọc theo userId nếu có
             if (userId.HasValue)
             {
                 query = query.Where(t => t.UserId == userId.Value);
             }
 
-            // Lọc theo isActive
+            // Lọc theo isActive nếu có
             if (isActive.HasValue)
             {
                 query = query.Where(t => t.IsActive == isActive.Value);
             }
 
-            // Thực thi query và trả về kết quả
+            // Trả về tất cả kết quả nếu không có lọc
             return await query.ToListAsync();
         }
+
 
     }
 }
