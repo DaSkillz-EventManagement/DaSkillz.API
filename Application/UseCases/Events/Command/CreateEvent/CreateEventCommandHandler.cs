@@ -1,4 +1,5 @@
-﻿using Application.ExternalServices.Images;
+﻿using Application.Abstractions.Caching;
+using Application.ExternalServices.Images;
 using Application.ExternalServices.Quartz;
 using Application.Helper;
 using Application.ResponseMessage;
@@ -25,9 +26,9 @@ namespace Application.UseCases.Events.Command.CreateEvent
         private readonly ITagRepository _tagRepository;
         private readonly IQuartzService _quartzService;
         private readonly IUserRepository _userRepository;
+        private readonly IRedisCaching _redisCaching;
 
-        public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper, IUnitOfWork unitOfWork, 
-            ITagRepository tagRepository, IQuartzService quartzService, IUserRepository userRepository)
+        public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper, IUnitOfWork unitOfWork, ITagRepository tagRepository, IQuartzService quartzService, IUserRepository userRepository, IRedisCaching redisCaching)
         {
             _eventRepo = eventRepo;
             _fileService = fileService;
@@ -36,6 +37,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
             _tagRepository = tagRepository;
             _quartzService = quartzService;
             _userRepository = userRepository;
+            _redisCaching = redisCaching;
         }
 
         private readonly long minimumUpdateTimeSpan = 21600000;//time span between event created and new event startDate
@@ -135,6 +137,15 @@ namespace Application.UseCases.Events.Command.CreateEvent
                 await _quartzService.StartEventEndingEmailNoticeJob(eventEntity.EventId, DateTimeHelper.ToDateTime(eventEntity.EndDate).AddHours(1));
                 var response = _mapper.Map<EventResponseDto>(eventEntity);
                 response.Host = _eventRepo.getHostInfo((Guid)eventEntity.CreatedBy);
+
+                //Xóa tất cả cache mà có từ khóa nằm trong cacheKey
+                var invalidateCache = await _redisCaching.SearchKeysAsync("getEv");
+                if (invalidateCache != null)
+                {
+                    foreach (var key in invalidateCache)
+                        await _redisCaching.DeleteKeyAsync(key);
+                }
+
                 return new APIResponse
                 {
                     Data = response,
