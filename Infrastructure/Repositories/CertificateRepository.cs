@@ -30,9 +30,15 @@ namespace Infrastructure.Repositories
             return await _context.Certificates.AnyAsync(a => a.UserId ==  userId && a.EventId == eventId);
         }
 
-        public async Task<List<Certificate>> GetFilteredCertificates(Guid? userId, Guid? eventId, DateTime? issueDate)
+        public async Task<List<Certificate>> GetFilteredCertificates(int? certificateId, Guid? userId, Guid? eventId, DateTime? issueDate)
         {
             var query = _context.Certificates.AsQueryable();
+
+            if (certificateId.HasValue)
+            {
+                query = query.Where(c => c.CertificateID == certificateId.Value);
+            }
+
 
             if (userId.HasValue)
             {

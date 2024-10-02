@@ -14,14 +14,14 @@ namespace Application.UseCases.Certificate.Command
     public class CreateCertificateCommandHandler : IRequestHandler<CreateCertificateCommand, APIResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserRepository _userRepository;
         private readonly ICertificateRepository _certificateRepository;
+        private readonly IParticipantRepository _participantRepository;
 
-        public CreateCertificateCommandHandler(IUnitOfWork unitOfWork, IUserRepository userRepository, ICertificateRepository certificateRepository)
+        public CreateCertificateCommandHandler(IUnitOfWork unitOfWork, ICertificateRepository certificateRepository, IParticipantRepository participantRepository)
         {
             _unitOfWork = unitOfWork;
-            _userRepository = userRepository;
             _certificateRepository = certificateRepository;
+            _participantRepository = participantRepository;
         }
 
         public async Task<APIResponse> Handle(CreateCertificateCommand request, CancellationToken cancellationToken)
@@ -31,17 +31,20 @@ namespace Application.UseCases.Certificate.Command
                 return new APIResponse
                 {
                     StatusResponse = System.Net.HttpStatusCode.NotFound,
-                    Message = MessageCommon.CreateSuccesfully
+                    Message = MessageCommon.CreateFailed
                 };
             }
                 
             var certificatesToAdd = new List<Domain.Entities.Certificate>();
 
-            foreach (var userid in request.UserIds)
+            foreach (var userId in request.UserIds)
             {
+                var exist = _participantRepository.GetParticipant(userId, request.EventId);
+                if (exist == null) continue;
+
                 var certificate = new Domain.Entities.Certificate
                 {
-                    UserId = userid,
+                    UserId = userId,
                     EventId = request.EventId,
                     IssueDate = DateTime.UtcNow
                 };

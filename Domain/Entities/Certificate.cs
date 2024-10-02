@@ -9,5 +9,4 @@ public class Certificate
     public Guid EventId { get; set; }  
     public DateTime IssueDate { get; set; }
     public virtual Participant? Participant { get; set; }  
-    public virtual Event? Event { get; set; } 
 }

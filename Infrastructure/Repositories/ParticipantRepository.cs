@@ -71,6 +71,8 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         return await query.ToPagedListAsync(filter.Page, filter.EachPage);
     }
 
+
+
     public new async Task<PagedList<Participant>> GetAll(Expression<Func<Participant, bool>> predicate, int page, int eachPage, string sortBy, bool isAscending = true)
     {
         var entities = await _context.Participants
