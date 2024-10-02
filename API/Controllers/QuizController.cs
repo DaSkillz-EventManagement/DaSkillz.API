@@ -8,8 +8,11 @@ using Application.UseCases.Quizs.Commands.UpdateQuestion;
 using Application.UseCases.Quizs.Commands.UpdateQuiz;
 using Application.UseCases.Quizs.Queries.GetQuizByEventId;
 using Application.UseCases.Quizs.Queries.GetQuizInfo;
+using Application.UseCases.Quizs.Queries.GetQuizParticipated;
+using Application.UseCases.Quizs.Queries.GetUserAnswers;
 using Domain.DTOs.Quiz.Request;
 using Domain.Entities;
+using Elastic.Clients.Elasticsearch.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -145,6 +148,29 @@ namespace API.Controllers
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new AttemptQuizCommand(dtos, userId, quizId, totalTime), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        //[Authorize]
+        [HttpGet("users-participated")]
+        public async Task<IActionResult> GetListUserAttempted([FromQuery, Required] Guid quizId, CancellationToken token = default)
+        {
+            var result = await _mediator.Send(new GetQuizParticipatedQuery(quizId), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        //[Authorize]
+        [HttpGet("users-participated/answers")]
+        public async Task<IActionResult> GetUserAnswers([FromQuery, Required] Guid quizId, [FromQuery, Required] Guid userId, CancellationToken token = default)
+        {
+            var result = await _mediator.Send(new GetUserAnswersQuery(userId, quizId), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);

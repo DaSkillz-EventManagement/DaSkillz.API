@@ -32,7 +32,7 @@ namespace Application.Configuration
             CreateMap<User, UserResponseDto>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
                 .ReverseMap();
-
+            CreateMap<User, AttemptedQuizUserResponse>();
             CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)).ReverseMap();
 
@@ -118,9 +118,15 @@ namespace Application.Configuration
 
             //Mapper Quiz
             CreateMap<CreateQuizDto, Quiz>().ReverseMap();
+            CreateMap<UserAnswer, UserAnswerResponseDto>().ReverseMap();
             CreateMap<Quiz, ResponseQuizDto>();
             CreateMap<Answer, ResponseAnswerDto>();
+            CreateMap<Answer, ResponseAnswerQuizAttemptDto>();
+            CreateMap<Question, UserAnswerResultDto>();
             CreateMap<Question, ResponseQuestionDto>()
+                .ForMember(dest => dest.Answers, opt => opt.MapFrom(dest => dest.Answers)).ReverseMap();
+
+            CreateMap<Question, ResponseQuizAttempt>()
                 .ForMember(dest => dest.Answers, opt => opt.MapFrom(dest => dest.Answers)).ReverseMap();
             CreateMap<UpdateQuizDto, Quiz>().ReverseMap();
             //sponsor
