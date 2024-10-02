@@ -17,7 +17,7 @@ public class QuestionRepository : RepositoryBase<Question>, IQuestionRepository
 
     public async Task<int> CountQuestion(Guid quizId)
     {
-        return await _context.Questions.Where(q => q.QuizId == quizId).CountAsync();
+        return await _context.Questions.Where(q => q.QuizId == quizId && q.IsMultipleAnswers == false).CountAsync();
     }
 
     public async Task<List<Question>> DeleteQuestions(List<Guid> questionIds)

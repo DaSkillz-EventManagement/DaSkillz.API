@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.DTOs.User.Response;
+using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
@@ -24,8 +25,29 @@ public class UserAnswerRepository : RepositoryBase<UserAnswer>, IUserAnswerRepos
         var userAttempt = await _context.UserAnswers
         .Where(u => u.QuizId == quizId && u.UserId == userId)
         .OrderByDescending(u => u.AttemptNo)
-        .FirstAsync();
+        .FirstOrDefaultAsync();
 
         return userAttempt?.AttemptNo ?? 0;    
+    }
+    private async Task<List<Guid>> GetUsersAttemptedQuiz(Guid quizId)
+    {
+        return await _context.UserAnswers
+            .Where(ua => ua.QuizId == quizId)
+            .Select(ua => ua.UserId)
+            .Distinct()
+            .ToListAsync();
+    }
+    public async Task<List<User>> GetListUsersAttemptedQuiz(Guid quizId)
+    {
+        List<Guid> userIds = await GetUsersAttemptedQuiz (quizId);
+        var users = await _context.Users.Where(u => userIds.Contains(u.UserId)).ToListAsync();
+        return users;
+    }
+
+    public async Task<List<UserAnswer>> GetUserAnswer(Guid userId, Guid quizId)
+    {
+        var result = await _context.UserAnswers.Where(u => u.QuizId == quizId && u.UserId == userId)
+            .ToListAsync();
+        return result;
     }
 }

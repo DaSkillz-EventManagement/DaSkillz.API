@@ -1,5 +1,6 @@
 ﻿using Application.ResponseMessage;
 using AutoMapper;
+using Domain.DTOs.Quiz.Response;
 using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
@@ -22,15 +23,17 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
     private readonly IAnswerRepository _answerRepository;
     private readonly IQuizRepository _quizRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public AttemptQuizHandler(IUserAnswerRepository userAnswerRepository, IQuestionRepository questionRepository, 
-        IAnswerRepository answerRepository, IUnitOfWork unitOfWork, IQuizRepository quizRepository)
+        IAnswerRepository answerRepository, IUnitOfWork unitOfWork, IQuizRepository quizRepository, IMapper mapper)
     {
         _userAnswerRepository = userAnswerRepository;
         _questionRepository = questionRepository;
         _answerRepository = answerRepository;
         _quizRepository = quizRepository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
     #endregion
     public async Task<APIResponse> Handle(AttemptQuizCommand request, CancellationToken cancellationToken)
@@ -76,17 +79,20 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
                 if (userAnswer!.IsCorrectAnswer)
                 {
                     userPoint++;
-                    entity.AnswerContent = userAnswer.AnswerContent;
                     entity.IsCorrect = true;
                 }
             }
             if(attempQuizDto.AnswerContent != null) {
                 entity.AnswerContent = attempQuizDto.AnswerContent;
                 Question question = await _questionRepository.GetById(attempQuizDto?.QuestionId);
-                if (question.CorrectAnswerLabel.Equals(attempQuizDto.AnswerContent, StringComparison.OrdinalIgnoreCase))
+                /*if (question.CorrectAnswerLabel.Equals(attempQuizDto.AnswerContent, StringComparison.OrdinalIgnoreCase))
                 {
                     userPoint++;
                     entity.IsCorrect = true;
+                }*/
+                if (!question.IsMultipleAnswers)
+                {
+                    entity.IsCorrect = null;
                 }
             }
             entity.AttemptNo = attempNo + 1;
@@ -96,12 +102,13 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
         {
             if(await _unitOfWork.SaveChangesAsync() > 0)
             {
-                string finalResult = $"Your final score: {userPoint}/{maxPoint}";
+                var result = await _questionRepository.GetQuestionsByQuizId(request.QuizId);
+                //string finalResult = $"Your final score: {userPoint}/{maxPoint}";
                 return new APIResponse
                 {
                     StatusResponse = HttpStatusCode.OK,
                     Message = MessageCommon.CreateSuccesfully,
-                    Data = finalResult
+                    Data = _mapper.Map<List<ResponseQuizAttempt>>(result)
                 };
             }
             return new APIResponse

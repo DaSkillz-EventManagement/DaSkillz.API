@@ -32,6 +32,7 @@
         public string? Theme { get; set; }
 
         public virtual User? CreatedByNavigation { get; set; }
+        public virtual EventStatistics Statistics { get; set; }
         public virtual ICollection<AdvertisedEvent> AdvertisedEvents { get; set; }
         public virtual ICollection<Logo> Logos { get; set; }
         public virtual ICollection<Coupon> Coupons { get; set; }
