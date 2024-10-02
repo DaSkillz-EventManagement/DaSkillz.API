@@ -13,7 +13,6 @@ using Domain.Enum.Payment;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch.Security;
 using MediatR;
 using System.Net;
 
@@ -171,10 +170,10 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                     }
                     sponsor.IsSponsored = true;
                 }
-                //else if (exist.SubscriptionType == (int)PaymentType.ADVERTISE)
-                //{
-                //    await _mediator.Send(new UseAdvertisedEventQuery((Guid)exist.EventId!, (Guid)exist.UserId!), cancellationToken);
-                //}
+                else if (exist.SubscriptionType == (int)PaymentType.ADVERTISE)
+                {
+                    await _mediator.Send(new UseAdvertisedEventQuery((Guid)exist.EventId!, (Guid)exist.UserId!, 5), cancellationToken);
+                }
 
                 await _caching.RemoveAsync($"payment_{request.appTransId}");
             }

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Abstractions.Caching;
+using Domain.Entities;
 using Domain.Enum.Events;
 using Domain.Repositories;
 using Event_Management.Domain.Enum;
@@ -10,11 +11,13 @@ namespace Application.UseCases.Events.Command.DeleteEvent
     {
         private readonly IEventRepository _eventRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IRedisCaching _redisCaching;
 
-        public DeleteEventHandler(IEventRepository eventRepository, IUserRepository userRepository)
+        public DeleteEventHandler(IEventRepository eventRepository, IUserRepository userRepository, IRedisCaching redisCaching)
         {
             _eventRepository = eventRepository;
             _userRepository = userRepository;
+            _redisCaching = redisCaching;
         }
 
         public async Task<bool> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
@@ -31,12 +34,22 @@ namespace Application.UseCases.Events.Command.DeleteEvent
                     return false;
                 }
                 DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(existEvent.StartDate);
+
+                //Xóa tất cả cache mà có từ khóa nằm trong cacheKey
+                var invalidateCache = await _redisCaching.SearchKeysAsync("getEv");
+                if (invalidateCache != null)
+                {
+                    foreach (var key in invalidateCache)
+                        await _redisCaching.DeleteKeyAsync(key);
+                }
+
                 if (isOwner)
                 {
                     if (startDate.CompareTo(DateTime.Now.AddHours(6)) < 0)
                     {
                         return await _eventRepository.ChangeEventStatus(request.EventId, EventStatus.Cancel);
                     }
+
                     return await _eventRepository.ChangeEventStatus(request.EventId, EventStatus.Deleted);
                 }
                 if (!isOwner && userInfo!.RoleId == ((int)UserRole.Admin))

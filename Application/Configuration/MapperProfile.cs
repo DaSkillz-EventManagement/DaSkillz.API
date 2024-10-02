@@ -136,11 +136,32 @@ namespace Application.Configuration
             //CreateMap<List<SponsorEvent>, List<SponsorEventDto>>().ReverseMap();
             CreateMap<SponsorEvent, SponsorEventDetailDto>();
 
+
+            //
+            CreateMap<Certificate, CertificateResponseDto>()
+                .ForMember(dest => dest.certicateId, opt => opt.MapFrom(src => src.CertificateID))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Participant!.User.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Participant!.User.Email))
+                .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Participant.Event.EventName))
+                .ReverseMap();
+
+            CreateMap<Participant, FilterCertificateDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.Certificate, opt => opt.MapFrom(src => src.Certificates.FirstOrDefault())) // Map the first certificate
+                .ReverseMap();
+
+
+
             //Participant
             CreateMap<Participant, ParticipantEventDto>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                //.ForMember(dest => dest.certification, opt => opt.MapFrom(src =>
+                //            src.Certificates.FirstOrDefault(c => c.EventId == src.EventId)))
                 .ReverseMap();
 
             CreateMap<PagedList<Participant>, PagedList<ParticipantEventDto>>().ReverseMap();
@@ -155,12 +176,7 @@ namespace Application.Configuration
 
             CreateMap<Subscription, SubscriptionResponseDto>().ReverseMap();
 
-            CreateMap<Certificate, CertificateResponseDto>()
-            .ForMember(dest => dest.certicateId, opt => opt.MapFrom(src => src.CertificateID))
-            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
-            .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))
-            .ReverseMap();
+            
 
         }
     }
