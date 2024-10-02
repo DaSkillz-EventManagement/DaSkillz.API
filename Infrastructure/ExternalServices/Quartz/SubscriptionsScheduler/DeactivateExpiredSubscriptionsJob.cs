@@ -19,7 +19,6 @@ public class DeactivateExpiredSubscriptionsJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
 
-        // Use a bulk update to deactivate expired subscriptions
         var updatedRows = await userRepository.UpdateIsPremiumUser();
 
         foreach (var user in updatedRows)

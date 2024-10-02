@@ -44,6 +44,7 @@ using Quartz;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
+using Infrastructure.ExternalServices.Quartz.CertificateScheduler;
 
 namespace Infrastructure
 {
@@ -67,7 +68,7 @@ namespace Infrastructure
             {
                 options.UseSqlServer(
                     //configuration.GetConnectionString("local"),
-                    configuration.GetConnectionString("production"),
+                     configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
@@ -78,7 +79,7 @@ namespace Infrastructure
 
             //Add redis
             var redisConnection = configuration["Redis:HostName"];
-            var redisDatabase = ConnectionMultiplexer.Connect(redisConnection);
+            var redisDatabase = ConnectionMultiplexer.Connect($"{redisConnection},abortConnect=false");
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 return redisDatabase;
@@ -157,6 +158,8 @@ namespace Infrastructure
             services.AddScoped<ICouponRepository, CouponRepository>();
             services.AddScoped<IAdvertisedEventRepository, AdvertisedEventRepository>();
             services.AddScoped<IEventStatisticsRepository, EventStatisticsRepository>();
+            services.AddScoped<ICertificateRepository, CertificateRepository>();
+
             //Quiz service
             services.AddScoped<IQuizRepository, QuizRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
@@ -177,22 +180,32 @@ namespace Infrastructure
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddQuartz(q =>
             {
-                //var checkJobKey = new JobKey("CheckTransactionStatusJob");
-                //q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
-                //q.AddTrigger(opts => opts
-                //    .ForJob(checkJobKey)
-                //    .WithIdentity("CheckTransactionStatusTrigger")
-                //    .StartNow()
-                //    .WithSimpleSchedule(x => x
-                //        .WithIntervalInMinutes(2)
-                //        .RepeatForever()
-                //        .Build()));
+                var checkJobKey = new JobKey("CheckTransactionStatusJob");
+                q.AddJob<CheckTransactionStatusJob>(opts => opts.WithIdentity(checkJobKey));
+                q.AddTrigger(opts => opts
+                    .ForJob(checkJobKey)
+                    .WithIdentity("CheckTransactionStatusTrigger")
+                    .StartNow()
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInMinutes(1)
+                        .RepeatForever()
+                        .Build()));
 
                 var deactivateJobKey = new JobKey("DeactivateExpiredSubscriptionsJob");
                 q.AddJob<DeactivateExpiredSubscriptionsJob>(opts => opts.WithIdentity(deactivateJobKey));
                 q.AddTrigger(opts => opts
                     .ForJob(deactivateJobKey)
                     .WithIdentity("DeactivateExpiredSubscriptionsTrigger")
+                    .StartNow()
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInMinutes(1)  // Run every 1 minute
+                        .RepeatForever()));
+
+                var provideCertificate = new JobKey("ProvideCertificate");
+                q.AddJob<ProvideCertificateAfterEventEnded>(opts => opts.WithIdentity(provideCertificate));
+                q.AddTrigger(opts => opts
+                    .ForJob(provideCertificate)
+                    .WithIdentity("ProvideCertificateTrigger")
                     .StartNow()
                     .WithSimpleSchedule(x => x
                         .WithIntervalInMinutes(1)  // Run every 1 minute

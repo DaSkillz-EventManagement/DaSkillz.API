@@ -1,6 +1,7 @@
 ﻿using Application.UseCases.Events.Command.CreateEvent;
 using AutoMapper;
 using Domain.DTOs.AdvertisedEvents;
+using Domain.DTOs.Certificate;
 using Domain.DTOs.Coupons;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
@@ -153,7 +154,14 @@ namespace Application.Configuration
             CreateMap<PagedList<Participant>, PagedList<ParticipantDto>>().ReverseMap();
 
             CreateMap<Subscription, SubscriptionResponseDto>().ReverseMap();
-            
+
+            CreateMap<Certificate, CertificateResponseDto>()
+            .ForMember(dest => dest.certicateId, opt => opt.MapFrom(src => src.CertificateID))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))
+            .ReverseMap();
+
         }
     }
 }

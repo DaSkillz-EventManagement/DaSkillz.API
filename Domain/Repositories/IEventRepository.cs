@@ -10,7 +10,7 @@ namespace Domain.Repositories
 {
     public interface IEventRepository : IRepository<Event>
     {
-
+        Task<IEnumerable<Event>> GetEndedEventsAsync();
         Task<bool> IsOwner(Guid userId, Guid eventId);
 
 

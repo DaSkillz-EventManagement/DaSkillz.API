@@ -29,6 +29,11 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         return await _context.Participants.FirstOrDefaultAsync(p => p.UserId.Equals(userId) && p.EventId.Equals(eventId));
     }
 
+    public async Task<IEnumerable<Participant?>> GetParticipantsByEventId(Guid eventId)
+    {
+        return await _context.Participants.Where(p => p.EventId.Equals(eventId) ).ToListAsync();
+    }
+
     public async Task<Participant?> GetDetailParticipant(Guid userId, Guid eventId)
     {
         return await _context.Participants
