@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enum.Quiz;
 using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
@@ -15,10 +16,16 @@ public class QuizRepository : RepositoryBase<Quiz>, IQuizRepository
         _context = context;
     }
 
-    public async Task<List<Quiz>> GetAllQuizsByEventId(Guid eventId)
+    public async Task<List<Quiz>> GetAllQuizsByEventId(Guid eventId, QuizEnum? status)
     {
-        var quizs = await _context.Quizs.Where(q => q.eventId == eventId).ToListAsync();
-        return quizs;
+        var quizs = _context.Quizs.Where(q => q.eventId == eventId).AsQueryable();
+
+        if(status != null)
+        {
+            quizs = quizs.Where(q => q.QuizStatus == (int)status!);
+        }
+
+        return await quizs.ToListAsync();
     }
 
     public async Task<int> GetQuizAttemptAllow(Guid quizId)
