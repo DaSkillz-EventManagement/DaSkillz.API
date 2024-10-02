@@ -79,7 +79,6 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
                 if (userAnswer!.IsCorrectAnswer)
                 {
                     userPoint++;
-                    entity.AnswerContent = userAnswer.AnswerContent;
                     entity.IsCorrect = true;
                 }
             }

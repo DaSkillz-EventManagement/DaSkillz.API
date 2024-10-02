@@ -11,7 +11,8 @@ public class UserAnswerResponseDto
     public Guid UserAnswerId { get; set; }
     public Guid UserId { get; set; }
     public Guid QuizId { get; set; }
-    public UserAnswerResultDto Question {  get; set; } = new UserAnswerResultDto();
+    public ResponseQuestionDto Question {  get; set; } = new ResponseQuestionDto();
+    public Guid? AnswerId { get; set; }
     public string? AnswerContent { get; set; }
     public string? TotalTime { get; set; }
     public bool? IsCorrect { get; set; }

@@ -37,9 +37,19 @@ public class GetUserAnswersHandle : IRequestHandler<GetUserAnswersQuery, APIResp
             foreach (var item in result)
             {
                 UserAnswerResponseDto responseDto = new UserAnswerResponseDto();
-                Question question = await _questionRepository.GetById(item.QuestionId); 
-                responseDto.Question = _mapper.Map<UserAnswerResultDto>(question);
+                Question question = await _questionRepository.GetQuestionById(item.QuestionId); 
+                responseDto.Question = _mapper.Map<ResponseQuestionDto>(question);
                 responseDto = _mapper.Map<UserAnswerResponseDto>(item);
+                if (question.IsMultipleAnswers)
+                {
+                    responseDto.AnswerId = Guid.Parse(item.AnswerContent!);
+                    responseDto.AnswerContent = null;
+                }
+                if (!question.IsMultipleAnswers)
+                {
+                    responseDto.AnswerId = null;
+                    responseDto.AnswerContent = item.AnswerContent;
+                }
                 responseDtos.Add(responseDto);
             }
             return new APIResponse
