@@ -7,6 +7,7 @@ namespace Domain.Repositories;
 
 public interface IParticipantRepository : IRepository<Participant>
 {
+    Task<IEnumerable<Participant?>> GetParticipantsByEventId(Guid eventId);
     Task<bool> IsExistedOnEvent(Guid userId, Guid eventId);
     Task<Participant?> GetParticipant(Guid userId, Guid eventId);
     Task<PagedList<Participant>> FilterDataParticipant(FilterParticipantDto filter);

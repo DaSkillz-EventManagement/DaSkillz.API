@@ -25,6 +25,13 @@ namespace Infrastructure.Repositories
             _mapper = mapper;
         }
 
+        public async Task<IEnumerable<Event>> GetEndedEventsAsync()
+        {
+            return await _context.Events
+                .Where(e => e.Status == EventStatus.Ended.ToString())
+                .ToListAsync();
+        }
+
         private async Task<IQueryable<Event>> GetUserRegisterdEventsQuery(Guid userId)
         {
             var participants = await _context.Participants
