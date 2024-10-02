@@ -26,7 +26,8 @@ namespace Application.UseCases.Events.Command.CreateEvent
         private readonly IQuartzService _quartzService;
         private readonly IUserRepository _userRepository;
 
-        public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper, IUnitOfWork unitOfWork, ITagRepository tagRepository, IQuartzService quartzService)
+        public CreateEventCommandHandler(IEventRepository eventRepo, IImageService fileService, IMapper mapper, IUnitOfWork unitOfWork, 
+            ITagRepository tagRepository, IQuartzService quartzService, IUserRepository userRepository)
         {
             _eventRepo = eventRepo;
             _fileService = fileService;
@@ -34,6 +35,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
             _unitOfWork = unitOfWork;
             _tagRepository = tagRepository;
             _quartzService = quartzService;
+            _userRepository = userRepository;
         }
 
         private readonly long minimumUpdateTimeSpan = 21600000;//time span between event created and new event startDate
