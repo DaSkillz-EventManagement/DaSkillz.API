@@ -145,13 +145,14 @@ namespace Application.Configuration
                 .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Participant.Event.EventName))
                 .ReverseMap();
 
-            CreateMap<Certificate, FilterCertificateDto>()
-                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Participant!.User.FullName))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Participant!.User.Email))
-                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Participant!.User.Phone))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Participant!.Status))
-                .ForMember(dest => dest.Certificate, opt => opt.MapFrom(src => src))
+            CreateMap<Participant, FilterCertificateDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.Certificate, opt => opt.MapFrom(src => src.Certificates.FirstOrDefault())) // Map the first certificate
                 .ReverseMap();
+
 
 
             //Participant
