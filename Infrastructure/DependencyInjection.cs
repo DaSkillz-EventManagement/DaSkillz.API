@@ -156,7 +156,7 @@ namespace Infrastructure
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<ICouponRepository, CouponRepository>();
             services.AddScoped<IAdvertisedEventRepository, AdvertisedEventRepository>();
-
+            services.AddScoped<IEventStatisticsRepository, EventStatisticsRepository>();
             //Quiz service
             services.AddScoped<IQuizRepository, QuizRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
