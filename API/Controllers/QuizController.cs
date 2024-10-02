@@ -12,6 +12,7 @@ using Application.UseCases.Quizs.Queries.GetQuizParticipated;
 using Application.UseCases.Quizs.Queries.GetUserAnswers;
 using Domain.DTOs.Quiz.Request;
 using Domain.Entities;
+using Domain.Enum.Quiz;
 using Elastic.Clients.Elasticsearch.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -114,9 +115,9 @@ namespace API.Controllers
         
         
         [HttpGet]
-        public async Task<IActionResult> GetQuizByEventId([FromQuery, Required] Guid EventId, CancellationToken token = default)
+        public async Task<IActionResult> GetQuizByEventId([FromQuery, Required] Guid EventId, [FromQuery] QuizEnum? status, CancellationToken token = default)
         {
-            var result = await _mediator.Send(new GetQuizByEventIdQuery(EventId), token);
+            var result = await _mediator.Send(new GetQuizByEventIdQuery(EventId, status), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);

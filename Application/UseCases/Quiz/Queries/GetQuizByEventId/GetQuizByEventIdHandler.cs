@@ -20,7 +20,7 @@ public class GetQuizByEventIdHandler : IRequestHandler<GetQuizByEventIdQuery, AP
     }
     public async Task<APIResponse> Handle(GetQuizByEventIdQuery request, CancellationToken cancellationToken)
     {
-        var quizs = await _quizRepository.GetAllQuizsByEventId(request.EventId);
+        var quizs = await _quizRepository.GetAllQuizsByEventId(request.EventId, request.Status);
         if (quizs.Count > 0)
         {
             return new APIResponse
