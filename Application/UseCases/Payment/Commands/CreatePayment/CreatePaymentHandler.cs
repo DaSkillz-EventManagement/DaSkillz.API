@@ -51,6 +51,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                     };
                 }
 
+               
 
                 Random rnd = new Random();
                 string app_trans_id = DateTime.UtcNow.ToString("yyMMdd") + "_" + rnd.Next(1000000);
@@ -133,7 +134,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                             }
                         }
                     }
-
+                    await _caching.SetAsync<int?>($"numOfDate_{app_trans_id}", request.numOfDate, 16);
 
                 }
 
