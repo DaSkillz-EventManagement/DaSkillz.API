@@ -8,6 +8,8 @@ using System.Net;
 
 namespace API.Controllers
 {
+    [Route("api/v1/certificate")]
+    [ApiController]
     public class CertificateController : Controller
     {
         private readonly IMediator _mediator;
@@ -18,7 +20,7 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [Authorize]
+  
         [HttpGet("filter")]
         [SwaggerOperation(Summary = "Get filtered Certificate information")]
         [ProducesResponseType(StatusCodes.Status200OK)]
