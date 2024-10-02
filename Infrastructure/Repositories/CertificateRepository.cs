@@ -20,6 +20,11 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task AddRange(IEnumerable<Certificate> certificates)
+        {
+            await _context.Certificates.AddRangeAsync(certificates);        
+        }
+
         public async Task<bool> CheckIfUserHaveCertificate(Guid userId, Guid eventId)
         {
             return await _context.Certificates.AnyAsync(a => a.UserId ==  userId && a.EventId == eventId);

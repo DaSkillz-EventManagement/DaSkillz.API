@@ -23,11 +23,11 @@ public class CertificateConfiguration : IEntityTypeConfiguration<Certificate>
             .HasColumnType("datetime")
             .IsRequired();
 
-        builder.HasOne(d => d.User)
+        builder.HasOne<Participant>()
                .WithMany(p => p.Certificates)
-               .HasForeignKey(d => d.UserId)
+               .HasForeignKey(c => new { c.UserId, c.EventId }) 
                .OnDelete(DeleteBehavior.ClientSetNull)
-               .HasConstraintName("FK_Certificate_User");
+               .HasConstraintName("FK_Certificate_Participant");
 
         builder.HasOne(d => d.Event)
                .WithMany(p => p.Certificates)

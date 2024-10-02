@@ -157,8 +157,8 @@ namespace Application.Configuration
 
             CreateMap<Certificate, CertificateResponseDto>()
             .ForMember(dest => dest.certicateId, opt => opt.MapFrom(src => src.CertificateID))
-            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            //.ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User))
+            //.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
             .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))
             .ReverseMap();
 

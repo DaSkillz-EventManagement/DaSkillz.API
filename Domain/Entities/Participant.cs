@@ -13,5 +13,6 @@
         public virtual Event Event { get; set; } = null!;
         public virtual RoleEvent? RoleEvent { get; set; }
         public virtual User User { get; set; } = null!;
+        public virtual ICollection<Certificate> Certificates { get; set; }
     }
 }
