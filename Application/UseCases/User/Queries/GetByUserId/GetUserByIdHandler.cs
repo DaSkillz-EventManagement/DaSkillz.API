@@ -30,7 +30,7 @@ namespace Application.UseCases.User.Queries.GetByUserId
             //problem: nếu lượng user truy cập cao có thể dẫn đến cache stampede và cache penetration
             //solution: sẽ dụng bloom filter, clock, request coalescing (đang nghiên cứu, sẽ áp dụng sau)
             var cacheKey = $"user_{request.userId}";
-            var cachingData = await _caching.GetAsync<Domain.Entities.User>(cacheKey);
+            var cachingData = await _caching.GetAsync<UserUpdatedResponseDto>(cacheKey);
             if (cachingData != null)
             {
                 return new APIResponse

@@ -15,6 +15,7 @@ using Application.UseCases.Events.Queries.GetTopCreatorsByEventCount;
 using Application.UseCases.Events.Queries.GetTopLocationByEventCount;
 using Application.UseCases.Events.Queries.GetUserHostEvent;
 using Application.UseCases.Events.Queries.GetUserPastAndIncomingEvent;
+using Application.UseCases.EventStatistic.Queries.GetEventStatisticsById;
 using Domain.DTOs.Events;
 using Domain.DTOs.Events.RequestDto;
 using Domain.Enum.Events;
@@ -24,6 +25,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Threading;
 
 namespace API.Controllers
 {
@@ -305,6 +307,18 @@ namespace API.Controllers
                 Message = MessageEvent.PopularLocation,
                 Data = result
             });
+        }
+
+
+        [Authorize]
+        [HttpGet("event-statistics")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetEventStatictis([FromQuery, Required] Guid eventId, CancellationToken cancellationToken = default)
+        {
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            var result = await _mediator.Send(new GetEventStatisticsByIdQuery(eventId, userId), cancellationToken);
+            return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
 
         [HttpGet("user-hosted")]

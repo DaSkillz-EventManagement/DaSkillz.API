@@ -13,22 +13,8 @@ SELECT
     COUNT(DISTINCT CASE WHEN f.Rating = 3 THEN f.UserID END) AS totalFbThreeStar,
     COUNT(DISTINCT CASE WHEN f.Rating = 4 THEN f.UserID END) AS totalFbFourStar,
     COUNT(DISTINCT CASE WHEN f.Rating = 5 THEN f.UserID END) AS totalFbFiveStar,
-    SUM(DISTINCT CASE WHEN s.IsSponsored = 1 AND TRY_CAST(s.Amount AS DECIMAL(18, 2)) IS NOT NULL THEN TRY_CAST(s.Amount AS DECIMAL(18, 2)) ELSE 0 END) AS totalSponsored,
-    SUM(DISTINCT CASE WHEN s.IsSponsored = 1 AND TRY_CAST(s.Amount AS DECIMAL(18, 2)) IS NOT NULL THEN TRY_CAST(s.Amount AS DECIMAL(18, 2)) ELSE 0 END) + 
-    ISNULL(
-        (SELECT SUM(TRY_CAST(t.Amount AS DECIMAL(18, 2)))
-         FROM Transactions t
-         WHERE t.EventID = e.EventID
-           AND NOT EXISTS (
-               SELECT 1
-               FROM SponsorEvent se
-               WHERE se.EventID = e.EventID
-                 AND t.SubscriptionType = 'Advertise'
-                 AND se.UserID = t.UserId
-                 AND se.Status = 1
-           )
-        ), 0
-    ) AS revenue
+    SUM(DISTINCT CASE WHEN s.IsSponsored = 1 AND TRY_CAST(s.Amount AS DECIMAL(18, 2)) IS NOT NULL THEN TRY_CAST(s.Amount AS DECIMAL(18, 2)) ELSE 0 END) AS totalSponsored
+    
 FROM
     Events e
     LEFT JOIN Participant p ON e.EventID = p.EventID

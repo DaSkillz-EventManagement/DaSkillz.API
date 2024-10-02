@@ -31,7 +31,7 @@ namespace Application.UseCases.User.Queries.GetUserByKeyword
             //solution: sẽ dụng bloom filter, clock, request coalescing (đang nghiên cứu, sẽ áp dụng sau)
             string cacheKey = "all_user_keyword";
            
-            var cachingData = await _caching.GetAsync<IEnumerable<Domain.Entities.User>>(cacheKey);
+            var cachingData = await _caching.GetAsync<IEnumerable<UserByKeywordResponseDto>>(cacheKey);
             if (cachingData != null)
             {
                 return new APIResponse

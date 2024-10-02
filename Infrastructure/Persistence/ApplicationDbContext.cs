@@ -31,6 +31,7 @@ namespace Infrastructure.Persistence
         public virtual DbSet<Question> Questions { get; set; } = null!;
         public virtual DbSet<Answer> Answers { get; set; } = null!;
         public virtual DbSet<UserAnswer> UserAnswers { get; set; } = null!;
+        public virtual DbSet<EventStatistics> EventStatistics { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

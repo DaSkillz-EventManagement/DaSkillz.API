@@ -31,14 +31,14 @@ namespace Application.UseCases.User.Queries.FilterUser
             //problem: nếu lượng user truy cập cao có thể dẫn đến cache stampede và cache penetration
             //solution: sẽ dụng bloom filter, clock, request coalescing (đang nghiên cứu, sẽ áp dụng sau)
             var cacheKey = $"all_filter_user_{request.UserId}_{request.FullName}_{request.Email}_{request.Phone}_{request.Status}";
-            var cachingData = await _caching.GetAsync<IEnumerable<Domain.Entities.User>>(cacheKey);
+            var cachingData = await _caching.GetAsync<IEnumerable<UserResponseDto>>(cacheKey);
             if (cachingData != null)
             {
                 return new APIResponse
                 {
                     StatusResponse = HttpStatusCode.OK,
                     Message = MessageCommon.Complete,
-                    Data = cacheKey,
+                    Data = cachingData,
                 };
             }
 
