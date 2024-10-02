@@ -11,5 +11,6 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
         public Guid? EventId { get; set; }
         public int SubscriptionType { get; set; }
         public string? redirectUrl { get; set; }
+        public int? numOfDate {  get; set; }
     }
 }

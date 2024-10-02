@@ -33,7 +33,6 @@
         public virtual ICollection<Coupon> Coupons { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
-        public virtual ICollection<Certificate> Certificates { get; set; }
         public virtual Subscription? Subscription { get; set; }
     }
 }

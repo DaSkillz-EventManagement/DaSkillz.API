@@ -29,22 +29,18 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Subscription>> FilterSubscriptionAsync(Guid? userId, bool? isActive)
         {
-            // Tạo query gốc
             var query = _context.Subscription.AsQueryable();
 
-            // Lọc theo userId nếu có
             if (userId.HasValue)
             {
                 query = query.Where(t => t.UserId == userId.Value);
             }
 
-            // Lọc theo isActive nếu có
             if (isActive.HasValue)
             {
                 query = query.Where(t => t.IsActive == isActive.Value);
             }
 
-            // Trả về tất cả kết quả nếu không có lọc
             return await query.ToListAsync();
         }
 

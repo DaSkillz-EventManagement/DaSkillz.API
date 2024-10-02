@@ -5,7 +5,8 @@ namespace Domain.Repositories
 {
     public interface ICertificateRepository : IRepository<Certificate>
     {
-        Task<List<Certificate>> GetFilteredCertificates(Guid? userId, Guid? eventId, DateTime? issueDate);
+        Task AddRange(IEnumerable<Certificate> certificates);
+        Task<List<Certificate>> GetFilteredCertificates(int? certificateId, Guid? userId, Guid? eventId, DateTime? issueDate);
         Task<bool> CheckIfUserHaveCertificate(Guid userId, Guid eventId);
     }
 }

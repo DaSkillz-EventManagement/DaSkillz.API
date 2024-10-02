@@ -68,7 +68,7 @@ namespace Infrastructure
             {
                 options.UseSqlServer(
                     //configuration.GetConnectionString("local"),
-                     configuration.GetConnectionString("production"),
+                    configuration.GetConnectionString("production"),
                     b =>
                     {
                         b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
@@ -201,15 +201,15 @@ namespace Infrastructure
                         .WithIntervalInMinutes(1)  // Run every 1 minute
                         .RepeatForever()));
 
-                var provideCertificate = new JobKey("ProvideCertificate");
-                q.AddJob<ProvideCertificateAfterEventEnded>(opts => opts.WithIdentity(provideCertificate));
-                q.AddTrigger(opts => opts
-                    .ForJob(provideCertificate)
-                    .WithIdentity("ProvideCertificateTrigger")
-                    .StartNow()
-                    .WithSimpleSchedule(x => x
-                        .WithIntervalInMinutes(1)  // Run every 1 minute
-                        .RepeatForever()));
+                //var provideCertificate = new JobKey("ProvideCertificate");
+                //q.AddJob<ProvideCertificateAfterEventEnded>(opts => opts.WithIdentity(provideCertificate));
+                //q.AddTrigger(opts => opts
+                //    .ForJob(provideCertificate)
+                //    .WithIdentity("ProvideCertificateTrigger")
+                //    .StartNow()
+                //    .WithSimpleSchedule(x => x
+                //        .WithIntervalInMinutes(1)  // Run every 1 minute
+                //        .RepeatForever()));
 
                 var jobKey = new JobKey("AllEventStatusToEndedJob");
                 var jobKey2 = new JobKey("AllEventStatusToOngoingJob");

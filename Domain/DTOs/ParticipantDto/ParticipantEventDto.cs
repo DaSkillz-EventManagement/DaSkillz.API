@@ -1,4 +1,6 @@
-﻿namespace Domain.DTOs.ParticipantDto;
+﻿using Domain.DTOs.Certificate;
+
+namespace Domain.DTOs.ParticipantDto;
 
 public class ParticipantEventDto
 {
@@ -11,4 +13,5 @@ public class ParticipantEventDto
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public string? Status { get; set; }
+    //public CertificateResponseDto? certification { get; set;}
 }

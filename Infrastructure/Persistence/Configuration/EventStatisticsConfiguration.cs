@@ -14,7 +14,7 @@ namespace Infrastructure.Persistence.Configuration
         public void Configure(EntityTypeBuilder<EventStatistics> builder)
         {
             builder.HasKey(e => e.EventId);
-
+            builder.ToTable("EventStatistics");
             builder.ToView("EventStatistics");
             builder.Metadata.SetIsTableExcludedFromMigrations(true);
         }
