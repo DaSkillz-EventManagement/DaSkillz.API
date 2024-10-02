@@ -172,7 +172,8 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                 }
                 else if (exist.SubscriptionType == (int)PaymentType.ADVERTISE)
                 {
-                    await _mediator.Send(new UseAdvertisedEventQuery((Guid)exist.EventId!, (Guid)exist.UserId!, 5), cancellationToken);
+                    var numOfDate = await _caching.GetAsync<int?>($"numOfDate_{request.appTransId}");
+                    await _mediator.Send(new UseAdvertisedEventQuery((Guid)exist.EventId!, (Guid)exist.UserId!, numOfDate ?? 3), cancellationToken);
                 }
 
                 await _caching.RemoveAsync($"payment_{request.appTransId}");
