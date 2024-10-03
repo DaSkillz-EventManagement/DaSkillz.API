@@ -44,7 +44,7 @@ namespace Application.UseCases.Certificate.Command
 
                 var certificate = new Domain.Entities.Certificate
                 {
-                    CertificateID = new Guid(),
+                    CertificateID = Guid.NewGuid(),
                     UserId = userId,
                     EventId = request.EventId,
                     IssueDate = DateTime.UtcNow
