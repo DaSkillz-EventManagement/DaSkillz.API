@@ -10,6 +10,7 @@ using Application.UseCases.Quizs.Queries.GetQuizByEventId;
 using Application.UseCases.Quizs.Queries.GetQuizInfo;
 using Application.UseCases.Quizs.Queries.GetQuizParticipated;
 using Application.UseCases.Quizs.Queries.GetUserAnswers;
+using Application.UseCases.Quizs.Queries.ShowQuestion;
 using Domain.DTOs.Quiz.Request;
 using Domain.Entities;
 using Domain.Enum.Quiz;
@@ -124,7 +125,7 @@ namespace API.Controllers
             }
             return NotFound(result);
         }
-        
+
         
         [HttpGet("info")]
         public async Task<IActionResult> GetQuizQuestions([FromQuery, Required] Guid QuizId, CancellationToken token = default)
@@ -149,6 +150,16 @@ namespace API.Controllers
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new AttemptQuizCommand(dtos, userId, quizId, totalTime), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpGet("attempt/show-question")]
+        public async Task<IActionResult> ShowQuestion([FromQuery, Required] Guid QuizId, CancellationToken token = default)
+        {
+            var result = await _mediator.Send(new ShowQuestionQuery(QuizId), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);
