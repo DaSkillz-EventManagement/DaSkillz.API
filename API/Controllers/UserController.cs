@@ -69,4 +69,13 @@ public class UserController : Controller
         var result = await _mediator.Send(new GetUserById(userId), cancellationToken);
         return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
     }
+
+    //[HttpGet("check-premium")]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+    //public async Task<IActionResult> CheckPremium(CancellationToken cancellationToken = default)
+    //{
+    //    var result = await _mediator.Send(new GetAllUserQuery(pageNo, eachPage), cancellationToken);
+    //    return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+    //}
 }
