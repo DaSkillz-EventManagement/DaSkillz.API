@@ -39,11 +39,12 @@ namespace Application.UseCases.Certificate.Command
 
             foreach (var userId in request.UserIds)
             {
-                var exist = _participantRepository.GetParticipant(userId, request.EventId);
+                var exist = await _participantRepository.GetParticipant(userId, request.EventId);
                 if (exist == null) continue;
 
                 var certificate = new Domain.Entities.Certificate
                 {
+                    CertificateID = new Guid(),
                     UserId = userId,
                     EventId = request.EventId,
                     IssueDate = DateTime.UtcNow

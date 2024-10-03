@@ -12,8 +12,8 @@ public class CertificateConfiguration : IEntityTypeConfiguration<Certificate>
         builder.ToTable("Certificates");
         builder.HasKey(t => t.CertificateID);
 
-            builder.Property(ua => ua.CertificateID)
-                .ValueGeneratedOnAdd();
+        builder.Property(ua => ua.CertificateID)
+            .ValueGeneratedNever();
 
             builder.Property(ua => ua.UserId)
                 .IsRequired();
