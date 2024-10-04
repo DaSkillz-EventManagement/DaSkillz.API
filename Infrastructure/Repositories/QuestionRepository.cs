@@ -62,7 +62,7 @@ public class QuestionRepository : RepositoryBase<Question>, IQuestionRepository
 
     public async Task<Question?> GetQuestionById(Guid questionId)
     {
-        return await _context.Questions.Include(q => q.Answers).FirstOrDefaultAsync(q => q.QuestionId == questionId);
+        return await _context.Questions.AsNoTracking().Include(q => q.Answers).FirstOrDefaultAsync(q => q.QuestionId == questionId);
     }
 
     public async Task<List<Question>> GetQuestionsByQuizId(Guid quizId)
