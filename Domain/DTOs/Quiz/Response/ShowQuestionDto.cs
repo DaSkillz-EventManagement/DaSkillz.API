@@ -8,6 +8,6 @@ namespace Domain.DTOs.Quiz.Response;
 
 public class ShowQuestionDto
 {
-    public ResponseQuizDto Quiz { get; set; } = new ResponseQuizDto();
+    public ResponseQuizDto? Quiz { get; set; }
     public List<ResponseQuizAttempt> Questions { get; set; } = new List<ResponseQuizAttempt>();
 }

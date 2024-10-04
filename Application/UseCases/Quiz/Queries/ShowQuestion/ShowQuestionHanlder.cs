@@ -34,10 +34,9 @@ public class ShowQuestionHanlder : IRequestHandler<ShowQuestionQuery, APIRespons
 
         if(quiz != null)
         {
-            List<ResponseQuizAttempt> responseQuizAttempts = new List<ResponseQuizAttempt>();
-            responseQuizAttempts = _mapper.Map<List<ResponseQuizAttempt>>(questions);
+            
             result.Quiz = _mapper.Map<ResponseQuizDto>(quiz);
-            result.Questions =responseQuizAttempts;
+            result.Questions = _mapper.Map<List<ResponseQuizAttempt>>(questions);
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
@@ -49,7 +48,7 @@ public class ShowQuestionHanlder : IRequestHandler<ShowQuestionQuery, APIRespons
         {
             StatusResponse = HttpStatusCode.OK,
             Message = MessageCommon.Complete,
-            Data = result
+            Data = null
         };
     }
 }
