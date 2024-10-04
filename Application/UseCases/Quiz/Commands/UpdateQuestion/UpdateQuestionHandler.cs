@@ -32,7 +32,7 @@ public class UpdateQuestionHandler : IRequestHandler<UpdateQuestionCommand, APIR
     {
         foreach(var item in request.Question)
         {   
-                Question temp = await _questionRepository.GetQuestionById(item.QuestionId);
+                Question? temp = await _questionRepository.GetById(item.QuestionId);
                 if (temp != null)
                 {
                     temp.QuestionName = item.QuestionName;
@@ -41,7 +41,7 @@ public class UpdateQuestionHandler : IRequestHandler<UpdateQuestionCommand, APIR
                     await _questionRepository.Update(temp);
                     foreach (var answer in item.Answers)
                     {
-                        var entity = await _answerRepository.GetById(answer.AnswerId);
+                        var entity = await _answerRepository.GetByIdAsNoTracking(answer.AnswerId);
                         if (entity != null)
                         {
                             entity.AnswerContent = answer.AnswerContent;
@@ -52,22 +52,26 @@ public class UpdateQuestionHandler : IRequestHandler<UpdateQuestionCommand, APIR
                 }
             else
             {
-                Question newQuestion = new Question();
-                newQuestion.QuestionId = item.QuestionId;
-                newQuestion.QuestionName = item.QuestionName;
-                newQuestion.CorrectAnswerLabel = string.Empty;
-                newQuestion.IsMultipleAnswers= item.IsMultipleAnswers;
-                newQuestion.ShowAnswerAfterChoosing = false;
-                newQuestion.QuizId = request.QuizId;
+                Question newQuestion = new Question
+                {
+                    QuestionId = item.QuestionId,
+                    QuestionName = item.QuestionName,
+                    CorrectAnswerLabel = string.Empty,
+                    IsMultipleAnswers = item.IsMultipleAnswers,
+                    ShowAnswerAfterChoosing = false,
+                    QuizId = request.QuizId
+                };
                 await _questionRepository.Add(newQuestion);
                 foreach (var answer in item.Answers)
-                {                  
-                    Answer entity = new Answer();
-                    entity.AnswerId = answer.AnswerId;
-                    entity.QuestionId = newQuestion.QuestionId;
-                    entity.AnswerContent = answer.AnswerContent;
-                    entity.IsCorrectAnswer = answer.IsCorrectAnswer;
-                    await _answerRepository.Add(entity);
+                {
+                    Answer newAnswer = new Answer
+                    {
+                        AnswerId = answer.AnswerId,
+                        QuestionId = newQuestion.QuestionId,
+                        AnswerContent = answer.AnswerContent,
+                        IsCorrectAnswer = answer.IsCorrectAnswer
+                    };
+                    await _answerRepository.Add(newAnswer);
                 }
             }
 
