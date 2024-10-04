@@ -47,7 +47,18 @@ public class UpdateQuestionHandler : IRequestHandler<UpdateQuestionCommand, APIR
                             entity.AnswerContent = answer.AnswerContent;
                             entity.IsCorrectAnswer = answer.IsCorrectAnswer;
                             await _answerRepository.Update(entity);
-                        }
+                    }
+                    else
+                    {
+                        Answer newAnswer = new Answer
+                        {
+                            AnswerId = answer.AnswerId,
+                            QuestionId = item.QuestionId,
+                            AnswerContent = answer.AnswerContent,
+                            IsCorrectAnswer = answer.IsCorrectAnswer
+                        };
+                        await _answerRepository.Add(newAnswer);
+                    }
                     }
                 }
             else
