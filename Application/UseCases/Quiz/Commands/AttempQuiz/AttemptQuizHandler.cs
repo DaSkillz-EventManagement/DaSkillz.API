@@ -70,11 +70,11 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
             entity.QuizId = request.QuizId;
             entity.QuestionId = attempQuizDto.QuestionId;
             entity.TotalTime = request.TotalTime;
-            entity.UserId = request.UserId; 
-            if(attempQuizDto.AnswerId != null)
+            entity.UserId = request.UserId;
+            entity.IsCorrect = false;
+            if (attempQuizDto.AnswerId != null)
             {
                 entity.AnswerContent = attempQuizDto.AnswerId.ToString();
-                entity.IsCorrect = false;
                 Answer userAnswer = await _answerRepository.GetById(attempQuizDto.AnswerId);
                 if (userAnswer!.IsCorrectAnswer)
                 {
