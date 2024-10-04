@@ -26,7 +26,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetFilterCertificate(
-                                                [FromQuery] int? certificateId,
+                                                [FromQuery] Guid? certificateId,
                                                 [FromQuery] Guid? userId,
                                                 [FromQuery] Guid? eventId,
                                                 [FromQuery] DateTime? issueDate,
