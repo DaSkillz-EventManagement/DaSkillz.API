@@ -26,7 +26,7 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent
         public async Task<APIResponse> Handle(GetAdvertisedInfoByEventQuery request, CancellationToken cancellationToken)
         {
             var response = new APIResponse();
-            var isOwner = await _eventRepository.IsOwner(request.UserId, request.EventId);
+            var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
             if (!isOwner)
             {
                 response.StatusResponse = HttpStatusCode.BadRequest;
