@@ -33,6 +33,7 @@ namespace Infrastructure.Persistence
         public virtual DbSet<Certificate> Certificates { get; set; } = null!;
         public virtual DbSet<UserAnswer> UserAnswers { get; set; } = null!;
         public virtual DbSet<EventStatistics> EventStatistics { get; set; } = null!;
+        public virtual DbSet<SearchHistory> SearchHistories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
