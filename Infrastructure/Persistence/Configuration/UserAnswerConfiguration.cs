@@ -33,6 +33,8 @@ public class UserAnswerConfiguration : IEntityTypeConfiguration<UserAnswer>
 
         builder.Property(ua => ua.IsCorrect);
 
+        builder.Property(ua => ua.SubmitAt);
+
         builder.HasOne(ua => ua.Quiz)
             .WithMany()
             .HasForeignKey(ua => ua.QuizId)

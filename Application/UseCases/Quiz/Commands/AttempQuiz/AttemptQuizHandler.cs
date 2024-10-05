@@ -1,4 +1,5 @@
-﻿using Application.ResponseMessage;
+﻿using Application.Abstractions.Caching;
+using Application.ResponseMessage;
 using AutoMapper;
 using Domain.DTOs.Quiz.Response;
 using Domain.Entities;
@@ -23,17 +24,17 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
     private readonly IAnswerRepository _answerRepository;
     private readonly IQuizRepository _quizRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IRedisCaching _caching;
 
     public AttemptQuizHandler(IUserAnswerRepository userAnswerRepository, IQuestionRepository questionRepository, 
-        IAnswerRepository answerRepository, IUnitOfWork unitOfWork, IQuizRepository quizRepository, IMapper mapper)
+        IAnswerRepository answerRepository, IUnitOfWork unitOfWork, IQuizRepository quizRepository, IRedisCaching caching)
     {
         _userAnswerRepository = userAnswerRepository;
         _questionRepository = questionRepository;
         _answerRepository = answerRepository;
         _quizRepository = quizRepository;
         _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        _caching = caching;
     }
     #endregion
     public async Task<APIResponse> Handle(AttemptQuizCommand request, CancellationToken cancellationToken)
@@ -48,7 +49,7 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
                 Data = MessageEvent.YouAlreadyAttemptedThisQuiz
             };
         }*/
-
+        
         int attempNo = await _userAnswerRepository.GetAttemptNo(request.QuizId, request.UserId);
         int quizAttemptAllow = await _quizRepository.GetQuizAttemptAllow(request.QuizId);
         if(quizAttemptAllow > 0 && attempNo >= quizAttemptAllow)
@@ -96,19 +97,26 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
                 }
             }
             entity.AttemptNo = attempNo + 1;
+            entity.SubmitAt = DateTime.Now;
             await _userAnswerRepository.Add(entity);
         }
         try
         {
             if(await _unitOfWork.SaveChangesAsync() > 0)
             {
-                var result = await _questionRepository.GetQuestionsByQuizId(request.QuizId);
+                //var result = await _questionRepository.GetQuestionsByQuizId(request.QuizId);
                 //string finalResult = $"Your final score: {userPoint}/{maxPoint}";
+                var invalidateCache = await _caching.SearchKeysAsync($"users_asnswers_{request.QuizId}");
+                if (invalidateCache != null)
+                {
+                    foreach (var key in invalidateCache)
+                        await _caching.DeleteKeyAsync(key);
+                }
                 return new APIResponse
                 {
                     StatusResponse = HttpStatusCode.OK,
                     Message = MessageCommon.CreateSuccesfully,
-                    Data = _mapper.Map<List<ResponseQuizAttempt>>(result)
+                    Data = MessageCommon.CreateSuccesfully//_mapper.Map<List<ResponseQuizAttempt>>(result)
                 };
             }
             return new APIResponse

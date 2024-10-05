@@ -47,6 +47,7 @@ public class UserAnswerRepository : RepositoryBase<UserAnswer>, IUserAnswerRepos
     public async Task<List<UserAnswer>> GetUserAnswer(Guid userId, Guid quizId)
     {
         var result = await _context.UserAnswers.Where(u => u.QuizId == quizId && u.UserId == userId)
+            .OrderBy(u => u.AttemptNo)
             .ToListAsync();
         return result;
     }
