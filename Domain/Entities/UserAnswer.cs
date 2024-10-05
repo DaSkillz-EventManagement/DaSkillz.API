@@ -12,6 +12,7 @@ public class UserAnswer
     public string? TotalTime { get; set; }
     public bool? IsCorrect { get; set; }
     public int AttemptNo { get; set; }
+    public DateTime? SubmitAt { get; set; }
 
     public virtual Quiz Quiz { get; set; } = null!;
     public virtual Question Question { get; set; } = null!;

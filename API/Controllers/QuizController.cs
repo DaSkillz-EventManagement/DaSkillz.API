@@ -6,6 +6,7 @@ using Application.UseCases.Quizs.Commands.DeleteQuestions;
 using Application.UseCases.Quizs.Commands.DeleteQuiz;
 using Application.UseCases.Quizs.Commands.UpdateQuestion;
 using Application.UseCases.Quizs.Commands.UpdateQuiz;
+using Application.UseCases.Quizs.Queries.GetAllUsersAnswers;
 using Application.UseCases.Quizs.Queries.GetQuizByEventId;
 using Application.UseCases.Quizs.Queries.GetQuizInfo;
 using Application.UseCases.Quizs.Queries.GetQuizParticipated;
@@ -183,6 +184,16 @@ namespace API.Controllers
         public async Task<IActionResult> GetUserAnswers([FromQuery, Required] Guid quizId, [FromQuery, Required] Guid userId, CancellationToken token = default)
         {
             var result = await _mediator.Send(new GetUserAnswersQuery(userId, quizId), token);
+            if (result.StatusResponse == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpGet("users-participated/all/answers")]
+        public async Task<IActionResult> GetUsersAnswers([FromQuery, Required] Guid quizId, CancellationToken token = default)
+        {
+            var result = await _mediator.Send(new GetAllUsersAnswersQuery(quizId), token);
             if (result.StatusResponse == HttpStatusCode.OK)
             {
                 return Ok(result);

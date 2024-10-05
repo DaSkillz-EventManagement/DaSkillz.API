@@ -16,5 +16,6 @@ public class UserAnswerResponseDto
     public string? AnswerContent { get; set; }
     public string? TotalTime { get; set; }
     public bool? IsCorrect { get; set; }
+    public DateTime? SubmitAt { get; set; }
     public int AttemptNo { get; set; }
 }

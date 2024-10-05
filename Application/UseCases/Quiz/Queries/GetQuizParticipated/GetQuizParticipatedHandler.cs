@@ -1,5 +1,6 @@
 ﻿using Application.ResponseMessage;
 using AutoMapper;
+using Domain.DTOs.Quiz.Response;
 using Domain.DTOs.User.Response;
 using Domain.Models.Response;
 using Domain.Repositories;
