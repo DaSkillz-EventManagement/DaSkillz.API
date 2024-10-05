@@ -86,7 +86,7 @@ public class GetAllUsersAnswersHandler : IRequestHandler<GetAllUsersAnswersQuery
             }
             response.Add(temp);
         }
-        await _caching.SetAsync(cacheKey, response, 2);
+        await _caching.SetAsync(cacheKey, response, 5);
 
         if (response != null)
         {

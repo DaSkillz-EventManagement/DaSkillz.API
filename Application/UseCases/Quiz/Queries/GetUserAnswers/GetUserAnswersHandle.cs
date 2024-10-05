@@ -74,7 +74,7 @@ public class GetUserAnswersHandle : IRequestHandler<GetUserAnswersQuery, APIResp
                 }
                 response[$"attempNo{item.AttemptNo}"].Add(responseDto);
             }
-            await _caching.SetAsync(cacheKey, response, 2);
+            await _caching.SetAsync(cacheKey, response, 5);
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
