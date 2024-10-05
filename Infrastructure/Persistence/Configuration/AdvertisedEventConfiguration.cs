@@ -34,6 +34,8 @@ namespace Infrastructure.Persistence.Configuration
             builder.Property(e => e.PurchasedPrice)
                 .HasColumnType("decimal(18,2)") // Set decimal precision for PurchasedPrice
                 .IsRequired(); // Make PurchasedPrice required
+
+        
         }
     }
 }

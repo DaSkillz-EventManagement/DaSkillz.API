@@ -19,7 +19,8 @@ namespace Infrastructure.Repositories
 
         public async Task<AdvertisedEvent?> GetAdvertisedByEventId(Guid eventId)
         {
-            return await _context.AdvertisedEvents.Where(ad => ad.EventId.Equals(eventId)).FirstOrDefaultAsync();
+            return await _context.AdvertisedEvents.Where(ad => ad.EventId.Equals(eventId)).AsNoTracking()
+                   .FirstOrDefaultAsync();
         }
 
         public async Task<List<AdvertisedEvent>> GetFilteredAdvertisedByHost(Guid userId, string status)

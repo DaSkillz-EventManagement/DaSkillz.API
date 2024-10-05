@@ -19,6 +19,7 @@ namespace Domain.Entities
         public long EndDate { get; set; }
         public decimal PurchasedPrice { get; set; }
 
+        public virtual User User { get; set; }
         public virtual Event Event { get; set; }
     }
 }

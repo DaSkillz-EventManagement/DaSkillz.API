@@ -1,5 +1,7 @@
 ﻿using Application.ResponseMessage;
 using Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent;
+using AutoMapper;
+using Domain.DTOs.AdvertisedEvents;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;
@@ -16,11 +18,13 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent
     {
         private readonly IEventRepository _eventRepository;
         private readonly IAdvertisedEventRepository _advertisedEventRepository;
+        private readonly IMapper _mapper;
 
-        public GetAdvertisedInfoByEventQueryHandler(IEventRepository eventRepository, IAdvertisedEventRepository advertisedEventRepository)
+        public GetAdvertisedInfoByEventQueryHandler(IEventRepository eventRepository, IAdvertisedEventRepository advertisedEventRepository, IMapper mapper)
         {
             _eventRepository = eventRepository;
             _advertisedEventRepository = advertisedEventRepository;
+            _mapper = mapper;
         }
 
         public async Task<APIResponse> Handle(GetAdvertisedInfoByEventQuery request, CancellationToken cancellationToken)
@@ -35,10 +39,19 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent
                 return response;
             }
             var existAd = await _advertisedEventRepository.GetAdvertisedByEventId(request.EventId);
-
-            response.StatusResponse = HttpStatusCode.OK;
-            response.Message = MessageCommon.GetSuccesfully;
-            response.Data = existAd;
+            var dto = _mapper.Map<AdvertisedEventDto>(existAd);
+            if(dto != null)
+            {
+                response.StatusResponse = HttpStatusCode.OK;
+                response.Message = MessageCommon.GetSuccesfully;
+                response.Data = existAd;
+            } else
+            {
+                response.StatusResponse = HttpStatusCode.OK;
+                response.Message = MessageCommon.GetSuccesfully;
+                response.Data = null;
+            }
+            
             return response;
         }
     }
