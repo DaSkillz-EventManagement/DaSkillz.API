@@ -56,6 +56,7 @@ namespace API.Controllers
             };
         }
 
+        [Authorize]
         [HttpGet("ad-info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,6 +73,7 @@ namespace API.Controllers
             };
         }
 
+        [Authorize]
         [HttpGet("ad-host")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
