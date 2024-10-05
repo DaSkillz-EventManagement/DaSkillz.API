@@ -42,7 +42,7 @@ public class GetUserAnswersHandle : IRequestHandler<GetUserAnswersQuery, APIResp
                 responseDto = _mapper.Map<UserAnswerResponseDto>(item);
                 if (question.IsMultipleAnswers)
                 {
-                    responseDto.AnswerId = Guid.Parse(item.AnswerContent!);
+                    responseDto.AnswerId = item.AnswerContent != null ? Guid.Parse(item.AnswerContent) : null;
                     responseDto.AnswerContent = null;
                 }
                 if (!question.IsMultipleAnswers)
