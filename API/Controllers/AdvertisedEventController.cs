@@ -65,12 +65,7 @@ namespace API.Controllers
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new GetAdvertisedInfoByEventQuery(eventId, userId), cancellationToken);
 
-            return new APIResponse()
-            {
-                StatusResponse = HttpStatusCode.OK,
-                Message = MessageCommon.GetSuccesfully,
-                Data = result
-            };
+            return result;
         }
 
         [Authorize]
