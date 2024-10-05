@@ -53,7 +53,7 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
                     advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
                     advertisedEntity.EventId = request.EventId;
                     advertisedEntity.PurchaserId = request.UserId;
-                    advertisedEntity.PurchasedPrice = (decimal)priceAd.amount;
+                    advertisedEntity.PurchasedPrice = (decimal)priceAd.amount * request.numOfDate;
                     advertisedEntity.StartDate = DateTimeHelper.GetCurrentTimeAsLong();
 
                     // Convert StartDate back to DateTimeOffset
@@ -87,7 +87,7 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
                 advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
                 advertisedEntity.EventId = request.EventId;
                 advertisedEntity.PurchaserId = request.UserId;
-                advertisedEntity.PurchasedPrice = (decimal)priceAd.amount;
+                advertisedEntity.PurchasedPrice = (decimal)priceAd.amount * request.numOfDate;
                 advertisedEntity.StartDate = DateTimeHelper.GetCurrentTimeAsLong();
 
                 // Convert StartDate back to DateTimeOffset
