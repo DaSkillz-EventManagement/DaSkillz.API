@@ -1,5 +1,6 @@
 ﻿using Application.UseCases.User.Commands.DeleteUser;
 using Application.UseCases.User.Commands.UpdateUser;
+using Application.UseCases.User.Queries.CheckUserPremium;
 using Application.UseCases.User.Queries.GetAllUsers;
 using Application.UseCases.User.Queries.GetByUserId;
 using Application.UseCases.User.Queries.GetUserByKeyword;
@@ -70,12 +71,12 @@ public class UserController : Controller
         return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
     }
 
-    //[HttpGet("check-premium")]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> CheckPremium(CancellationToken cancellationToken = default)
-    //{
-    //    var result = await _mediator.Send(new GetAllUserQuery(pageNo, eachPage), cancellationToken);
-    //    return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
-    //}
+    [HttpGet("check-premium")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CheckPremium([FromQuery] Guid userId ,CancellationToken cancellationToken = default)
+    {
+        var result = await _mediator.Send(new CheckUserPremiumQuery(userId), cancellationToken);
+        return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+    }
 }
