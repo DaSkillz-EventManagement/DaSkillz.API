@@ -17,10 +17,10 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<AdvertisedEvent?> GetAdvertisedByEventId(Guid eventId)
+        public async Task<List<AdvertisedEvent?>> GetAdvertisedByEventId(Guid eventId)
         {
-            return await _context.AdvertisedEvents.Where(ad => ad.EventId.Equals(eventId)).AsNoTracking()
-                   .FirstOrDefaultAsync();
+            return await _context.AdvertisedEvents.Where(ad => ad.EventId.Equals(eventId)).OrderByDescending(ad => ad.EndDate).AsNoTracking()
+                  .ToListAsync();
         }
 
         public async Task<List<AdvertisedEvent>> GetFilteredAdvertisedByHost(Guid userId, string status)
@@ -28,12 +28,17 @@ namespace Infrastructure.Repositories
             var result = await _context.AdvertisedEvents.Where(ad => ad.UserId.Equals(userId)).ToListAsync();
             if (status.Equals(AdvertisedStatus.Expired.ToString()))
             {
-                result = result.Where(ad => ad.EndDate < DateTimeHelper.GetCurrentTimeAsLong()).ToList();
-            } else if (status.Equals(AdvertisedStatus.Remain.ToString()))
+                result = result.Where(ad => ad.Status.Equals(AdvertisedStatus.Expired.ToString())).ToList();
+            } else if (status.Equals(AdvertisedStatus.Active.ToString()))
             {
-                result = result.Where(ad => ad.EndDate > DateTimeHelper.GetCurrentTimeAsLong()).ToList();
+                result = result.Where(ad => ad.Status.Equals(AdvertisedStatus.Active.ToString())).ToList();
             }
             return result;
+        }
+
+        public async Task<AdvertisedEvent?> GetLastestAdvertisedEvent(Guid eventId)
+        {
+            return await _context.AdvertisedEvents.Where(ad => ad.EventId.Equals(eventId) && ad.Status.Equals(AdvertisedStatus.Active.ToString())).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public async Task<List<Guid>> GetListAdvertisedEventId()

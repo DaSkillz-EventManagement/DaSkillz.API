@@ -2,6 +2,7 @@
 using Application.ResponseMessage;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enum.AdvertisedEvents;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
@@ -33,7 +34,7 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
         {
             var response = new APIResponse();
             var priceAd = await _priceRepository.GetPriceAdvertised();
-            var existAd = await _advertisedEventRepository.GetAdvertisedByEventId(request.EventId);
+            var existAd = await _advertisedEventRepository.GetLastestAdvertisedEvent(request.EventId);
 
             if(existAd != null)
             {
@@ -50,11 +51,13 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
                     }
 
                     var advertisedEntity = new AdvertisedEvent();
+                    advertisedEntity.Id = Guid.NewGuid();
                     advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
                     advertisedEntity.EventId = request.EventId;
                     advertisedEntity.UserId = request.UserId;
                     advertisedEntity.PurchasedPrice = (decimal)priceAd.amount * request.numOfDate;
                     advertisedEntity.StartDate = DateTimeHelper.GetCurrentTimeAsLong();
+                    advertisedEntity.Status = AdvertisedStatus.Active.ToString();
 
                     // Convert StartDate back to DateTimeOffset
                     DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(advertisedEntity.StartDate);
@@ -84,11 +87,13 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
                 
 
                 var advertisedEntity = new AdvertisedEvent();
+                advertisedEntity.Id = new Guid();
                 advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
                 advertisedEntity.EventId = request.EventId;
                 advertisedEntity.UserId = request.UserId;
                 advertisedEntity.PurchasedPrice = (decimal)priceAd.amount * request.numOfDate;
                 advertisedEntity.StartDate = DateTimeHelper.GetCurrentTimeAsLong();
+                advertisedEntity.Status = AdvertisedStatus.Active.ToString();
 
                 // Convert StartDate back to DateTimeOffset
                 DateTimeOffset startDate = DateTimeOffset.FromUnixTimeMilliseconds(advertisedEntity.StartDate);

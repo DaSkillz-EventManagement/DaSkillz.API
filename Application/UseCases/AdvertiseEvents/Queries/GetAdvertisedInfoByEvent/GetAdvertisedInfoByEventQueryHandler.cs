@@ -39,7 +39,7 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent
                 return response;
             }
             var existAd = await _advertisedEventRepository.GetAdvertisedByEventId(request.EventId);
-            var dto = _mapper.Map<AdvertisedEventDto>(existAd);
+            var dto = _mapper.Map<List<AdvertisedEventDto>>(existAd);
 
             //var dto = new AdvertisedEventDto();
             //dto.UserId = existAd.UserId;

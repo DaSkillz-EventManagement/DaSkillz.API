@@ -10,8 +10,7 @@ namespace Infrastructure.Persistence.Configuration
         {
 
 
-            // Set the composite primary key (assuming PurchaserId and EventId are the composite keys)
-            builder.HasKey(e => new { e.UserId, e.EventId });
+            builder.Property(e => e.Id).ValueGeneratedNever();
 
             // Configure the PurchaserId property
             builder.Property(e => e.UserId)
@@ -29,6 +28,10 @@ namespace Infrastructure.Persistence.Configuration
             // Configure the EndDate property
             builder.Property(e => e.EndDate)
                 .IsRequired(); // Make EndDate required
+
+            builder.Property(e => e.Status)
+               .HasMaxLength(10)
+               .IsUnicode(false);
 
             // Configure the PurchasedPrice property
             builder.Property(e => e.PurchasedPrice)

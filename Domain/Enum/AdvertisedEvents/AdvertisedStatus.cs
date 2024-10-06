@@ -9,6 +9,6 @@ namespace Domain.Enum.AdvertisedEvents
     public enum AdvertisedStatus
     {
         Expired,
-        Remain
+        Active
     }
 }
