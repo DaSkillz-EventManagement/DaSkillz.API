@@ -13,7 +13,9 @@ namespace Infrastructure.Persistence.Configuration
     {
         public void Configure(EntityTypeBuilder<SearchHistory> builder)
         {
-            builder.HasNoKey();
+            builder.HasKey(e => e.Id);  // Specify the primary key
+            builder.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
 
             // Configure EventName property
             builder.Property(e => e.EventName)

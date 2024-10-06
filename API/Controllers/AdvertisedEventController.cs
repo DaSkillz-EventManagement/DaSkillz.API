@@ -77,12 +77,7 @@ namespace API.Controllers
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new GetFilteredAdvertisedByHostQuery(userId, status), cancellationToken);
 
-            return new APIResponse()
-            {
-                StatusResponse = HttpStatusCode.OK,
-                Message = MessageCommon.GetSuccesfully,
-                Data = result
-            };
+            return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
     }
 }
