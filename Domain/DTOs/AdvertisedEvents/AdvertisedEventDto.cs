@@ -2,7 +2,7 @@
 {
     public class AdvertisedEventDto
     {
-        public Guid PurchaserId { get; set; }
+        public Guid UserId { get; set; }
         public Guid EventId { get; set; }
         public long CreatedDate { get; set; }
         public long StartDate { get; set; }

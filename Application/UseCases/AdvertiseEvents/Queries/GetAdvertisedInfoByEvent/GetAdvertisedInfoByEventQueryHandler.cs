@@ -40,11 +40,19 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent
             }
             var existAd = await _advertisedEventRepository.GetAdvertisedByEventId(request.EventId);
             var dto = _mapper.Map<AdvertisedEventDto>(existAd);
+
+            //var dto = new AdvertisedEventDto();
+            //dto.UserId = existAd.UserId;
+            //dto.EventId = existAd.EventId;
+            //dto.CreatedDate = existAd.CreatedDate;
+            //dto.EndDate = existAd.EndDate;
+            //dto.StartDate = existAd.StartDate;
+            //dto.PurchasedPrice = existAd.PurchasedPrice;
             if(dto != null)
             {
                 response.StatusResponse = HttpStatusCode.OK;
                 response.Message = MessageCommon.GetSuccesfully;
-                response.Data = existAd;
+                response.Data = dto;
             } else
             {
                 response.StatusResponse = HttpStatusCode.OK;

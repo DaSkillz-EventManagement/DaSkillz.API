@@ -11,10 +11,10 @@ namespace Infrastructure.Persistence.Configuration
 
 
             // Set the composite primary key (assuming PurchaserId and EventId are the composite keys)
-            builder.HasKey(e => new { e.PurchaserId, e.EventId });
+            builder.HasKey(e => new { e.UserId, e.EventId });
 
             // Configure the PurchaserId property
-            builder.Property(e => e.PurchaserId)
+            builder.Property(e => e.UserId)
                 .IsRequired(); // Make PurchaserId required
 
             // Configure the EventId property

@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<AdvertisedEvent>> GetFilteredAdvertisedByHost(Guid userId, string status)
         {
-            var result = await _context.AdvertisedEvents.Where(ad => ad.PurchaserId.Equals(userId)).ToListAsync();
+            var result = await _context.AdvertisedEvents.Where(ad => ad.UserId.Equals(userId)).ToListAsync();
             if (status.Equals(AdvertisedStatus.Expired.ToString()))
             {
                 result = result.Where(ad => ad.EndDate < DateTimeHelper.GetCurrentTimeAsLong()).ToList();
