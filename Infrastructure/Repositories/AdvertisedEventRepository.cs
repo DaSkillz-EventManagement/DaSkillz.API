@@ -1,4 +1,5 @@
 ﻿using Application.Helper;
+using Domain.DTOs.AdvertisedEvents;
 using Domain.Entities;
 using Domain.Enum.AdvertisedEvents;
 using Domain.Repositories;
@@ -15,6 +16,19 @@ namespace Infrastructure.Repositories
         public AdvertisedEventRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<List<AdEventStatisticDto>> GetAdEventStatistic()
+        {
+                return await _context.AdvertisedEvents
+            .GroupBy(ad => ad.EventId)
+            .Select(group => new AdEventStatisticDto
+            {
+                EventId = group.Key, // This is the EventId
+                NumOfPurchasing = group.Count(), // Number of advertisements for the event
+                TotalMoney = group.Sum(ad => ad.PurchasedPrice) // Total amount of money paid for the event
+            })
+            .ToListAsync();
         }
 
         public async Task<List<AdvertisedEvent?>> GetAdvertisedByEventId(Guid eventId)

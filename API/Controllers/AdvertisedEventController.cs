@@ -1,6 +1,7 @@
 ﻿using Application.Helper;
 using Application.ResponseMessage;
 using Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent;
+using Application.UseCases.AdvertiseEvents.Queries.GetAdEventStatistic;
 using Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedEventByCreatedDay;
 using Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent;
 using Application.UseCases.AdvertiseEvents.Queries.GetFilteredAdveetisedByHost;
@@ -76,6 +77,18 @@ namespace API.Controllers
         {
             Guid userId = Guid.Parse(User.GetUserIdFromToken());
             var result = await _mediator.Send(new GetFilteredAdvertisedByHostQuery(userId, status), cancellationToken);
+
+            return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
+        }
+
+        [Authorize]
+        [HttpGet("ad-statistic")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetAdvertisedEventByAdmin(CancellationToken cancellationToken = default)
+        {
+            Guid userId = Guid.Parse(User.GetUserIdFromToken());
+            var result = await _mediator.Send(new GetAdEventStatisticQuery(userId), cancellationToken);
 
             return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
         }
