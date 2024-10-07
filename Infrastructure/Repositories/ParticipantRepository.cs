@@ -3,6 +3,7 @@ using Domain.Entities;
 using Domain.Enum.Participant;
 using Domain.Models.Pagination;
 using Domain.Repositories;
+using Elastic.Clients.Elasticsearch.Security;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
@@ -21,7 +22,7 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         _context = context;
     }
 
-    public async Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? eventId, DateTime startDate, DateTime endDate)
+    public async Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
     {
         DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
 
@@ -29,7 +30,20 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
             .Include(a => a.Event)
             .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted);
 
-        if (eventId != null)
+        var isRole = await _context.Users.AnyAsync(x => x.RoleId == 2 && x.UserId == userId);
+        if (isRole)
+        {
+            if (eventId != null)
+            {
+                query = query.Where(p => p.EventId == eventId.Value && p.Event.CreatedBy == userId);
+            }
+            else
+            {
+                query = query.Where(p => p.Event.CreatedBy == userId);
+            }
+        }
+
+        else 
         {
             query = query.Where(p => p.EventId == eventId.Value);
         }
@@ -46,7 +60,7 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         return participationByDay;
     }
 
-    public async Task<List<HourlyPartitipant>> GetParticipationByHourAsync(Guid? eventId, DateTime startDate, DateTime endDate)
+    public async Task<List<HourlyPartitipant>> GetParticipationByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
     {
         DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
 
@@ -55,7 +69,20 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
             .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted)
             .ToListAsync(); // Get all relevant records
 
-        if (eventId != null)
+        var isRole = await _context.Users.AnyAsync(x => x.RoleId == 2 && x.UserId == userId);
+        if (isRole)
+        {
+            if (eventId != null)
+            {
+                participants = participants.Where(p => p.EventId == eventId.Value && p.Event.CreatedBy == userId).ToList();
+            }
+            else
+            {
+                participants = participants.Where(p => p.Event.CreatedBy == userId).ToList();
+            }
+        }
+
+        else if (eventId != null)
         {
             participants = participants.Where(p => p.EventId == eventId.Value).ToList();
         }
