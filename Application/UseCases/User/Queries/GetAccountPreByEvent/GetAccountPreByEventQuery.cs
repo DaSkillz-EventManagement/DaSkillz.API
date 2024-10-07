@@ -10,12 +10,12 @@ namespace Application.UseCases.User.Queries.GetAccountPreByEvent
 {
     public class GetAccountPreByEventQuery : IRequest<APIResponse>
     {
-        public Guid EventId { get; set; }
+        public Guid AnotherUserId { get; set; }
         public Guid UserId { get; set; }
 
-        public GetAccountPreByEventQuery(Guid eventId, Guid userId)
+        public GetAccountPreByEventQuery(Guid anotherUserId, Guid userId)
         {
-            EventId = eventId;
+            AnotherUserId = anotherUserId;
             UserId = userId;
         }
     }

@@ -156,10 +156,10 @@ namespace Infrastructure.Repositories
                 .ToList());
         }
 
-        public async Task<List<AccountStatisticInfoDto>> GetAccountStatisticInfoByEventId(Guid eventId)
+        public async Task<List<AccountStatisticInfoDto>> GetAccountStatisticInfoByEventId(Guid userId)
         {
             return await Task.Run(() => _context.Transactions
-                .Where(t => t.EventId == eventId) // Filter by EventId
+                .Where(t => t.UserId.Equals(userId) && t.SubscriptionType == (int)PaymentType.SUBSCRIPTION) // Filter by EventId
                 .AsEnumerable()
                 .Select(t => new AccountStatisticInfoDto
                 {

@@ -29,8 +29,8 @@ namespace Application.UseCases.User.Queries.GetAccountPreByEvent
         {
             var response = new APIResponse();
             var isAdmin = await _userRepository.IsAdmin(request.UserId);
-            var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
-            if (!isOwner && !isAdmin)
+            
+            if (!isAdmin)
             {
 
                 response.StatusResponse = HttpStatusCode.BadRequest;
@@ -39,7 +39,7 @@ namespace Application.UseCases.User.Queries.GetAccountPreByEvent
                 return response;
             }
 
-            var listAcc = await _transactionRepository.GetAccountStatisticInfoByEventId(request.EventId);
+            var listAcc = await _transactionRepository.GetAccountStatisticInfoByEventId(request.AnotherUserId);
 
             if (listAcc != null)
             {

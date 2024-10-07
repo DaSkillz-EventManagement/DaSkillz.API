@@ -102,10 +102,10 @@ public class UserController : Controller
     [HttpGet("accountpre-info")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<APIResponse>> GetAccountPreByEvent([FromQuery] Guid eventId, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<APIResponse>> GetAccountPreByEvent([FromQuery] Guid anotherUserId, CancellationToken cancellationToken = default)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
-        var result = await _mediator.Send(new GetAccountPreByEventQuery(eventId, userId), cancellationToken);
+        var result = await _mediator.Send(new GetAccountPreByEventQuery(anotherUserId, userId), cancellationToken);
 
         return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
     }

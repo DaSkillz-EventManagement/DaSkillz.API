@@ -17,6 +17,6 @@ namespace Domain.Repositories
         Task<Transaction?> GetAlreadyPaid(Guid userId, Guid eventId);
 
         Task<List<AccountStatisticDto>> GetAccountStatistics();
-        Task<List<AccountStatisticInfoDto>> GetAccountStatisticInfoByEventId(Guid eventId);
+        Task<List<AccountStatisticInfoDto>> GetAccountStatisticInfoByEventId(Guid userId);
     }
 }
