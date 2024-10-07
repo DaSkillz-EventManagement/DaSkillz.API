@@ -20,7 +20,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalParticipant
             if (request.IsDay)
             {
                 // Lấy dữ liệu tham gia theo ngày từ kho dữ liệu
-                var participationByDay = await _participantRepository.GetParticipationByDayAsync(request.StartDate, request.EndDate);
+                var participationByDay = await _participantRepository.GetParticipationByDayAsync(request.eventId, request.StartDate, request.EndDate);
 
                 // Tạo danh sách để lưu trữ dữ liệu tham gia theo ngày đầy đủ
                 var dailyParticipation = new List<DailyParticipation>();
@@ -48,6 +48,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalParticipant
                     Message = MessageCommon.GetSuccesfully,
                     Data = new
                     {
+                        EventId = request.eventId,
                         TotalParticipation = totalParticipation,
                         DailyParticipation = dailyParticipation
                     }
@@ -56,7 +57,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalParticipant
             else
             {
                 // Lấy dữ liệu tham gia theo giờ từ kho dữ liệu
-                var participationByHour = await _participantRepository.GetParticipationByHourAsync(request.StartDate, request.EndDate);
+                var participationByHour = await _participantRepository.GetParticipationByHourAsync(request.eventId, request.StartDate, request.EndDate);
 
                 // Tạo danh sách để lưu trữ dữ liệu tham gia theo giờ đầy đủ
                 var hourlyParticipants = new List<HourlyPartitipant>();
@@ -91,6 +92,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalParticipant
                     Message = MessageCommon.GetSuccesfully,
                     Data = new
                     {
+                        EventId = request.eventId,
                         TotalParticipation = totalParticipation,
                         HourlyParticipants = hourlyParticipants
                     }

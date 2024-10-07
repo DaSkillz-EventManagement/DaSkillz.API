@@ -7,8 +7,8 @@ namespace Domain.Repositories
 {
     public interface ITransactionRepository : IRepository<Transaction>
     {
-        Task<List<DailyTransaction>> GetTotalAmountByDayAsync(DateTime startDate, DateTime endDate);
-        Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(DateTime startDate, DateTime endDate);
+        Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? eventId, DateTime startDate, DateTime endDate);
+        Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(Guid? eventId, DateTime startDate, DateTime endDate);
         Task<IEnumerable<Transaction?>> getEventTransactionAsync(Guid? eventId);
         Task<IEnumerable<Transaction?>> getTransactionByUserIdAsync(Guid? guid);
         Task<IList<Transaction>> getProcessingTransaction();

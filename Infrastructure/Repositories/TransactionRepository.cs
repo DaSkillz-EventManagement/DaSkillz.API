@@ -19,12 +19,17 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(DateTime startDate, DateTime endDate)
+        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? eventId, DateTime startDate, DateTime endDate)
         {
             DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
             var transactions = await _context.Transactions
                 .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
                 .ToListAsync();
+
+            if (eventId != null)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value).ToList();
+            }
 
             var transactionsByDay = transactions
                 .GroupBy(t => t.CreatedAt.Date)
@@ -39,13 +44,18 @@ namespace Infrastructure.Repositories
             return transactionsByDay;
         }
 
-        public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(DateTime startDate, DateTime endDate)
+        public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(Guid? eventId, DateTime startDate, DateTime endDate)
         {
             DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
 
             var transactions = await _context.Transactions
                 .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
-                .ToListAsync(); 
+                .ToListAsync();
+
+            if (eventId != null)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value).ToList();
+            }
 
             var transactionsByHour = transactions
                 .GroupBy(t => new { Day = t.CreatedAt.Date, Hour = t.CreatedAt.Hour })
