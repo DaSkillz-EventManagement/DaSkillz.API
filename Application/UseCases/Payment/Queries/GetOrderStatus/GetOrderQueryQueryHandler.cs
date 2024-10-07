@@ -133,24 +133,25 @@ namespace Application.UseCases.Payment.Queries.GetOrderStatus
                     var subscription = await _subscriptionRepository.GetByUserId(exist.UserId);
                     if (subscription != null)
                     {
-                        if (subscription.EndDate >= DateTime.UtcNow)
+                        if (subscription.EndDate >= DateTime.Now)
                         {
                             subscription.EndDate = subscription.EndDate.AddMonths(1);
                         }
                         else
                         {
-                            subscription.StartDate = DateTime.UtcNow;
-                            subscription.EndDate = DateTime.UtcNow.AddMonths(1);
+                            subscription.StartDate = DateTime.Now;
+                            subscription.EndDate = DateTime.Now.AddMonths(1);
                         }
                         subscription.IsActive = true;
+                        await _subscriptionRepository.Update(subscription);
                     }
                     else
                     {
                         subscription = new Subscription
                         {
                             UserId = (Guid)exist.UserId!,
-                            StartDate = DateTime.UtcNow,
-                            EndDate = DateTime.UtcNow.AddMonths(1),
+                            StartDate = DateTime.Now,
+                            EndDate = DateTime.Now.AddMonths(1),
                             IsActive = true
                         };
                         await _subscriptionRepository.Add(subscription);

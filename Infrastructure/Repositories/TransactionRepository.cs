@@ -1,4 +1,6 @@
-﻿using Domain.Entities;
+﻿using Application.Helper;
+using Domain.DTOs.Payment.Response;
+using Domain.Entities;
 using Domain.Enum.Payment;
 using Domain.Repositories;
 using Infrastructure.Persistence;
@@ -14,6 +16,49 @@ namespace Infrastructure.Repositories
         public TransactionRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(DateTime startDate, DateTime endDate)
+        {
+            DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
+            var transactions = await _context.Transactions
+                .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
+                .ToListAsync();
+
+            var transactionsByDay = transactions
+                .GroupBy(t => t.CreatedAt.Date)
+                .Select(g => new DailyTransaction
+                {
+                    Date = g.Key.ToString("dd/MM/yyyy"),
+                    TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(),
+                })
+                .OrderBy(d => d.Date)
+                .ToList();
+
+            return transactionsByDay;
+        }
+
+        public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(DateTime startDate, DateTime endDate)
+        {
+            DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
+
+            var transactions = await _context.Transactions
+                .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
+                .ToListAsync(); 
+
+            var transactionsByHour = transactions
+                .GroupBy(t => new { Day = t.CreatedAt.Date, Hour = t.CreatedAt.Hour })
+                .Select(g => new HourlyTransaction
+                {
+                    Date = g.Key.Day.ToString("dd/MM/yyyy"),
+                    Hour = $"{g.Key.Hour:D2}:00",
+                    TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(), // Giữ nguyên phương thức
+                })
+                .OrderBy(h => h.Date)
+                .ThenBy(h => h.Hour)
+                .ToList();
+
+            return transactionsByHour;
         }
 
         public async Task<IEnumerable<Transaction?>> getTransactionByUserIdAsync(Guid? guid)

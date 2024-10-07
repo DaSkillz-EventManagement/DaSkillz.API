@@ -47,7 +47,7 @@ namespace Application.UseCases.Certificate.Command
                     CertificateID = Guid.NewGuid(),
                     UserId = userId,
                     EventId = request.EventId,
-                    IssueDate = DateTime.UtcNow
+                    IssueDate = DateTime.Now
                 };
 
                 certificatesToAdd.Add(certificate);

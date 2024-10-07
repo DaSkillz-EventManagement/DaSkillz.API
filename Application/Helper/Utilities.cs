@@ -55,5 +55,10 @@ namespace Application.Helper
             return Enum.TryParse<ParticipantStatus>(status, out _);
         }
 
+        public static decimal ParseAmount(string amount)
+        {
+            return decimal.TryParse(amount, out var parsedAmount) ? parsedAmount : 0;
+        }
+
     }
 }
