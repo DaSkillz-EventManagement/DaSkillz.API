@@ -7,6 +7,7 @@ using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories;
@@ -20,24 +21,32 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         _context = context;
     }
 
-    public async Task<List<DailyParticipation>> GetParticipationByDayAsync(DateTime startDate, DateTime endDate)
+    public async Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? eventId, DateTime startDate, DateTime endDate)
     {
         DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
-        var participationByDay = await _context.Participants
-        .Include(a => a.Event)
-        .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted)
-        .GroupBy(p => p.CreatedAt!.Value.Date)
-        .Select(g => new DailyParticipation
+
+        var query = _context.Participants
+            .Include(a => a.Event)
+            .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted);
+
+        if (eventId != null)
         {
-            Date = g.Key.ToString("dd/MM/yyyy"),
-            Count = g.Count()
-        })
-        .ToListAsync();
+            query = query.Where(p => p.EventId == eventId.Value);
+        }
+
+        var participationByDay = await query
+            .GroupBy(p => p.CreatedAt!.Value.Date)
+            .Select(g => new DailyParticipation
+            {
+                Date = g.Key.ToString("dd/MM/yyyy"),
+                Count = g.Count()
+            })
+            .ToListAsync();
 
         return participationByDay;
     }
 
-    public async Task<List<HourlyPartitipant>> GetParticipationByHourAsync(DateTime startDate, DateTime endDate)
+    public async Task<List<HourlyPartitipant>> GetParticipationByHourAsync(Guid? eventId, DateTime startDate, DateTime endDate)
     {
         DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
 
@@ -45,6 +54,11 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         var participants = await _context.Participants
             .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted)
             .ToListAsync(); // Get all relevant records
+
+        if (eventId != null)
+        {
+            participants = participants.Where(p => p.EventId == eventId.Value).ToList();
+        }
 
         var hourlyParticipants = participants
             .GroupBy(p => new
