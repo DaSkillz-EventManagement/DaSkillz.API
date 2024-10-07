@@ -19,16 +19,27 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? eventId, DateTime startDate, DateTime endDate)
+        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
         {
             DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
             var transactions = await _context.Transactions
                 .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
                 .ToListAsync();
 
-            if (eventId != null)
+            
+            if (type.HasValue && eventId != null)
             {
-                transactions = transactions.Where(p => p.EventId == eventId.Value).ToList();
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.SubscriptionType == type && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (eventId != null && !type.HasValue)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (type.HasValue && eventId == null)
+            {
+                transactions = transactions.Where(p => p.SubscriptionType == type).ToList();
             }
 
             var transactionsByDay = transactions
@@ -44,7 +55,7 @@ namespace Infrastructure.Repositories
             return transactionsByDay;
         }
 
-        public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(Guid? eventId, DateTime startDate, DateTime endDate)
+        public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
         {
             DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
 
@@ -52,9 +63,19 @@ namespace Infrastructure.Repositories
                 .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
                 .ToListAsync();
 
-            if (eventId != null)
+            if (type.HasValue && eventId != null)
             {
-                transactions = transactions.Where(p => p.EventId == eventId.Value).ToList();
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.SubscriptionType == type && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (eventId != null && !type.HasValue)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (type.HasValue && eventId == null)
+            {
+                transactions = transactions.Where(p => p.SubscriptionType == type).ToList();
             }
 
             var transactionsByHour = transactions

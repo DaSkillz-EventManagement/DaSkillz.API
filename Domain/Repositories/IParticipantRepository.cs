@@ -7,8 +7,8 @@ namespace Domain.Repositories;
 
 public interface IParticipantRepository : IRepository<Participant>
 {
-    Task<List<HourlyPartitipant>> GetParticipationByHourAsync(Guid? eventId, DateTime startDate, DateTime endDate);
-    Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? eventId, DateTime startDate, DateTime endDate);
+    Task<List<HourlyPartitipant>> GetParticipationByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate);
+    Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate);
     Task<IEnumerable<Participant?>> GetParticipantsByEventId(Guid eventId);
     Task<bool> IsExistedOnEvent(Guid userId, Guid eventId);
     Task<Participant?> GetParticipant(Guid userId, Guid eventId);

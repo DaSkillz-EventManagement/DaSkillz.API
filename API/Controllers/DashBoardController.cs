@@ -1,4 +1,5 @@
-﻿using Application.ResponseMessage;
+﻿using Application.Helper;
+using Application.ResponseMessage;
 using Application.UseCases.Admin.Queries.EventMonthly;
 using Application.UseCases.Admin.Queries.EventStatus;
 using Application.UseCases.Admin.Queries.GetTotalParticipant;
@@ -64,12 +65,13 @@ public class DashboardController : ControllerBase
 
     [Authorize]
     [HttpGet("total-participants")]
-    [SwaggerOperation(Summary = "Get daily participant", Description = "with time: 2024-10-01T18:00 without time will get 24 hours)")]
+    [SwaggerOperation(Summary = "Get daily participant", Description = "with time: 2024-10-01T18:00 (without time will get 24 hours)")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetTotalParticipants([FromQuery] Guid? eventId, [FromQuery, Required] DateTime startDate, [FromQuery, Required] DateTime endDate, [FromQuery] bool isDay, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new GetTotalParticipantByDateQuery(eventId, startDate, endDate, isDay), cancellationToken);
+        Guid userId = Guid.Parse(User.GetUserIdFromToken());
+        var result = await _mediator.Send(new GetTotalParticipantByDateQuery(userId, eventId, startDate, endDate, isDay), cancellationToken);
         return result.StatusResponse != System.Net.HttpStatusCode.OK
             ? StatusCode((int)result.StatusResponse, result)
             : Ok(result);
@@ -77,12 +79,19 @@ public class DashboardController : ControllerBase
 
     [Authorize]
     [HttpGet("total-transactions")]
-    [SwaggerOperation(Summary = "Get daily transactions", Description = "with time: 2024-10-01T18:00 without time will get 24 hours)")]
+    [SwaggerOperation(Summary = "Get daily transactions", Description = "with time: 2024-10-01T18:00 (without time will get 24 hours) //  Type: 1=Ticket, 2=Sponsor, 3=Advertise, 4=Subscription.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetTotalTransactions([FromQuery] Guid? eventId, [FromQuery, Required] DateTime startDate, [FromQuery, Required] DateTime endDate, [FromQuery] bool isDay, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetTotalTransactions(
+        [FromQuery] Guid? eventId, 
+        [FromQuery, Required] DateTime startDate, 
+        [FromQuery, Required] DateTime endDate, 
+        [FromQuery] bool isDay, 
+        [FromQuery] int TransactionType, 
+        CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new GetTotalTransactionByDate(eventId, startDate, endDate, isDay), cancellationToken);
+        Guid userId = Guid.Parse(User.GetUserIdFromToken());
+        var result = await _mediator.Send(new GetTotalTransactionByDate(userId, eventId, startDate, endDate, isDay, TransactionType), cancellationToken);
 
         return result.StatusResponse != System.Net.HttpStatusCode.OK
             ? StatusCode((int)result.StatusResponse, result)

@@ -20,7 +20,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalTransactionByDate
         {
             if (request.IsDay)
             {
-                var transactionsByDay = await _transactionRepository.GetTotalAmountByDayAsync(request.eventId, request.StartDate, request.EndDate);
+                var transactionsByDay = await _transactionRepository.GetTotalAmountByDayAsync(request.userId, request.eventId, request.StartDate, request.EndDate, request.TransactionType);
                 var dailyTransactions = new List<DailyTransaction>(); // Danh sách để lưu giao dịch theo ngày
                 decimal totalAmountDay = 0;
 
@@ -53,7 +53,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalTransactionByDate
             }
             else
             {
-                var transactionsByHour = await _transactionRepository.GetTotalAmountByHourAsync(request.eventId, request.StartDate, request.EndDate);
+                var transactionsByHour = await _transactionRepository.GetTotalAmountByHourAsync(request.userId, request.eventId, request.StartDate, request.EndDate, request.TransactionType);
                 var hourlyTransactions = new List<HourlyTransaction>(); // Danh sách để lưu giao dịch theo giờ
                 decimal totalAmountHour = 0;
 
