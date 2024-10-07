@@ -87,7 +87,7 @@ namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
                 
 
                 var advertisedEntity = new AdvertisedEvent();
-                advertisedEntity.Id = new Guid();
+                advertisedEntity.Id = Guid.NewGuid();
                 advertisedEntity.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
                 advertisedEntity.EventId = request.EventId;
                 advertisedEntity.UserId = request.UserId;
