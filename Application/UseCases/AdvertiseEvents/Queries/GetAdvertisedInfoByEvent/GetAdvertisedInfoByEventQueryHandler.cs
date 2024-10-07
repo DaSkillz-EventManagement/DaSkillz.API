@@ -34,7 +34,7 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent
             var response = new APIResponse();
             var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
             var isAdmin = await _userRepository.IsAdmin(request.UserId);
-            if (!isOwner || !isAdmin)
+            if (!isOwner && !isAdmin)
             {
                 
                 response.StatusResponse = HttpStatusCode.BadRequest;

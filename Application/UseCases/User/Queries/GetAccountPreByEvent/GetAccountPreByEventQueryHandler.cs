@@ -30,7 +30,7 @@ namespace Application.UseCases.User.Queries.GetAccountPreByEvent
             var response = new APIResponse();
             var isAdmin = await _userRepository.IsAdmin(request.UserId);
             var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
-            if (!isOwner || !isAdmin)
+            if (!isOwner && !isAdmin)
             {
 
                 response.StatusResponse = HttpStatusCode.BadRequest;
