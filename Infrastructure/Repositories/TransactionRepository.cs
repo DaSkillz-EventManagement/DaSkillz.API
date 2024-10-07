@@ -1,5 +1,6 @@
 ﻿using Application.Helper;
 using Domain.DTOs.Payment.Response;
+using Domain.DTOs.User.Response;
 using Domain.Entities;
 using Domain.Enum.Payment;
 using Domain.Repositories;
@@ -140,5 +141,34 @@ namespace Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<List<AccountStatisticDto>> GetAccountStatistics()
+        {
+            return await Task.Run(() => _context.Transactions
+                .Where(t => t.SubscriptionType == (int)PaymentType.SUBSCRIPTION)
+                .AsEnumerable()
+                .GroupBy(t => t.UserId)
+                .Select(group => new AccountStatisticDto
+                {
+                    UserId = (Guid)group.Key,
+                    NumOfPurchasing = group.Count(),
+                    TotalMoney = group.Sum(t => decimal.TryParse(t.Amount, out var amount) ? amount : 0) // Handle parsing
+                })
+                .ToList());
+        }
+
+        public async Task<List<AccountStatisticInfoDto>> GetAccountStatisticInfoByEventId(Guid eventId)
+        {
+            return await Task.Run(() => _context.Transactions
+                .Where(t => t.EventId == eventId) // Filter by EventId
+                .AsEnumerable()
+                .Select(t => new AccountStatisticInfoDto
+                {
+                    StartDate = t.CreatedAt,
+                    EndDate = t.CreatedAt.AddMonths(1), // EndDate is 1 month after CreatedDate
+                    Amount = decimal.TryParse(t.Amount, out var amount) ? amount : 0, // Parse the Amount
+                    IsActive = t.CreatedAt.AddMonths(1) >= DateTime.Now // If EndDate >= Now, IsActive is true (1), otherwise false (0)
+                })
+                .ToList());
+        }
     }
 }

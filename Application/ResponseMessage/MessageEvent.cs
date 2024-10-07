@@ -54,8 +54,9 @@
             public const string CreateQuizFailed = "CREATE_QUIZ_FAILED";
             public const string QuizAttemptReachedLimit = "NO_MORE_QUIZ_ATTEMPT_LEFT";
             
-            
-            public const string NumberEventsExceed = "THE_NUMBER_OF_CREATED_EVENTS_THIS_MONTH_REACH_PEAK";
+            public const string UserNotAllowToSee = "USER_NOT_ALLOWED_TO_SEE";
+
+        public const string NumberEventsExceed = "THE_NUMBER_OF_CREATED_EVENTS_THIS_MONTH_REACH_PEAK";
 
     }
 }

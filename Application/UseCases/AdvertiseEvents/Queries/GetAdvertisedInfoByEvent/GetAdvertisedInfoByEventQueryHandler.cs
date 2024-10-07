@@ -19,22 +19,26 @@ namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedInfoByEvent
         private readonly IEventRepository _eventRepository;
         private readonly IAdvertisedEventRepository _advertisedEventRepository;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
 
-        public GetAdvertisedInfoByEventQueryHandler(IEventRepository eventRepository, IAdvertisedEventRepository advertisedEventRepository, IMapper mapper)
+        public GetAdvertisedInfoByEventQueryHandler(IEventRepository eventRepository, IAdvertisedEventRepository advertisedEventRepository, IMapper mapper, IUserRepository userRepository)
         {
             _eventRepository = eventRepository;
             _advertisedEventRepository = advertisedEventRepository;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
 
         public async Task<APIResponse> Handle(GetAdvertisedInfoByEventQuery request, CancellationToken cancellationToken)
         {
             var response = new APIResponse();
             var isOwner = await _eventRepository.IsOwner(request.EventId, request.UserId);
-            if (!isOwner)
+            var isAdmin = await _userRepository.IsAdmin(request.UserId);
+            if (!isOwner || !isAdmin)
             {
+                
                 response.StatusResponse = HttpStatusCode.BadRequest;
-                response.Message = MessageEvent.YouAreNotOwnerOfThisEvent;
+                response.Message = MessageEvent.UserNotAllowToSee;
                 response.Data = null;
                 return response;
             }
