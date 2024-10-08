@@ -2,6 +2,7 @@
 using Application.ResponseMessage;
 using Application.UseCases.Admin.Queries.EventMonthly;
 using Application.UseCases.Admin.Queries.EventStatus;
+using Application.UseCases.Admin.Queries.GetTopSearch;
 using Application.UseCases.Admin.Queries.GetTotalParticipant;
 using Application.UseCases.Admin.Queries.GetTotalTransactionByDate;
 using Application.UseCases.Admin.Queries.MonthlyEvent;
@@ -93,6 +94,17 @@ public class DashboardController : ControllerBase
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new GetTotalTransactionByDate(userId, eventId, startDate, endDate, isDay, TransactionType), cancellationToken);
 
+        return result.StatusResponse != System.Net.HttpStatusCode.OK
+            ? StatusCode((int)result.StatusResponse, result)
+            : Ok(result);
+    }
+
+    [HttpGet("top-keyword")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetSearchHistory([FromQuery, Required] int size, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetTopSearchQuery(size),cancellationToken);
         return result.StatusResponse != System.Net.HttpStatusCode.OK
             ? StatusCode((int)result.StatusResponse, result)
             : Ok(result);

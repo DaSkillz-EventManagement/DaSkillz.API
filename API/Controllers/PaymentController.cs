@@ -1,6 +1,5 @@
 ﻿using Application.UseCases.Payment.Commands.Callback;
 using Application.UseCases.Payment.Commands.CreatePayment;
-using Application.UseCases.Payment.Commands.Refund;
 using Application.UseCases.Payment.Queries.GetAllTransaction;
 using Application.UseCases.Payment.Queries.GetFilterTransaction;
 using Application.UseCases.Payment.Queries.GetOrderStatus;
@@ -8,7 +7,6 @@ using Application.UseCases.Payment.Queries.GetTotalTransaction;
 using Application.UseCases.Payment.Queries.GetTransactionByEvent;
 using Application.UseCases.Payment.Queries.GetTransactionByUser;
 using Domain.Enum.Payment;
-using Elastic.Clients.Elasticsearch.Fluent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

@@ -1,5 +1,6 @@
 ﻿
 using Application.Abstractions.Caching;
+using Application.Abstractions.ElasticSearch;
 using Application.Helper;
 using AutoMapper;
 using Domain.DTOs.Events.ResponseDto;
@@ -22,8 +23,9 @@ namespace Application.UseCases.Events.Queries.GetFilteredEvent
         private readonly ISearchHistoryRepository _searchHistoryRepository;
         private readonly ITagRepository _tagRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IElasticService<SearchHistory> _elasticService;
 
-        public GetFilteredEventQueryHandler(IEventRepository eventRepo, IMapper mapper, IRedisCaching redisCaching, ISearchHistoryRepository searchHistoryRepository, ITagRepository tagRepository, IUnitOfWork unitOfWork)
+        public GetFilteredEventQueryHandler(IEventRepository eventRepo, IMapper mapper, IRedisCaching redisCaching, ISearchHistoryRepository searchHistoryRepository, ITagRepository tagRepository, IUnitOfWork unitOfWork, IElasticService<SearchHistory> elasticService)
         {
             _eventRepo = eventRepo;
             _mapper = mapper;
@@ -31,6 +33,7 @@ namespace Application.UseCases.Events.Queries.GetFilteredEvent
             _searchHistoryRepository = searchHistoryRepository;
             _tagRepository = tagRepository;
             _unitOfWork = unitOfWork;
+            _elasticService = elasticService;
         }
 
         public async Task<PagedList<EventResponseDto>> Handle(GetFilteredEventQuery request, CancellationToken cancellationToken)
@@ -60,12 +63,12 @@ namespace Application.UseCases.Events.Queries.GetFilteredEvent
 
 
             var result = await _eventRepo.GetFilteredEvent(request.Filter, request.PageNo, request.ElementEachPage);
-            if(request.Filter.EventName != null || request.Filter.Location != null || request.Filter.TagId != null)
+            if (request.Filter.EventName != null || request.Filter.Location != null || request.Filter.TagId != null)
             {
                 var search = new SearchHistory();
-                search.EventName = request.Filter.EventName;
+                search.EventName = request.Filter.EventName?.Trim();
                 search.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
-                search.Location = request.Filter.Location;
+                search.Location = request.Filter.Location?.Trim();
                 if (request.Filter.TagId != null)
                 {
                     foreach (var tagId in request.Filter.TagId)
@@ -77,8 +80,12 @@ namespace Application.UseCases.Events.Queries.GetFilteredEvent
 
                 await _searchHistoryRepository.Add(search);
                 await _unitOfWork.SaveChangesAsync();
+
+                await _elasticService.InsertWithIdAsync(search);
             }
-            
+
+               
+
 
             List<EventResponseDto> response = new List<EventResponseDto>(); //_mapper.Map<List<EventResponseDto>>(result);
             response = result.Select(_eventRepo.ToResponseDto).ToList();

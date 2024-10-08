@@ -1,17 +1,8 @@
 ﻿using Application.ResponseMessage;
-using Application.UseCases.Coupons.Queries.GetUsersByCoupon;
-using Azure;
 using Domain.Models.Response;
 using Domain.Repositories;
-using Elastic.Clients.Elasticsearch;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.UseCases.AdvertiseEvents.Queries.GetAdvertisedEventByCreatedDay
 {
