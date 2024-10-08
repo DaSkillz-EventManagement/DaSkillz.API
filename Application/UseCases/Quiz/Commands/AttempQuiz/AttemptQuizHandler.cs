@@ -1,18 +1,12 @@
 ﻿using Application.Abstractions.Caching;
 using Application.ResponseMessage;
-using AutoMapper;
-using Domain.DTOs.Quiz.Response;
 using Domain.Entities;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
+using Medallion.Threading;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.Quizs.Commands.AttempQuiz;
 
@@ -25,9 +19,9 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
     private readonly IQuizRepository _quizRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRedisCaching _caching;
-
+    private readonly IDistributedLockProvider _synchronizationProvider;
     public AttemptQuizHandler(IUserAnswerRepository userAnswerRepository, IQuestionRepository questionRepository, 
-        IAnswerRepository answerRepository, IUnitOfWork unitOfWork, IQuizRepository quizRepository, IRedisCaching caching)
+        IAnswerRepository answerRepository, IUnitOfWork unitOfWork, IQuizRepository quizRepository, IRedisCaching caching, IDistributedLockProvider synchronizationProvider)
     {
         _userAnswerRepository = userAnswerRepository;
         _questionRepository = questionRepository;
@@ -35,6 +29,7 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
         _quizRepository = quizRepository;
         _unitOfWork = unitOfWork;
         _caching = caching;
+        _synchronizationProvider = synchronizationProvider;
     }
     #endregion
     public async Task<APIResponse> Handle(AttemptQuizCommand request, CancellationToken cancellationToken)
@@ -48,9 +43,20 @@ public class AttemptQuizHandler : IRequestHandler<AttemptQuizCommand, APIRespons
                 Message = MessageEvent.YouAlreadyAttemptedThisQuiz,
                 Data = MessageEvent.YouAlreadyAttemptedThisQuiz
             };
+        }
+        var @lock = _synchronizationProvider.CreateLock($"Attempt_{request.UserId}_{request.QuizId}");
+        await using (var handle = await @lock.TryAcquireAsync())
+        {
+            if (handle == null)
+            {
+                return new APIResponse
+                {
+                    StatusResponse = HttpStatusCode.Conflict,
+                    Message = MessageCommon.lockAcquired
+                };
+            }
         }*/
-        
-        int attempNo = await _userAnswerRepository.GetAttemptNo(request.QuizId, request.UserId);
+            int attempNo = await _userAnswerRepository.GetAttemptNo(request.QuizId, request.UserId);
         int quizAttemptAllow = await _quizRepository.GetQuizAttemptAllow(request.QuizId);
         if(quizAttemptAllow > 0 && attempNo >= quizAttemptAllow)
         {
