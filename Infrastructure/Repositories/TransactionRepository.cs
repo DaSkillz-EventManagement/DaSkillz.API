@@ -19,28 +19,39 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
+        private async Task<List<Transaction>> GetFilteredTransactionsAsyncWithRole(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
         {
             DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
+
             var transactions = await _context.Transactions
                 .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
                 .ToListAsync();
 
-            
-            if (type.HasValue && eventId != null)
+            var isAdmin = await _context.Users.AnyAsync(x => x.UserId == userId && x.RoleId == 3);
+
+            if (isAdmin)
             {
-                transactions = transactions.Where(p => p.EventId == eventId.Value && p.SubscriptionType == type && p.Event!.CreatedBy == userId).ToList();
+                if (type.HasValue)
+                    transactions = transactions.Where(p => p.SubscriptionType == type).ToList();
+
+                if (eventId != null)
+                    transactions = transactions.Where(p => p.EventId == eventId.Value).ToList();
+            }
+            else
+            {
+                if (type.HasValue)
+                    transactions = transactions.Where(p => p.SubscriptionType == type && p.Event!.CreatedBy == userId).ToList();
+
+                if (eventId != null)
+                    transactions = transactions.Where(p => p.EventId == eventId.Value && p.Event!.CreatedBy == userId).ToList();
             }
 
-            if (eventId != null && !type.HasValue)
-            {
-                transactions = transactions.Where(p => p.EventId == eventId.Value && p.Event!.CreatedBy == userId).ToList();
-            }
+            return transactions;
+        }
 
-            if (type.HasValue && eventId == null)
-            {
-                transactions = transactions.Where(p => p.SubscriptionType == type).ToList();
-            }
+        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
+        {
+            var transactions = await GetFilteredTransactionsAsyncWithRole(userId, eventId, startDate, endDate, type);
 
             var transactionsByDay = transactions
                 .GroupBy(t => t.CreatedAt.Date)
@@ -57,26 +68,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
         {
-            DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
-
-            var transactions = await _context.Transactions
-                .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
-                .ToListAsync();
-
-            if (type.HasValue && eventId != null)
-            {
-                transactions = transactions.Where(p => p.EventId == eventId.Value && p.SubscriptionType == type && p.Event!.CreatedBy == userId).ToList();
-            }
-
-            if (eventId != null && !type.HasValue)
-            {
-                transactions = transactions.Where(p => p.EventId == eventId.Value && p.Event!.CreatedBy == userId).ToList();
-            }
-
-            if (type.HasValue && eventId == null)
-            {
-                transactions = transactions.Where(p => p.SubscriptionType == type).ToList();
-            }
+            var transactions = await GetFilteredTransactionsAsyncWithRole(userId, eventId, startDate, endDate, type);
 
             var transactionsByHour = transactions
                 .GroupBy(t => new { Day = t.CreatedAt.Date, Hour = t.CreatedAt.Hour })
@@ -84,7 +76,7 @@ namespace Infrastructure.Repositories
                 {
                     Date = g.Key.Day.ToString("dd/MM/yyyy"),
                     Hour = $"{g.Key.Hour:D2}:00",
-                    TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(), // Giữ nguyên phương thức
+                    TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(),
                 })
                 .OrderBy(h => h.Date)
                 .ThenBy(h => h.Hour)
@@ -92,6 +84,7 @@ namespace Infrastructure.Repositories
 
             return transactionsByHour;
         }
+
 
         public async Task<IEnumerable<Transaction?>> getTransactionByUserIdAsync(Guid? guid)
         {
