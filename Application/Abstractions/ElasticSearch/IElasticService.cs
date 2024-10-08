@@ -1,19 +1,27 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using Nest;
 
 namespace Application.Abstractions.ElasticSearch
 {
     public interface IElasticService<TDomain> where TDomain : class
     {
-        Task IndexDocumentAsync(TDomain customer);
-        Task BulkIndexDocumentsAsync(IEnumerable<TDomain> customer/*, string indexName*/);
-        Task<TDomain> Get(int key);
-        Task<IEnumerable<TDomain>?> GetAll();
-        Task Remove(int key);
-        Task RemoveWithQuery(DeleteByQueryRequestDescriptor<TDomain> descriptor);
-        Task Update(TDomain domain, int id);
-        Task UpdateWithQuery(UpdateByQueryRequestDescriptor<TDomain> descriptor);
-        Task<IEnumerable<TDomain>> FilterAsync(SearchRequestDescriptor<TDomain> descriptor);
-        Task IndexDocumentWithKeywordAsync(TDomain domain, int keyword);
+        Task<TDomain> GetAsync(string id);
+        Task<TDomain> GetAsync(IGetRequest request);
+        Task<TDomain> FindAsync(string id);
+        Task<TDomain> FindAsync(IGetRequest request);
+        Task<IEnumerable<TDomain>> GetAllAsync();
+        Task<IEnumerable<TDomain>> GetManyAsync(IEnumerable<string> ids);
+        Task<IEnumerable<TDomain>> SearchAsync(Func<SearchDescriptor<TDomain>, ISearchRequest> selector);
+        Task<IEnumerable<TDomain>> SearchAsync(Func<QueryContainerDescriptor<TDomain>, QueryContainer> request);
+        Task<ISearchResponse<TDomain>> SearchAsync(Func<QueryContainerDescriptor<TDomain>, QueryContainer> request, Func<AggregationContainerDescriptor<TDomain>, IAggregationContainer> aggregationsSelector);
+        Task<bool> CreateIndexAsync();
+        Task<bool> InsertAsync(TDomain t);
+        Task<bool> InsertWithIdAsync(TDomain model);
+        Task<bool> InsertManyAsync(IList<TDomain> tList);
+        Task<bool> UpdateAsync(TDomain t);
+        Task<long> GetTotalCountAsync();
+        Task<bool> DeleteByIdAsync(string id);
+        Task<bool> DeleteByQueryAsync(Func<QueryContainerDescriptor<TDomain>, QueryContainer> selector);
+        Task<bool> ExistAsync(string id);
     }
 }
 

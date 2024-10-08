@@ -6,9 +6,7 @@ using Domain.Enum.AdvertisedEvents;
 using Domain.Models.Response;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch;
 using MediatR;
-using Microsoft.Extensions.Azure;
 using System.Net;
 
 namespace Application.UseCases.AdvertiseEvents.Command.UseAdvertisedEvent
