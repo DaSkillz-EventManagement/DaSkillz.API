@@ -60,22 +60,25 @@ namespace Application.UseCases.Events.Queries.GetFilteredEvent
 
 
             var result = await _eventRepo.GetFilteredEvent(request.Filter, request.PageNo, request.ElementEachPage);
-
-            var search = new SearchHistory();
-            search.EventName = request.Filter.EventName;
-            search.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
-            search.Location = request.Filter.Location;
-            if(request.Filter.TagId != null)
+            if(request.Filter.EventName != null || request.Filter.Location != null || request.Filter.TagId != null)
             {
-                foreach (var tagId in request.Filter.TagId)
+                var search = new SearchHistory();
+                search.EventName = request.Filter.EventName;
+                search.CreatedDate = DateTimeHelper.GetCurrentTimeAsLong();
+                search.Location = request.Filter.Location;
+                if (request.Filter.TagId != null)
                 {
-                    var tagEntity = await _tagRepository.GetById(tagId);
-                    search.Hashtag = tagEntity.TagName;
+                    foreach (var tagId in request.Filter.TagId)
+                    {
+                        var tagEntity = await _tagRepository.GetById(tagId);
+                        search.Hashtag = tagEntity.TagName;
+                    }
                 }
-            }
 
-            await _searchHistoryRepository.Add(search);
-            await _unitOfWork.SaveChangesAsync();
+                await _searchHistoryRepository.Add(search);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            
 
             List<EventResponseDto> response = new List<EventResponseDto>(); //_mapper.Map<List<EventResponseDto>>(result);
             response = result.Select(_eventRepo.ToResponseDto).ToList();
