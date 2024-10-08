@@ -1,8 +1,14 @@
-﻿using Application.UseCases.User.Commands.DeleteUser;
+﻿using Application.Helper;
+using Application.UseCases.AdvertiseEvents.Queries.GetAdEventStatistic;
+using Application.UseCases.User.Commands.DeleteUser;
 using Application.UseCases.User.Commands.UpdateUser;
+using Application.UseCases.User.Queries.CheckUserPremium;
+using Application.UseCases.User.Queries.GetAccountPreByEvent;
+using Application.UseCases.User.Queries.GetAccountStatistic;
 using Application.UseCases.User.Queries.GetAllUsers;
 using Application.UseCases.User.Queries.GetByUserId;
 using Application.UseCases.User.Queries.GetUserByKeyword;
+using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -70,12 +76,37 @@ public class UserController : Controller
         return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
     }
 
-    //[HttpGet("check-premium")]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> CheckPremium(CancellationToken cancellationToken = default)
-    //{
-    //    var result = await _mediator.Send(new GetAllUserQuery(pageNo, eachPage), cancellationToken);
-    //    return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
-    //}
+    [HttpGet("check-premium")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CheckPremium([FromQuery] Guid userId, CancellationToken cancellationToken = default)
+    {
+        var result = await _mediator.Send(new CheckUserPremiumQuery(userId), cancellationToken);
+        return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+    }
+
+
+    [Authorize]
+    [HttpGet("account-statistic")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<APIResponse>> GetAccountStatistic(CancellationToken cancellationToken = default)
+    {
+        Guid userId = Guid.Parse(User.GetUserIdFromToken());
+        var result = await _mediator.Send(new GetAccountStatisticQuery(userId), cancellationToken);
+
+        return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
+    }
+
+    [Authorize]
+    [HttpGet("accountpre-info")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<APIResponse>> GetAccountPreByEvent([FromQuery] Guid anotherUserId, CancellationToken cancellationToken = default)
+    {
+        Guid userId = Guid.Parse(User.GetUserIdFromToken());
+        var result = await _mediator.Send(new GetAccountPreByEventQuery(anotherUserId, userId), cancellationToken);
+
+        return (result.StatusResponse != HttpStatusCode.OK) ? result : StatusCode((int)result.StatusResponse, result);
+    }
 }

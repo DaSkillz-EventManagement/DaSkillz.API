@@ -1,5 +1,9 @@
-﻿using Domain.Entities;
+﻿using Domain.DTOs.AdvertisedEvents;
+using Domain.DTOs.User.Response;
+using Domain.Entities;
+using Domain.Enum.Payment;
 using Domain.Repositories;
+using Event_Management.Domain.Enum;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
@@ -136,6 +140,13 @@ namespace Infrastructure.Repositories
                                .Include(a => a.Subscription)
                                .ToListAsync();
         }
+
+        public async Task<bool> IsAdmin(Guid userId)
+        {
+            return await _context.Users.AnyAsync(u => u.UserId.Equals(userId) && u.RoleId == (int)UserRole.Admin);
+        }
+
+        
 
     }
 }

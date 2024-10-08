@@ -3,10 +3,12 @@ using Domain.Entities;
 using Domain.Enum.Participant;
 using Domain.Models.Pagination;
 using Domain.Repositories;
+using Elastic.Clients.Elasticsearch.Security;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories;
@@ -19,6 +21,91 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
     {
         _context = context;
     }
+
+    public async Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
+    {
+        DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
+
+        var query = _context.Participants
+            .Include(a => a.Event)
+            .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted);
+
+        var isRole = await _context.Users.AnyAsync(x => x.RoleId == 2 && x.UserId == userId);
+        if (isRole)
+        {
+            if (eventId != null)
+            {
+                query = query.Where(p => p.EventId == eventId.Value && p.Event.CreatedBy == userId);
+            }
+            else
+            {
+                query = query.Where(p => p.Event.CreatedBy == userId);
+            }
+        }
+
+        else 
+        {
+            query = query.Where(p => p.EventId == eventId.Value);
+        }
+
+        var participationByDay = await query
+            .GroupBy(p => p.CreatedAt!.Value.Date)
+            .Select(g => new DailyParticipation
+            {
+                Date = g.Key.ToString("dd/MM/yyyy"),
+                Count = g.Count()
+            })
+            .ToListAsync();
+
+        return participationByDay;
+    }
+
+    public async Task<List<HourlyPartitipant>> GetParticipationByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
+    {
+        DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
+
+        // Fetch the participants first
+        var participants = await _context.Participants
+            .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted)
+            .ToListAsync(); // Get all relevant records
+
+        var isRole = await _context.Users.AnyAsync(x => x.RoleId == 2 && x.UserId == userId);
+        if (isRole)
+        {
+            if (eventId != null)
+            {
+                participants = participants.Where(p => p.EventId == eventId.Value && p.Event.CreatedBy == userId).ToList();
+            }
+            else
+            {
+                participants = participants.Where(p => p.Event.CreatedBy == userId).ToList();
+            }
+        }
+
+        else if (eventId != null)
+        {
+            participants = participants.Where(p => p.EventId == eventId.Value).ToList();
+        }
+
+        var hourlyParticipants = participants
+            .GroupBy(p => new
+            {
+                Day = p.CreatedAt!.Value.Date,
+                Hour = p.CreatedAt.Value.Hour
+            })
+            .Select(g => new HourlyPartitipant
+            {
+                Date = g.Key.Day.ToString("dd/MM/yyyy"), // Perform formatting in memory
+                Hour = string.Format("{0:D2}:00", g.Key.Hour),
+                Count = g.Count() // Count participants
+            })
+            .OrderBy(e => e.Date)
+            .ToList();
+
+        return hourlyParticipants;
+    }
+
+
     public async Task<bool> IsExistedOnEvent(Guid userId, Guid eventId)
     {
         return await _context.Participants.AnyAsync(p => p.UserId.Equals(userId) && p.EventId.Equals(eventId));
@@ -31,7 +118,7 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
 
     public async Task<IEnumerable<Participant?>> GetParticipantsByEventId(Guid eventId)
     {
-        return await _context.Participants.Where(p => p.EventId.Equals(eventId) ).ToListAsync();
+        return await _context.Participants.Where(p => p.EventId.Equals(eventId)).ToListAsync();
     }
 
     public async Task<Participant?> GetDetailParticipant(Guid userId, Guid eventId)
@@ -138,7 +225,7 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         int epCount = await _context.Participants.Where(p => p.EventId == eventId).CountAsync();
         Event entity = await _context.Events.FindAsync(eventId);
         int eventCapacity = entity!.Capacity!.Value;
-        if(eventCapacity < 0)
+        if (eventCapacity < 0)
         {
             return false;
         }

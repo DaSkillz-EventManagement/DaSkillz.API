@@ -1,4 +1,7 @@
-﻿using Domain.Entities;
+﻿using Application.Helper;
+using Domain.DTOs.Payment.Response;
+using Domain.DTOs.User.Response;
+using Domain.Entities;
 using Domain.Enum.Payment;
 using Domain.Repositories;
 using Infrastructure.Persistence;
@@ -14,6 +17,80 @@ namespace Infrastructure.Repositories
         public TransactionRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
+        {
+            DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
+            var transactions = await _context.Transactions
+                .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
+                .ToListAsync();
+
+            
+            if (type.HasValue && eventId != null)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.SubscriptionType == type && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (eventId != null && !type.HasValue)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (type.HasValue && eventId == null)
+            {
+                transactions = transactions.Where(p => p.SubscriptionType == type).ToList();
+            }
+
+            var transactionsByDay = transactions
+                .GroupBy(t => t.CreatedAt.Date)
+                .Select(g => new DailyTransaction
+                {
+                    Date = g.Key.ToString("dd/MM/yyyy"),
+                    TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(),
+                })
+                .OrderBy(d => d.Date)
+                .ToList();
+
+            return transactionsByDay;
+        }
+
+        public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
+        {
+            DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
+
+            var transactions = await _context.Transactions
+                .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDateAdjusted)
+                .ToListAsync();
+
+            if (type.HasValue && eventId != null)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.SubscriptionType == type && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (eventId != null && !type.HasValue)
+            {
+                transactions = transactions.Where(p => p.EventId == eventId.Value && p.Event!.CreatedBy == userId).ToList();
+            }
+
+            if (type.HasValue && eventId == null)
+            {
+                transactions = transactions.Where(p => p.SubscriptionType == type).ToList();
+            }
+
+            var transactionsByHour = transactions
+                .GroupBy(t => new { Day = t.CreatedAt.Date, Hour = t.CreatedAt.Hour })
+                .Select(g => new HourlyTransaction
+                {
+                    Date = g.Key.Day.ToString("dd/MM/yyyy"),
+                    Hour = $"{g.Key.Hour:D2}:00",
+                    TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(), // Giữ nguyên phương thức
+                })
+                .OrderBy(h => h.Date)
+                .ThenBy(h => h.Hour)
+                .ToList();
+
+            return transactionsByHour;
         }
 
         public async Task<IEnumerable<Transaction?>> getTransactionByUserIdAsync(Guid? guid)
@@ -95,5 +172,34 @@ namespace Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<List<AccountStatisticDto>> GetAccountStatistics()
+        {
+            return await Task.Run(() => _context.Transactions
+                .Where(t => t.SubscriptionType == (int)PaymentType.SUBSCRIPTION)
+                .AsEnumerable()
+                .GroupBy(t => t.UserId)
+                .Select(group => new AccountStatisticDto
+                {
+                    UserId = (Guid)group.Key,
+                    NumOfPurchasing = group.Count(),
+                    TotalMoney = group.Sum(t => decimal.TryParse(t.Amount, out var amount) ? amount : 0) // Handle parsing
+                })
+                .ToList());
+        }
+
+        public async Task<List<AccountStatisticInfoDto>> GetAccountStatisticInfoByEventId(Guid userId)
+        {
+            return await Task.Run(() => _context.Transactions
+                .Where(t => t.UserId.Equals(userId) && t.SubscriptionType == (int)PaymentType.SUBSCRIPTION) // Filter by EventId
+                .AsEnumerable()
+                .Select(t => new AccountStatisticInfoDto
+                {
+                    StartDate = t.CreatedAt,
+                    EndDate = t.CreatedAt.AddMonths(1), // EndDate is 1 month after CreatedDate
+                    Amount = decimal.TryParse(t.Amount, out var amount) ? amount : 0, // Parse the Amount
+                    IsActive = t.CreatedAt.AddMonths(1) >= DateTime.Now // If EndDate >= Now, IsActive is true (1), otherwise false (0)
+                })
+                .ToList());
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.DTOs.User.Response;
+using Domain.Entities;
 using Domain.Repositories.Generic;
 
 namespace Domain.Repositories
@@ -18,5 +19,8 @@ namespace Domain.Repositories
         Task<IEnumerable<User>> UpdateIsPremiumUser();
         Task<bool> IsPremiumAccount(Guid userId);
         Task<IEnumerable<User>> FilterUsersAsync(Guid? userId = null, string? fullName = null, string? email = null, string? phone = null, string? status = null);
+        Task<bool> IsAdmin(Guid userId);
+
+        
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Application.ResponseMessage;
-using Application.UseCases.Subscriptions.Query;
 using AutoMapper;
 using Domain.DTOs.Certificate;
-using Domain.DTOs.Subscription;
 using Domain.Models.Response;
 using Domain.Repositories;
 using MediatR;

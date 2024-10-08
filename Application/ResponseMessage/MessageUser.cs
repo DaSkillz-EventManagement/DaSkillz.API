@@ -16,6 +16,8 @@
         public const string OTPExpired = "OTP_EXPIRED";
         public const string PhoneExisted = "EXISTED_PHONE";
 
+        public const string UserNotAdmin = "USER_IS_NOT_ADMIN";
+
         //Authentication Message response
         public const string TokenInvalid = "INVALID_TOKEN";
         public const string TokenExpired = "TOKEN_EXPIRED";

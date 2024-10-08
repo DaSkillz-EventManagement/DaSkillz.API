@@ -8,7 +8,7 @@
             Tags = new HashSet<Tag>();
             Logos = new HashSet<Logo>();
             Coupons = new HashSet<Coupon>();
-
+            AdvertisedEvents = new HashSet<AdvertisedEvent>();
         }
 
         public Guid EventId { get; set; }

@@ -11,6 +11,7 @@
             //PaymentTransactions = new HashSet<PaymentTransaction>();
             RefreshTokens = new HashSet<RefreshToken>();
             Coupons = new HashSet<Coupon>();
+            AdvertisedEvents = new HashSet<AdvertisedEvent>();
         }
 
         public Guid UserId { get; set; }
@@ -32,6 +33,7 @@
         public virtual ICollection<Participant> Participants { get; set; }
         public virtual ICollection<Coupon> Coupons { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<AdvertisedEvent> AdvertisedEvents { get; set; }
         public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
         public virtual Subscription? Subscription { get; set; }
     }

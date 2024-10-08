@@ -122,15 +122,15 @@ namespace API.Controllers
             return result;
         }
 
-        [HttpPost("refund")]
-        [SwaggerOperation(Summary = "Refund a transaction", Description = "Processes a refund for a payment transaction.")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<object> Callback([FromBody] RefundCommand command, CancellationToken cancellationToken = default)
-        {
-            var result = await _mediator.Send(command, cancellationToken);
-            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
-        }
+        //[HttpPost("refund")]
+        //[SwaggerOperation(Summary = "Refund a transaction", Description = "Processes a refund for a payment transaction.")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<object> Callback([FromBody] RefundCommand command, CancellationToken cancellationToken = default)
+        //{
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        //}
 
 
     }
