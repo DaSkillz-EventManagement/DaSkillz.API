@@ -146,7 +146,50 @@ namespace Infrastructure.Repositories
             return await _context.Users.AnyAsync(u => u.UserId.Equals(userId) && u.RoleId == (int)UserRole.Admin);
         }
 
-        
+        public async Task<IEnumerable<UserStatisticResponseDto>> GetAllUserWithStatistics(int page, int pageSize, string sortBy, bool isAscending = false)
+        {
+            var users = await _context.Users
+                .Include(a => a.Subscription)
+                .AsSplitQuery()
+                .PaginateAndSort(page, pageSize, sortBy, isAscending)
+                .ToListAsync();
 
+            // Get account statistics
+            var accountStatistics = await GetAccountStatistics();
+
+            // Map users to UserStatisticResponseDto and include statistics
+            var userStatistics = users.Select(user => new UserStatisticResponseDto
+            {
+                UserId = user.UserId,
+                FullName = user.FullName,
+                Email = user.Email,
+                Phone = user.Phone,
+                Status = user.Status,
+                RoleId = user.RoleId,
+                RoleName = user.Role.RoleName,
+                Avatar = user.Avatar,
+                IsPremiumUser = user.IsPremiumUser,
+                NumOfPurchasing = accountStatistics.FirstOrDefault(stat => stat.UserId == user.UserId)?.NumOfPurchasing ?? 0,
+                TotalMoney = accountStatistics.FirstOrDefault(stat => stat.UserId == user.UserId)?.TotalMoney ?? 0
+            });
+
+            return userStatistics.ToList();
+        }
+
+
+        private async Task<List<AccountStatisticDto>> GetAccountStatistics()
+        {
+            return await Task.Run(() => _context.Transactions
+                .Where(t => t.SubscriptionType == (int)PaymentType.SUBSCRIPTION)
+                .AsEnumerable()
+                .GroupBy(t => t.UserId)
+                .Select(group => new AccountStatisticDto
+                {
+                    UserId = (Guid)group.Key,
+                    NumOfPurchasing = group.Count(),
+                    TotalMoney = group.Sum(t => decimal.TryParse(t.Amount, out var amount) ? amount : 0) // Handle parsing
+                })
+                .ToList());
+        }
     }
 }

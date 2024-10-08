@@ -21,6 +21,10 @@ namespace Domain.Repositories
         Task<IEnumerable<User>> FilterUsersAsync(Guid? userId = null, string? fullName = null, string? email = null, string? phone = null, string? status = null);
         Task<bool> IsAdmin(Guid userId);
 
-        
+
+        Task<IEnumerable<UserStatisticResponseDto>> GetAllUserWithStatistics(int page, int pageSize, string sortBy, bool isAscending = false);
+
+
+
     }
 }
