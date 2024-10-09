@@ -18,5 +18,6 @@ namespace Domain.Repositories
 
         Task<List<AccountStatisticDto>> GetAccountStatistics();
         Task<List<AccountStatisticInfoDto>> GetAccountStatisticInfoByEventId(Guid userId);
+        Task<TicketStatisticDto> GetTicketStatistic();
     }
 }
