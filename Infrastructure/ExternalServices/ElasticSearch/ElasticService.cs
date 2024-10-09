@@ -1,87 +1,231 @@
 ﻿using Application.Abstractions.ElasticSearch;
-using Elastic.Clients.Elasticsearch;
+using Nest;
 
 namespace Infrastructure.ExternalServices.ElasticSearch
 {
     public class ElasticService<TDomain> : IElasticService<TDomain> where TDomain : class
     {
-        private readonly ElasticsearchClient _client;
+        private readonly IElasticClient _elasticClient;
         private readonly string _indexName;
 
-        public ElasticService(ElasticsearchClient client)
+        public ElasticService(IElasticClient client)
         {
-            _client = client;
+            _elasticClient = client;
             _indexName = typeof(TDomain).Name.ToLower();
         }
 
-        public async Task<IEnumerable<TDomain>> FilterAsync(SearchRequestDescriptor<TDomain> descriptor)
+        public async Task<TDomain> GetAsync(string id)
         {
-            var indexResponse = await _client.SearchAsync(descriptor);
-            return indexResponse.IsValidResponse ? indexResponse.Documents.ToList() : default;
+            var response = await _elasticClient.GetAsync(DocumentPath<TDomain>.Id(id).Index(_indexName));
+
+            if (response.IsValid)
+                return response.Source;
+
+            //Log.Error(response.OriginalException, response.ServerError?.ToString());
+            return null;
         }
 
-        public async Task IndexDocumentAsync(TDomain domain)
+        public async Task<TDomain> GetAsync(IGetRequest request)
         {
+            var response = await _elasticClient.GetAsync<TDomain>(request);
 
-            var indexResponse = await _client.IndexAsync(domain, idx => idx.Index(_indexName));
-            if (!indexResponse.IsValidResponse)
-            {
-                throw new Exception($"Error searching customers: {indexResponse.TryGetOriginalException}");
-            }
+            if (response.IsValid)
+                return response.Source;
+
+            //Log.Error(response.OriginalException, response.ServerError?.ToString());
+            return null;
         }
 
-        public async Task IndexDocumentWithKeywordAsync(TDomain domain, int keyword)
+        public async Task<TDomain> FindAsync(string id)
         {
+            var response = await _elasticClient.GetAsync(DocumentPath<TDomain>.Id(id).Index(_indexName));
 
-            var indexResponse = await _client.IndexAsync(domain, idx => idx.Index(_indexName).Id(keyword));
-            if (!indexResponse.IsValidResponse)
-            {
-                throw new Exception($"Error searching customers: {indexResponse.TryGetOriginalException}");
-            }
-        }
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
 
-        public async Task BulkIndexDocumentsAsync(IEnumerable<TDomain> customer)
-        {
-            var response = await _client.BulkAsync(idx => idx.Index(_indexName)
-                    .UpdateMany(customer, (ud, u) => ud.Doc(u).DocAsUpsert(true)));
-            //return response.IsValidResponse;
-        }
-
-        public async Task<TDomain> Get(int key)
-        {
-            var response = await _client.GetAsync<TDomain>(key, g => g.Index(_indexName));
             return response.Source;
         }
 
-        public async Task<IEnumerable<TDomain>?> GetAll()
+        public async Task<TDomain> FindAsync(IGetRequest request)
         {
-            var response = await _client.SearchAsync<TDomain>(a => a.Index(_indexName));
+            var response = await _elasticClient.GetAsync<TDomain>(request);
 
-            return response.IsValidResponse ? response.Documents.ToList() : default;
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return response.Source;
         }
 
-        public async Task Update(TDomain domain, int key)
+        public async Task<IEnumerable<TDomain>> GetAllAsync()
         {
-            await _client.UpdateAsync<TDomain, TDomain>(_indexName, key, x => x.Doc(domain));
+            var search = new SearchDescriptor<TDomain>(_indexName).MatchAll();
+            var response = await _elasticClient.SearchAsync<TDomain>(search);
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return response.Hits.Select(hit => hit.Source).ToList();
         }
 
-        public async Task UpdateWithQuery(UpdateByQueryRequestDescriptor<TDomain> descriptor)
+        public async Task<IEnumerable<TDomain>> GetManyAsync(IEnumerable<string> ids)
         {
-            await _client.UpdateByQueryAsync(descriptor);
+            var response = await _elasticClient.GetManyAsync<TDomain>(ids, _indexName);
+
+            return response.Select(item => item.Source).ToList();
         }
 
-        public async Task Remove(int key)
+        public async Task<IEnumerable<TDomain>> SearchAsync(Func<QueryContainerDescriptor<TDomain>, QueryContainer> request)
         {
-            var response = await _client.DeleteAsync<TDomain>(key, d => d.Index(_indexName));
-            //return response.IsValidResponse;
+            var response = await _elasticClient.SearchAsync<TDomain>(s =>
+                s.Index(_indexName)
+                    .Query(request));
+            //.Sort(a => a.Ascending(b => sort))
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return response.Hits.Select(hit => hit.Source).ToList();
         }
 
-        public async Task RemoveWithQuery(DeleteByQueryRequestDescriptor<TDomain> descriptor)
+        public async Task<ISearchResponse<TDomain>> SearchAsync(Func<QueryContainerDescriptor<TDomain>, QueryContainer> request,
+            Func<AggregationContainerDescriptor<TDomain>, IAggregationContainer> aggregationsSelector)
         {
-            await _client.DeleteByQueryAsync(descriptor);
-            //var response = await _client.DeleteByQueryAsync<TDomain>(d => d.Indices(_indexName));
-            //return response.IsValidResponse ? response.Deleted : default;
+            var response = await _elasticClient.SearchAsync<TDomain>(s =>
+                s.Index(_indexName)
+                    .Query(request)
+                    .Aggregations(aggregationsSelector));
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return response;
         }
+
+        public async Task<IEnumerable<TDomain>> SearchAsync(Func<SearchDescriptor<TDomain>, ISearchRequest> selector)
+        {
+            var list = new List<TDomain>();
+            var response = await _elasticClient.SearchAsync<TDomain>(s => selector(s.Index(_indexName)));
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return response.Hits.Select(hit => hit.Source).ToList();
+        }
+
+        public async Task<bool> CreateIndexAsync()
+        {
+            if (!(await _elasticClient.Indices.ExistsAsync(_indexName)).Exists)
+            {
+                await _elasticClient.Indices.CreateAsync(_indexName, c =>
+                {
+                    c.Map<TDomain>(p => p.AutoMap());
+                    return c;
+                });
+            }
+            return true;
+        }
+
+        public async Task<bool> InsertAsync(TDomain model)
+        {
+            var response = await _elasticClient.IndexAsync(model, descriptor => descriptor.Index(_indexName));
+
+            if (!response.IsValid)
+                return false;
+
+            return true;
+        }
+
+        public async Task<bool> InsertWithIdAsync(TDomain model)
+        {
+            var documentId = Guid.NewGuid().ToString();
+            var response = await _elasticClient.IndexAsync(model, descriptor => descriptor.Index(_indexName).Id(documentId).Refresh(Elasticsearch.Net.Refresh.True));
+
+            if (!response.IsValid)
+                return false;
+
+            return true;
+        }
+
+        public async Task<bool> InsertManyAsync(IList<TDomain> tList)
+        {
+            await CreateIndexAsync();
+            var response = await _elasticClient.IndexManyAsync(tList, _indexName);
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+
+            return true;
+        }
+
+        public async Task<bool> UpdateAsync(TDomain model)
+        {
+            var response = await _elasticClient.UpdateAsync(DocumentPath<TDomain>.Id(model).Index(_indexName), p => p.Doc(model));
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return true;
+        }
+
+        //public async Task<bool> UpdatePartAsync(TDomain model, object partialEntity)
+        //{
+        //    var request = new UpdateRequest<TDomain, object>(_indexName, model.Id)
+        //    {
+        //        Doc = partialEntity
+        //    };
+        //    var response = await _elasticClient.UpdateAsync(request);
+
+        //    if (!response.IsValid)
+        //        throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+        //    return true;
+        //}
+
+        public async Task<bool> DeleteByIdAsync(string id)
+        {
+            var response = await _elasticClient.DeleteAsync(DocumentPath<TDomain>.Id(id).Index(_indexName));
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return true;
+        }
+
+        public async Task<bool> DeleteByQueryAsync(Func<QueryContainerDescriptor<TDomain>, QueryContainer> selector)
+        {
+            var response = await _elasticClient.DeleteByQueryAsync<TDomain>(q => q
+                .Query(selector)
+                .Index(_indexName)
+            );
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return true;
+        }
+
+        public async Task<long> GetTotalCountAsync()
+        {
+            var search = new SearchDescriptor<TDomain>(_indexName).MatchAll();
+            var response = await _elasticClient.SearchAsync<TDomain>(search);
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return response.Total;
+        }
+
+        public async Task<bool> ExistAsync(string id)
+        {
+            var response = await _elasticClient.DocumentExistsAsync(DocumentPath<TDomain>.Id(id).Index(_indexName));
+
+            if (!response.IsValid)
+                throw new Exception(response.ServerError?.ToString(), response.OriginalException);
+
+            return response.Exists;
+        }
+
 
     }
 }

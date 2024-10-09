@@ -3,12 +3,10 @@ using Domain.Entities;
 using Domain.Enum.Participant;
 using Domain.Models.Pagination;
 using Domain.Repositories;
-using Elastic.Clients.Elasticsearch.Security;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories;
@@ -22,7 +20,7 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
         _context = context;
     }
 
-    public async Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
+    private async Task<List<Participant>> GetFilteredParticipantsWithRoleAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
     {
         DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
 
@@ -30,62 +28,40 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
             .Include(a => a.Event)
             .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted);
 
-        var isRole = await _context.Users.AnyAsync(x => x.RoleId == 2 && x.UserId == userId);
-        if (isRole)
+        var isAdmin = await _context.Users.AnyAsync(x => x.RoleId == 3 && x.UserId == userId);
+        if (isAdmin)
         {
-            if (eventId != null)
-            {
+            if (eventId.HasValue)
+                query = query.Where(p => p.EventId == eventId.Value);
+        }
+        else
+        {
+            if (eventId.HasValue)
                 query = query.Where(p => p.EventId == eventId.Value && p.Event.CreatedBy == userId);
-            }
-            else
-            {
-                query = query.Where(p => p.Event.CreatedBy == userId);
-            }
         }
 
-        else 
-        {
-            query = query.Where(p => p.EventId == eventId.Value);
-        }
+        return await query.ToListAsync();
+    }
 
-        var participationByDay = await query
+    public async Task<List<DailyParticipation>> GetParticipationByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
+    {
+        var participants = await GetFilteredParticipantsWithRoleAsync(userId, eventId, startDate, endDate);
+
+        var participationByDay = participants
             .GroupBy(p => p.CreatedAt!.Value.Date)
             .Select(g => new DailyParticipation
             {
                 Date = g.Key.ToString("dd/MM/yyyy"),
                 Count = g.Count()
             })
-            .ToListAsync();
+            .ToList();
 
         return participationByDay;
     }
 
     public async Task<List<HourlyPartitipant>> GetParticipationByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate)
     {
-        DateTime endDateAdjusted = endDate.Date.AddDays(1).AddTicks(-1);
-
-        // Fetch the participants first
-        var participants = await _context.Participants
-            .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDateAdjusted)
-            .ToListAsync(); // Get all relevant records
-
-        var isRole = await _context.Users.AnyAsync(x => x.RoleId == 2 && x.UserId == userId);
-        if (isRole)
-        {
-            if (eventId != null)
-            {
-                participants = participants.Where(p => p.EventId == eventId.Value && p.Event.CreatedBy == userId).ToList();
-            }
-            else
-            {
-                participants = participants.Where(p => p.Event.CreatedBy == userId).ToList();
-            }
-        }
-
-        else if (eventId != null)
-        {
-            participants = participants.Where(p => p.EventId == eventId.Value).ToList();
-        }
+        var participants = await GetFilteredParticipantsWithRoleAsync(userId, eventId, startDate, endDate);
 
         var hourlyParticipants = participants
             .GroupBy(p => new
@@ -95,9 +71,9 @@ public class ParticipantRepository : RepositoryBase<Participant>, IParticipantRe
             })
             .Select(g => new HourlyPartitipant
             {
-                Date = g.Key.Day.ToString("dd/MM/yyyy"), // Perform formatting in memory
+                Date = g.Key.Day.ToString("dd/MM/yyyy"),
                 Hour = string.Format("{0:D2}:00", g.Key.Hour),
-                Count = g.Count() // Count participants
+                Count = g.Count()
             })
             .OrderBy(e => e.Date)
             .ToList();

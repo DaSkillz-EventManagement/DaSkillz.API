@@ -11,8 +11,7 @@ using Application.ExternalServices.Mail;
 using Application.ExternalServices.Quartz;
 using Domain.Repositories;
 using Domain.Repositories.UnitOfWork;
-using Elastic.Clients.Elasticsearch;
-using Elastic.Transport;
+using Elasticsearch.Net;
 using Infrastructure.ExternalServices.Authentication;
 using Infrastructure.ExternalServices.Authentication.Setting;
 using Infrastructure.ExternalServices.AvatarApi;
@@ -33,18 +32,18 @@ using Infrastructure.ExternalServices.Quartz;
 using Infrastructure.ExternalServices.Quartz.PaymentScheduler;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
-using Medallion.Threading.Redis;
 using Medallion.Threading;
+using Medallion.Threading.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Nest;
 using Quartz;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
-using Infrastructure.ExternalServices.Quartz.CertificateScheduler;
 
 namespace Infrastructure
 {
@@ -117,9 +116,15 @@ namespace Infrastructure
 
             //Add ElasticSearch
             var elasticsearchSettings = configuration.GetSection("ELasticSearch").Get<ElasticSetting>();
-            var settings = new ElasticsearchClientSettings(new Uri(elasticsearchSettings.Url!))
-                .Authentication(new BasicAuthentication(elasticsearchSettings.Username!, elasticsearchSettings.Password!));
-            var client = new ElasticsearchClient(settings);
+            //var settings = new ElasticsearchClientSettings(new Uri(elasticsearchSettings.Url!))
+            //    .Authentication(new BasicAuthentication(elasticsearchSettings.Username!, elasticsearchSettings.Password!));
+            //var client = new ElasticsearchClient(settings);
+
+            var pool = new SingleNodeConnectionPool(new Uri(elasticsearchSettings.Url!));
+            var settings = new ConnectionSettings(pool)
+                .EnableApiVersioningHeader();
+
+            var client = new ElasticClient(settings);
 
 
             //Add SignalR
@@ -141,7 +146,8 @@ namespace Infrastructure
             services.AddSingleton<IDistributedLockProvider>(_ =>
             new RedisDistributedSynchronizationProvider(redisDatabase!.GetDatabase()));
 
-            services.AddSingleton(client);
+            //services.AddSingleton(client);
+            services.AddSingleton<IElasticClient>(client);
             services.AddSingleton<IRedisCaching, RedisCaching>();
             services.AddScoped(typeof(IElasticService<>), typeof(ElasticService<>));
             services.AddScoped<IUnitOfWork>(provider => (IUnitOfWork)provider.GetRequiredService<ApplicationDbContext>());

@@ -12,3 +12,17 @@ services:
     ports:
         - "6379:6379"
 
+  elasticsearch:
+      image: elasticsearch:8.15.0
+      container_name: elasticsearch
+      environment:
+        - discovery.type=single-node
+        - xpack.security.enabled=false 
+        - ELASTIC_CLIENT_APIVERSIONING=true
+      volumes:
+        - elasticsearch-data:/usr/share/elasticsearch/data
+      ports:
+        - "9200:9200"
+   
+volumes:
+  elasticsearch-data:

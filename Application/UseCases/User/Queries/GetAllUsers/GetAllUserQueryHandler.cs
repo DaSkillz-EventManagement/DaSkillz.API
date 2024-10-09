@@ -44,16 +44,16 @@ namespace Application.UseCases.User.Queries.GetAllUsers
                 };
             }
 
-            var users = await _userRepository.GetAllUser(request.Page, request.Pagesize, "Email");
-            var usersResponse = _mapper.Map<IEnumerable<UserResponseDto>>(users);
-            await _caching.SetAsync(cacheKey, usersResponse, 15);
+            var users = await _userRepository.GetAllUserWithStatistics(request.Page, request.Pagesize, "Email");
+            //var usersResponse = _mapper.Map<IEnumerable<UserResponseDto>>(users);
+            await _caching.SetAsync(cacheKey, users, 15);
 
 
             return new APIResponse
             {
                 StatusResponse = HttpStatusCode.OK,
                 Message = MessageCommon.Complete,
-                Data = usersResponse ?? null
+                Data = users ?? null
             };
         }
     }
