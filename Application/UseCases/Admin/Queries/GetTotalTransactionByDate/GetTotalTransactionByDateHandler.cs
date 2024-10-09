@@ -18,26 +18,68 @@ namespace Application.UseCases.Admin.Queries.GetTotalTransactionByDate
 
         public async Task<APIResponse> Handle(GetTotalTransactionByDate request, CancellationToken cancellationToken)
         {
+            var transactionTypes = new Dictionary<int, string>
+            {
+                { 1, "Ticket" },
+                { 2, "Sponsor" },
+                { 3, "Advertise" },
+                { 4, "Subscription" }
+            };
+
+            var totalsByType = new Dictionary<string, decimal>
+                {
+                    { "Ticket", 0m },   // Ticket
+                    { "Sponsor", 0m },  // Sponsor
+                    { "Advertise", 0m },// Advertise
+                    { "Subscription", 0m } // Subscription
+                };
+            List<DailyTransaction> transactionsByDay;
+            if (request.TransactionType == null)
+            {
+                transactionsByDay = await _transactionRepository.GetTotalAmountByDayAsync(request.userId, request.eventId, request.StartDate, request.EndDate, null);
+            }
+            else
+            {
+                transactionsByDay = await _transactionRepository.GetTotalAmountByDayAsync(request.userId, request.eventId, request.StartDate, request.EndDate, request.TransactionType);
+
+            }
             if (request.IsDay)
             {
-                var transactionsByDay = await _transactionRepository.GetTotalAmountByDayAsync(request.userId, request.eventId, request.StartDate, request.EndDate, request.TransactionType);
-                var dailyTransactions = new List<DailyTransaction>(); // Danh sách để lưu giao dịch theo ngày
-                decimal totalAmountDay = 0;
+                var dailyTransactions = new List<DailyTransaction>(); 
+                decimal totalAmountDay = 0; 
 
                 for (var day = request.StartDate.Date; day <= request.EndDate.Date; day = day.AddDays(1))
                 {
                     var dayString = day.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    var transactionAmount = transactionsByDay.FirstOrDefault(t => t.Date == dayString)?.TotalAmount;
+                    var dailyTotalsByType = new Dictionary<string, decimal>(totalsByType);
 
-                    decimal amount = decimal.TryParse(transactionAmount, out var parsedAmount) ? parsedAmount : 0;
-                    totalAmountDay += amount;
+                    var transactionsForDay = transactionsByDay.Where(t => t.Date == dayString).ToList();
 
+                    decimal totalAmountForDay = 0;
+
+                    // Update daily totals by type
+                    foreach (var transaction in transactionsForDay)
+                    {
+                        if (transactionTypes.ContainsKey(transaction.SubscriptionType))
+                        {
+                            var type = transactionTypes[transaction.SubscriptionType];
+                            var amount = decimal.Parse(transaction.TotalAmount);
+                            dailyTotalsByType[type] += amount; // Add to the specific type for the day
+                            totalAmountForDay += amount; // Add to the daily total
+                        }
+                    }
+
+                    totalAmountDay += totalAmountForDay; // Add the day's total to the overall total
+
+                    // Add daily transaction breakdown to the result
                     dailyTransactions.Add(new DailyTransaction
                     {
                         Date = dayString,
-                        TotalAmount = amount.ToString() // Hoặc định dạng bạn muốn
+                        TotalAmount = totalAmountForDay.ToString(),
+                        TotalsByType = dailyTotalsByType.ToDictionary(k => k.Key, v => v.Value.ToString()) 
                     });
                 }
+
 
                 return new APIResponse
                 {
@@ -47,6 +89,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalTransactionByDate
                     {
                         EventId = request.eventId,
                         TotalAmount = totalAmountDay.ToString(),
+                        TotalsByType = totalsByType.ToDictionary(k => k.Key, v => v.Value.ToString()),
                         DailyTransactions = dailyTransactions
                     }
                 };
@@ -54,28 +97,42 @@ namespace Application.UseCases.Admin.Queries.GetTotalTransactionByDate
             else
             {
                 var transactionsByHour = await _transactionRepository.GetTotalAmountByHourAsync(request.userId, request.eventId, request.StartDate, request.EndDate, request.TransactionType);
-                var hourlyTransactions = new List<HourlyTransaction>(); // Danh sách để lưu giao dịch theo giờ
+                var hourlyTransactions = new List<HourlyTransaction>(); 
                 decimal totalAmountHour = 0;
 
                 for (var day = request.StartDate.Date; day <= request.EndDate.Date; day = day.AddDays(1))
                 {
-                    // Xác định giờ bắt đầu và giờ kết thúc cho từng ngày
-                    int startHour = (day.Date == request.StartDate.Date) ? request.StartDate.Hour : 0; // Nếu là ngày đầu tiên, bắt đầu từ giờ đã cho
-                    int endHour = (day.Date == request.EndDate.Date) ? request.EndDate.Hour : 23; // Nếu là ngày cuối cùng, kết thúc tại giờ đã cho
+                    int startHour = (day.Date == request.StartDate.Date) ? request.StartDate.Hour : 0; 
+                    int endHour = (day.Date == request.EndDate.Date) ? request.EndDate.Hour : 23; 
 
-                    for (var hour = startHour; hour <= endHour; hour++) // Duyệt qua từng giờ trong ngày
+                    for (var hour = startHour; hour <= endHour; hour++) 
                     {
-                        var hourString = $"{hour:D2}:00"; // Định dạng giờ
-                        var transactionAmount = transactionsByHour.FirstOrDefault(t => t.Hour == hourString)?.TotalAmount;
+                        var hourString = $"{hour:D2}:00"; 
+                        var transactionsForHour = transactionsByHour.Where(t => t.Hour == hourString).ToList();
 
-                        decimal amount = decimal.TryParse(transactionAmount, out var parsedAmount) ? parsedAmount : 0;
-                        totalAmountHour += amount;
+                        var hourlyTotalsByType = new Dictionary<string, decimal>(totalsByType);
+
+                        decimal totalAmountForHour = 0;
+
+                        foreach (var transaction in transactionsForHour)
+                        {
+                            if (transactionTypes.ContainsKey(transaction.SubscriptionType))
+                            {
+                                var type = transactionTypes[transaction.SubscriptionType];
+                                var amount = decimal.Parse(transaction.TotalAmount);
+                                hourlyTotalsByType[type] += amount; 
+                                totalAmountForHour += amount; 
+                            }
+                        }
+
+                        totalAmountHour += totalAmountForHour; 
 
                         hourlyTransactions.Add(new HourlyTransaction
                         {
                             Date = day.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
                             Hour = hourString,
-                            TotalAmount = amount.ToString() // Hoặc định dạng bạn muốn
+                            TotalAmount = totalAmountForHour.ToString(),
+                            TotalsByType = hourlyTotalsByType.ToDictionary(k => k.Key, v => v.Value.ToString())
                         });
                     }
                 }
@@ -92,6 +149,7 @@ namespace Application.UseCases.Admin.Queries.GetTotalTransactionByDate
                     }
                 };
             }
+
         }
     }
 }
