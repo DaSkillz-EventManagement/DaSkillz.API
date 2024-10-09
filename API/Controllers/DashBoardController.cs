@@ -104,7 +104,9 @@ public class DashboardController : ControllerBase
     public async Task<IActionResult> GetTicketStatistic(CancellationToken token = default)
     {
         var result = await _mediator.Send(new TicketStatisticQuery(), token);
-        return Ok(result);
+        return result.StatusResponse != HttpStatusCode.OK
+            ? StatusCode((int)result.StatusResponse, result)
+            : Ok(result);
     }
 
     [HttpGet("top-keyword")]

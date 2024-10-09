@@ -1,4 +1,5 @@
 ﻿using Application.ResponseMessage;
+using Azure;
 using Domain.DTOs.Payment.Response;
 using Domain.Models.Response;
 using Domain.Repositories;
@@ -16,12 +17,23 @@ public class TicketStatisticHandler : IRequestHandler<TicketStatisticQuery, APIR
     }
     public async Task<APIResponse> Handle(TicketStatisticQuery request, CancellationToken cancellationToken)
     {
-        TicketStatisticDto response = await _transactionRepository.GetTicketStatistic();
-        return new APIResponse
+        try
         {
-            StatusResponse = HttpStatusCode.OK,
-            Message = MessageCommon.Complete,
-            Data = response
-        };
+            TicketStatisticDto response = await _transactionRepository.GetTicketStatistic();
+            return new APIResponse
+            {
+                StatusResponse = HttpStatusCode.OK,
+                Message = MessageCommon.Complete,
+                Data = response
+            };
+        }catch (Exception ex)
+        {
+            return new APIResponse
+            {
+                StatusResponse = HttpStatusCode.BadRequest,
+                Message = MessageCommon.Complete,
+                Data = ex.Message
+            };
+        }
     }
 }
