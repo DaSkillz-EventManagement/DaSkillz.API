@@ -99,7 +99,7 @@ public class DashboardController : ControllerBase
             ? StatusCode((int)result.StatusResponse, result)
             : Ok(result);
     }
-    [Authorize]
+    //[Authorize]
     [HttpGet("ticket-statistic")]
     public async Task<IActionResult> GetTicketStatistic(CancellationToken token = default)
     {
