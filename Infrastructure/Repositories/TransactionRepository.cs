@@ -201,5 +201,31 @@ namespace Infrastructure.Repositories
                 })
                 .ToList());
         }
+        public async Task<TicketStatisticDto> GetTicketStatistic()
+        {
+            // get all TICKET
+            var transactions = await _context.Transactions
+                .Where(t => t.SubscriptionType == (int)PaymentType.TICKET)
+                .ToListAsync();
+
+            int totalTicket = transactions.Count;
+            int ticketSuccess = transactions.Count(t => t.Status == (int)TransactionStatus.SUCCESS);
+            int ticketFailed = transactions.Count(t => t.Status == (int)TransactionStatus.FAIL);
+            int ticketProcessing = transactions.Count(t => t.Status == (int)TransactionStatus.PROCESSING);
+
+            // Total Revenue
+            double totalRevenue = transactions
+                .Where(t => t.Status == (int)TransactionStatus.SUCCESS)
+                .Sum(t => double.TryParse(t.Amount, out var amount) ? amount : 0);
+
+            return new TicketStatisticDto
+            {
+                TotalTicket = totalTicket,
+                SuccessSoldTicket = ticketSuccess,
+                FailedSoldTicket = ticketFailed,
+                ProcessingTicket = ticketProcessing,
+                TotalRevenue = totalRevenue,
+            };
+        }
     }
 }

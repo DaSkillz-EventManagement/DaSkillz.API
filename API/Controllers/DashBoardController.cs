@@ -6,6 +6,7 @@ using Application.UseCases.Admin.Queries.GetTotalParticipant;
 using Application.UseCases.Admin.Queries.GetTotalTransactionByDate;
 using Application.UseCases.Admin.Queries.MonthlyEvent;
 using Application.UseCases.Admin.Queries.MonthlyUser;
+using Application.UseCases.Admin.Queries.TicketStatistic;
 using Domain.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -96,5 +97,12 @@ public class DashboardController : ControllerBase
         return result.StatusResponse != System.Net.HttpStatusCode.OK
             ? StatusCode((int)result.StatusResponse, result)
             : Ok(result);
+    }
+    [Authorize]
+    [HttpGet("ticket-statistic")]
+    public async Task<IActionResult> GetTicketStatistic(CancellationToken token = default)
+    {
+        var result = await _mediator.Send(new TicketStatisticQuery(), token);
+        return Ok(result);
     }
 }
