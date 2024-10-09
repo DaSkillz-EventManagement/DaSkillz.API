@@ -88,11 +88,31 @@ public class DashboardController : ControllerBase
         [FromQuery, Required] DateTime startDate, 
         [FromQuery, Required] DateTime endDate, 
         [FromQuery] bool isDay, 
-        [FromQuery] int TransactionType, 
+        [FromQuery, Required] int TransactionType, 
         CancellationToken cancellationToken)
     {
         Guid userId = Guid.Parse(User.GetUserIdFromToken());
         var result = await _mediator.Send(new GetTotalTransactionByDate(userId, eventId, startDate, endDate, isDay, TransactionType), cancellationToken);
+
+        return result.StatusResponse != System.Net.HttpStatusCode.OK
+            ? StatusCode((int)result.StatusResponse, result)
+            : Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("total-type-transactions")]
+    [SwaggerOperation(Summary = "Get all type of daily transactions", Description = "with time: 2024-10-01T18:00 (without time will get 24 hours) //  Type: 1=Ticket, 2=Sponsor, 3=Advertise, 4=Subscription.")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetTotalTypeTransactions(
+        [FromQuery] Guid? eventId,
+        [FromQuery, Required] DateTime startDate,
+        [FromQuery, Required] DateTime endDate,
+        [FromQuery] bool isDay,
+        CancellationToken cancellationToken)
+    {
+        Guid userId = Guid.Parse(User.GetUserIdFromToken());
+        var result = await _mediator.Send(new GetTotalTransactionByDate(userId, eventId, startDate, endDate, isDay, null), cancellationToken);
 
         return result.StatusResponse != System.Net.HttpStatusCode.OK
             ? StatusCode((int)result.StatusResponse, result)

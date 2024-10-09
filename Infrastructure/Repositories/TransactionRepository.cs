@@ -52,16 +52,33 @@ namespace Infrastructure.Repositories
         public async Task<List<DailyTransaction>> GetTotalAmountByDayAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
         {
             var transactions = await GetFilteredTransactionsAsyncWithRole(userId, eventId, startDate, endDate, type);
-
-            var transactionsByDay = transactions
-                .GroupBy(t => t.CreatedAt.Date)
+            List<DailyTransaction> transactionsByDay;
+            if (type == null)
+            {
+                 transactionsByDay = transactions
+                .GroupBy(t => new { t.CreatedAt.Date, t.SubscriptionType })
                 .Select(g => new DailyTransaction
                 {
-                    Date = g.Key.ToString("dd/MM/yyyy"),
+                    Date = g.Key.Date.ToString("dd/MM/yyyy"),
+                    SubscriptionType = g.Key.SubscriptionType,
                     TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(),
                 })
                 .OrderBy(d => d.Date)
                 .ToList();
+            }
+            else
+            {
+                 transactionsByDay = transactions
+               .GroupBy(t => t.CreatedAt.Date)
+               .Select(g => new DailyTransaction
+               {
+                   Date = g.Key.ToString("dd/MM/yyyy"),
+                   TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(),
+               })
+               .OrderBy(d => d.Date)
+               .ToList();
+            }
+           
 
             return transactionsByDay;
         }
@@ -69,8 +86,24 @@ namespace Infrastructure.Repositories
         public async Task<List<HourlyTransaction>> GetTotalAmountByHourAsync(Guid? userId, Guid? eventId, DateTime startDate, DateTime endDate, int? type)
         {
             var transactions = await GetFilteredTransactionsAsyncWithRole(userId, eventId, startDate, endDate, type);
-
-            var transactionsByHour = transactions
+            List<HourlyTransaction> transactionsByHour;
+            if (type == null)
+            {
+                transactionsByHour = transactions
+               .GroupBy(t => new { t.CreatedAt.Date, Hour = t.CreatedAt.Hour, t.SubscriptionType})
+               .Select(g => new HourlyTransaction
+               {
+                   Date = g.Key.Date.ToString("dd/MM/yyyy"),
+                   Hour = $"{g.Key.Hour:D2}:00",
+                   SubscriptionType = g.Key.SubscriptionType,
+                   TotalAmount = g.Sum(t => Utilities.ParseAmount(t.Amount)).ToString(),
+               })
+               .OrderBy(d => d.Date)
+               .ToList();
+            }
+            else
+            {
+                transactionsByHour = transactions
                 .GroupBy(t => new { Day = t.CreatedAt.Date, Hour = t.CreatedAt.Hour })
                 .Select(g => new HourlyTransaction
                 {
@@ -81,6 +114,7 @@ namespace Infrastructure.Repositories
                 .OrderBy(h => h.Date)
                 .ThenBy(h => h.Hour)
                 .ToList();
+            }
 
             return transactionsByHour;
         }

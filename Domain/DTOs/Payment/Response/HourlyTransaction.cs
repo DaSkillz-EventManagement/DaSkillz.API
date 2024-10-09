@@ -11,5 +11,7 @@ namespace Domain.DTOs.Payment.Response
         public string Date { get; set; }
         public string Hour { get; set; }
         public string TotalAmount { get; set; }
+        public int SubscriptionType { get; set; }
+        public Dictionary<string, string> TotalsByType { get; set; } = new Dictionary<string, string>();
     }
 }
