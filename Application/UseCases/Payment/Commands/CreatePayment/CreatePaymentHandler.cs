@@ -166,7 +166,7 @@ namespace Application.UseCases.Payment.Commands.CreatePayment
                             new HashEntry("transactionId",$"{newTrans.Apptransid}"),
                             new HashEntry("timestamp", $"{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}")
                             };
-                    await _caching.HashSetAsync(cacheKey, hashEntries, 15);
+                    await _caching.HashSetAsync(cacheKey, hashEntries, 20);
                 }
 
 
