@@ -543,6 +543,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Event>> GetListEventsByListId(List<Guid> eventsId)
         {
             return await _context.Events
+                        //.Where(e => eventsId.Contains(e.EventId))
                          .Where(e => eventsId.Contains(e.EventId))  // Filter based on the list of event IDs
                          .ToListAsync();
         }
