@@ -73,7 +73,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
 
             var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EventRequestDto.StartDate).DateTime;
-            if (tempStartDate > DateTime.Now.AddDays(90))
+            if (tempStartDate > DateTime.Now.AddDays(150))
             {
                 return new APIResponse
                 {
