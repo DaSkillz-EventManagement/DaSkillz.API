@@ -157,7 +157,6 @@ namespace Infrastructure.Repositories
 
                     if (distance <= 5000)
                     {
-                        Console.WriteLine($"event {item.EventName} distance: " + distance);
                         result.Add(item);
                     }
                 }
