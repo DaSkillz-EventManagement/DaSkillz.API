@@ -124,9 +124,9 @@ namespace Application.UseCases.Events.Command.UpdateEvent
             //location
             eventEntity.Location = request.EventRequestDto.Location!.Name;
             eventEntity.LocationId = request.EventRequestDto.Location.Id;
-            eventEntity.LocationCoord = request.EventRequestDto.Location.Coord;
+            eventEntity.LocationCoord = request.EventRequestDto.Location.Coord != null ? request.EventRequestDto.Location.Coord : null;
             eventEntity.LocationAddress = request.EventRequestDto.Location.Address;
-            eventEntity.LocationUrl = request.EventRequestDto.Location.Url;
+            eventEntity.LocationUrl = request.EventRequestDto.Location.Url != null ? request.EventRequestDto.Location.Url : null;
             //capacity
             eventEntity.Capacity = request.EventRequestDto.Capacity.HasValue ? request.EventRequestDto.Capacity.Value : eventEntity.Capacity;
             //approval

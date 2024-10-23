@@ -17,10 +17,10 @@ namespace Domain.DTOs.Events
         [Required(ErrorMessage = "LocationAddress is required!")]
         public string? Address { get; set; } = null;
 
-        [Required(ErrorMessage = "LocationUrl is required!")]
+        
         public string? Url { get; set; } = null;
 
-        [Required(ErrorMessage = "LocationCoord is required!")]
+        
         public string? Coord { get; set; } = null;
     }
 }
