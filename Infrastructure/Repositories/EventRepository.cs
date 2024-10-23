@@ -11,6 +11,7 @@ using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 
 namespace Infrastructure.Repositories
 {
@@ -156,7 +157,6 @@ namespace Infrastructure.Repositories
 
                     if (distance <= 5000)
                     {
-                        Console.WriteLine($"event {item.EventName} distance: " + distance);
                         result.Add(item);
                     }
                 }
@@ -301,9 +301,13 @@ namespace Infrastructure.Repositories
         public bool UpdateEventStatusToOnGoing(Guid eventId)
         {
             var ongoingEvent = _context.Events.Find(eventId);
-            ongoingEvent.Status = EventStatus.OnGoing.ToString();
-            _context.Update(ongoingEvent);
-            return _context.SaveChanges() > 0;
+            if (ongoingEvent.Status!.Equals(EventStatus.NotYet.ToString()))
+            {
+                ongoingEvent.Status = EventStatus.OnGoing.ToString();
+                _context.Update(ongoingEvent);
+                return _context.SaveChanges() > 0;
+            }
+            return true;
         }
 
         public bool UpdateEventStatusToOnGoing()
@@ -318,9 +322,13 @@ namespace Infrastructure.Repositories
         public bool UpdateEventStatusToEnded(Guid eventId)
         {
             var endedEvent = _context.Events.Find(eventId);
-            endedEvent.Status = EventStatus.Ended.ToString();
-            _context.Update(endedEvent);
-            return _context.SaveChanges() > 0;
+            if (endedEvent.Status!.Equals(EventStatus.OnGoing.ToString()))
+            {
+                endedEvent.Status = EventStatus.Ended.ToString();
+                _context.Update(endedEvent);
+                return _context.SaveChanges() > 0;
+            }
+            return true;
         }
 
         public bool UpdateEventStatusToEnded()
