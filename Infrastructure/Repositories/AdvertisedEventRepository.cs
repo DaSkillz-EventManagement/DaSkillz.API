@@ -2,6 +2,7 @@
 using Domain.DTOs.AdvertisedEvents;
 using Domain.Entities;
 using Domain.Enum.AdvertisedEvents;
+using Domain.Enum.Events;
 using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.Common;
@@ -20,7 +21,8 @@ namespace Infrastructure.Repositories
 
         public async Task<List<AdEventStatisticDto>> GetAdEventStatistic()
         {
-                return await _context.AdvertisedEvents
+             return await _context.AdvertisedEvents
+          
             .GroupBy(ad => ad.EventId)
             .Select(group => new AdEventStatisticDto
             {
@@ -58,6 +60,8 @@ namespace Infrastructure.Repositories
         public async Task<List<Guid>> GetListAdvertisedEventId()
         {
             return await _context.AdvertisedEvents
+                        .Include(ad => ad.Event)
+                        .Where(ad => ad.Status.Equals(AdvertisedStatus.Active.ToString()) )
                          .OrderBy(ae => ae.CreatedDate)
                          .Select(ae => ae.EventId)  // Select the EventId column
                          .ToListAsync();

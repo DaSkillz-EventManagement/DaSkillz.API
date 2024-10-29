@@ -43,4 +43,4 @@ jobs:
 
       - name: Restart Azure App Service
         run: |
-          az webapp restart --name daskillz --resource-group daskillz_production
+          az webapp restart --name daskillzz --resource-group FU_Resources

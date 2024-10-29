@@ -73,7 +73,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
 
             var tempStartDate = DateTimeOffset.FromUnixTimeMilliseconds(request.EventRequestDto.StartDate).DateTime;
-            if (tempStartDate > DateTime.Now.AddDays(15))
+            if (tempStartDate > DateTime.Now.AddDays(150))
             {
                 return new APIResponse
                 {
@@ -104,7 +104,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
             }
 
 
-            if (!IsValidCoordinateString(request.EventRequestDto.Location.Coord!))
+            if (!IsValidCoordinateString(request.EventRequestDto.Location.Coord))
             {
                 return new APIResponse
                 {
@@ -112,7 +112,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
                     StatusResponse = HttpStatusCode.BadRequest
                 };
             }
-            eventEntity.LocationCoord = request.EventRequestDto.Location.Coord;
+            eventEntity.LocationCoord = request.EventRequestDto.Location.Coord != null ? request.EventRequestDto.Location.Coord : null;
             eventEntity.Status = EventStatus.NotYet.ToString();
             eventEntity.Location = request.EventRequestDto.Location.Name;
             if (request.EventRequestDto.TagId.Count > 5)
@@ -164,6 +164,7 @@ namespace Application.UseCases.Events.Command.CreateEvent
 
         private bool IsValidCoordinateString(string coordinateString)
         {
+            if (coordinateString == null) return true;
             string pattern = @"^-?\d+(?:\.\d+)?, *-?\d+(?:\.\d+)?$";
             return Regex.IsMatch(coordinateString, pattern);
         }
