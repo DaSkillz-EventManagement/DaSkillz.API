@@ -25,6 +25,12 @@ namespace Application.Configuration
     {
         public MapperProfile()
         {
+            CreateMap<Transaction, MinimalTransactionResponseDto>()
+                .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName))
+                .ReverseMap();
+
             CreateMap<Transaction, TransactionResponseDto>()
                 .ForMember(dest => dest.OrderUrl, opt => opt.MapFrom(src => src.Status == 3 ? src.OrderUrl : null))
                 .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))

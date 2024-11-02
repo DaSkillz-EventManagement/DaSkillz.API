@@ -27,6 +27,16 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+
+        [HttpGet("test")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Test(CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetEventTransactionQueryTest(), cancellationToken);
+            return result.StatusResponse != HttpStatusCode.OK ? StatusCode((int)result.StatusResponse, result) : Ok(result);
+        }
+
         [HttpGet("query-status")]
         [SwaggerOperation(Summary = "Get transaction status", Description = "Retrieves the status of a transaction based on a query parameter.")]
         [ProducesResponseType(StatusCodes.Status200OK)]
